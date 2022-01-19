@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "ProductBold";
+  src: url("../public/ProductBold.ttf");
+}
+
+@font-face {
+  font-family: "ProductLight";
+  src: url("../public/ProductLight.ttf");
+}
