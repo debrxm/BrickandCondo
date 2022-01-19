@@ -7,13 +7,13 @@ const BrickandcondoLogin = ({}) => {
 
   return ( 
     <DarkFullWidthCard>
-      <Heading mb={20} color='white' fontSize='2xl' fontFamily='ProductBold'>Login- For BrickandCondo Admins.</Heading>
-      <Box w='60%'>
+      <Heading mb={{lg:20, base: 4}} color='white' fontSize={{lg:'2xl', base: '1xl'}} fontFamily='ProductBold'>Login- For BrickandCondo Admins.</Heading>
+      <Box w={{lg: '60%', md: '100%', base: '100%'}}>
         <form style={{fontFamily: 'ProductLight'}}>
           <FormControl mb={6}>
             <FormLabel htmlFor='email' color='white' fontSize={{base: '18px'}}>Email address</FormLabel>
             <Input 
-              w={{base: '40%'}} 
+              w={{lg: '40%', md: '90%', base: '100%'}} 
               id='email' 
               type='email' 
               bg='white'
@@ -22,7 +22,7 @@ const BrickandcondoLogin = ({}) => {
           <FormControl mb={6}>
           <FormLabel htmlFor='email' color='white' fontSize={{base: '18px'}}>Password</FormLabel>
           <Input 
-            w={{base: '40%'}} 
+            w={{lg: '40%', md: '90%', base: '100%'}} 
             id='email' 
             type='password' 
             bg='white'
