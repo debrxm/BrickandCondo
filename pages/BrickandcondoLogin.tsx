@@ -27,15 +27,15 @@ const BrickandcondoLogin = ({}) => {
       setPassword("");
       setLoading(false);
     } catch (error) {
-      error.code === "auth/wrong-password"
-        ? setErrorMessage(
-            "The password is invalid or the user does not have a password."
-          )
-        : error.code === "auth/user-not-found"
-        ? setErrorMessage(
-            "There is no user record corresponding to this identifier."
-          )
-        : setErrorMessage(error.message);
+      // error.code === "auth/wrong-password"
+      //   ? setErrorMessage(
+      //       "The password is invalid or the user does not have a password."
+      //     )
+      //   : error.code === "auth/user-not-found"
+      //   ? setErrorMessage(
+      //       "There is no user record corresponding to this identifier."
+      //     )
+      //   : setErrorMessage(error.message);
       setLoading(false);
     }
   };
