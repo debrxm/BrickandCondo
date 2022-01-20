@@ -19,7 +19,7 @@ const Header = () => {
 const Footer = () => { 
   return ( 
     <Box  
-      mt={64}
+      mt={{lg:64, base: 32}}
       bg='secondary.100'
       py={16}
       px={12}
@@ -35,6 +35,7 @@ const Footer = () => {
         <Text 
           fontFamily='ProductLight'
           color='secondary.200'
+          fontSize={{lg:'3xl', base:'1xl'}}
         >
           At BrickandCondo, we are committed to helping you close on your home investment. So feel free to send us an email at <Link color='white' href='jw.org'>Hey@brickandcondo.com.</Link> <br/> <br/> We also love connecting with everyone on our page on <Link href='jw.org' color='white'>Instagram</Link> and you can checkout what we are tweeting on <Link href='jw.org' color='white'>Twitter</Link>!
 
@@ -45,12 +46,7 @@ const Footer = () => {
 }
 export const PageWrapper = (props:any) => { 
   return ( 
-      <Box
-        maxWidth={{lg:'1290px', base:'100vw'}}
-        // mx='auto'
-        py={10} 
-        px={12} 
-      >
+    <Box py={{lg:10, base:12}} px={{lg:12, base: 4}}>
       <Header />
       {props.children}
       <Footer />
