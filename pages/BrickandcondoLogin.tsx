@@ -74,7 +74,7 @@ const BrickandcondoLogin = (props: any) => {
           </FormControl>
           <FormControl mb={6}>
             <FormLabel
-              htmlFor="email"
+              htmlFor="password"
               color="white"
               fontSize={{ base: "18px" }}
             >
@@ -82,7 +82,7 @@ const BrickandcondoLogin = (props: any) => {
             </FormLabel>
             <Input
               w={{ base: "40%" }}
-              id="email"
+              id="password"
               type="password"
               bg="white"
               value={password}
