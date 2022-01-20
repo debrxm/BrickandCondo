@@ -9,16 +9,17 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { auth } from "../firebase/config";
+import { createUserProfile } from "../firebase/auth";
 import { DarkFullWidthCard } from "../components/DarkFullWidthCard";
 import { LightButton } from "../components/LightButton";
 
-const BrickandcondoLogin = ({}) => {
+const BrickandcondoLogin = (props: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -26,19 +27,27 @@ const BrickandcondoLogin = ({}) => {
       setEmail("");
       setPassword("");
       setLoading(false);
-    } catch (error) {
-      // error.code === "auth/wrong-password"
-      //   ? setErrorMessage(
-      //       "The password is invalid or the user does not have a password."
-      //     )
-      //   : error.code === "auth/user-not-found"
-      //   ? setErrorMessage(
-      //       "There is no user record corresponding to this identifier."
-      //     )
-      //   : setErrorMessage(error.message);
+    } catch (error: any) {
+      if (error.code === "auth/user-not-found") {
+        const { user } = await auth.createUserWithEmailAndPassword(
+          email,
+          password
+        );
+        await createUserProfile(user);
+      }
+      error.code === "auth/wrong-password"
+        ? setErrorMessage(
+            "The password is invalid or the user does not have a password."
+          )
+        : error.code === "auth/user-not-found"
+        ? setErrorMessage(
+            "There is no user record corresponding to this identifier."
+          )
+        : setErrorMessage(error.message);
       setLoading(false);
     }
   };
+
   return (
     <DarkFullWidthCard>
       <Heading mb={20} color="white" fontSize="2xl" fontFamily="ProductBold">
@@ -77,7 +86,9 @@ const BrickandcondoLogin = ({}) => {
               type="password"
               bg="white"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
             />
           </FormControl>
           <LightButton onClick={onSubmit}>Login</LightButton>

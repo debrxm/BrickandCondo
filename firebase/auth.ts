@@ -1,28 +1,24 @@
 import firebase, { auth, firestore } from "./config";
 
-export const createUserProfile = async (userAuth, otherProps) => {
+export const createUserProfile = async (userAuth: any) => {
   if (!userAuth) return;
   const userRef = firestore.doc(`users/${userAuth.uid}`);
   const snapShot = await userRef.get();
 
   if (!snapShot.exists) {
-    const { firstName, lastName, phone } = otherProps;
-    const { email, emailVerified, uid, photoUri } = userAuth;
+    const { email, displayName, uid } = userAuth;
+    console.log(userAuth);
+
     const createdAt = Date.now();
     const userData = {
       id: uid,
-      firstName,
-      lastName,
-      phone,
+      displayName: displayName ? displayName : "John Doe",
       email,
       createdAt: createdAt,
-      emailVerified,
-      photoUri,
     };
     try {
-      auth.currentUser.sendEmailVerification();
       await userRef.set(userData);
-    } catch (error) {
+    } catch (error: any) {
       console.log("error creating user", error.message);
     }
   }
