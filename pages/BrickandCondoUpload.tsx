@@ -42,7 +42,7 @@ const BrickandCondoUpload = () => {
       gap={{lg:4,}} 
     >
       <Flex 
-        gap={{lg:4,}} 
+        gap={{lg:4, base: 10}} 
         my='4'
       >
         { 
@@ -53,13 +53,15 @@ const BrickandCondoUpload = () => {
           })
         }
       </Flex>
-      <DangerButton>Clear</DangerButton>
     </Flex>
+    <Box>
+      <DangerButton>Clear</DangerButton>
+    </Box>
 
     <Flex direction='column' my='10'>
       <Heading fontSize={{lg:'25px'}} fontFamily='ProductBold' color='secondary.100'>Property Meta Data</Heading>
       
-      <Flex mt='10' w='fit-content' gap={{lg: 4}}>
+      <Flex mt='10' w='fit-content' gap={{lg: 4}} direction={{lg:'row', base: 'column'}}>
         <CustomInput 
           type='number' 
           id='BathNum'
@@ -79,11 +81,11 @@ const BrickandCondoUpload = () => {
     </Flex>
     <Divider mt={{lg:'8'}} colorScheme='secondary'/>
     <Flex direction='column' my='10'>
-      <Heading fontSize={{lg:'25px'}} fontFamily='ProductBold' color='secondary.100'>Property Main Data</Heading>
+      <Heading fontSize={{lg:'25px'}} mb={{base: '4'}} fontFamily='ProductBold' color='secondary.100'>Property Main Data</Heading>
       
-      <Flex gap={{lg:4}}>
-        <Box w={{lg:'80%'}} my={{lg: 4}}>
-          <Flex direction='column' gap={{lg:'4'}}>
+      <Flex gap={{lg:4, base: 10}} direction={{lg:'row', base: 'column'}}>
+        <Box w={{lg:'80%', base: '100%'}} my={{lg: 4}}>
+          <Flex direction='column' gap={{lg:4, base: 6}}>
             <CustomInput 
               type='text'
               id='propertyName'
@@ -106,7 +108,7 @@ const BrickandCondoUpload = () => {
             />
           </Flex>
         </Box>
-        <Box w={{lg:'20%'}} my={{lg: 4}}>
+        <Box w={{lg:'20%', base: '100%'}} my={{lg: 4}}>
           <Flex direction='column' gap={{lg:'4'}} h={{lg: '100%'}}>
             <CustomInput 
               type='number'
@@ -131,7 +133,7 @@ const BrickandCondoUpload = () => {
           </Flex>
         </Box>
       </Flex>
-      <Box w={{lg:'40%'}}>
+      <Box w={{lg:'40%'}} mt={{base: 4}}>
         <LightButton>
           Upload Property
         </LightButton>

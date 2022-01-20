@@ -46,7 +46,7 @@ const Footer = () => {
 }
 export const PageWrapper = (props:any) => { 
   return ( 
-    <Box py={{lg:10, base:12}} px={{lg:12, base: 4}}>
+    <Box maxWidth={{lg: '1290px'}} mx='auto' py={{lg:10, base:12}} px={{lg:12, base: 4}}>
       <Header />
       {props.children}
       <Footer />

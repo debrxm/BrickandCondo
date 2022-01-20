@@ -64,7 +64,7 @@ const BrickandcondoLogin = (props: any) => {
               Email address
             </FormLabel>
             <Input
-              w={{ base: "40%" }}
+              w={{ base: "100%", lg: "40%" }}
               id="email"
               type="email"
               bg="white"
@@ -81,7 +81,7 @@ const BrickandcondoLogin = (props: any) => {
               Password
             </FormLabel>
             <Input
-              w={{ base: "40%" }}
+              w={{ base: "100%", lg: "40%" }}
               id="password"
               type="password"
               bg="white"
