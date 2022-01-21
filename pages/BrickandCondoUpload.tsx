@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   Flex,
-  FormControl,
   Grid,
   Heading,
   Text,
@@ -17,9 +16,9 @@ import {
 } from "../components/UploadComponents";
 import { LightButton } from "../components/LightButton";
 import { CreateProperty } from "../firebase/firestore";
+import Router from 'next/router'
 
 const BrickandCondoUpload = () => {
-  //Fake Data, this should be implemented by getting the actual files.
   const [currentUpload, setCurrentUpload] = React.useState("");
   const [mainImageUploadURL, setMainImageUploadURL] = React.useState("");
   const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState();
@@ -125,6 +124,7 @@ const BrickandCondoUpload = () => {
   };
   const cleanUp = () => {
     setCreateLoading(false);
+    Router.push('/BrickandCondoDash')
   };
   const onCreateProperty = async () => {
     const propertyData = {
