@@ -1,11 +1,5 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  Grid,
-  Heading,
-  Text,
-} from "@chakra-ui/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Box, Divider, Flex, Grid, Heading, Text } from "@chakra-ui/react";
 import React from "react";
 import { CustomInput, CustomTextArea } from "../components/CustomInput";
 import { DangerButton } from "../components/DangerButton";
@@ -16,12 +10,16 @@ import {
 } from "../components/UploadComponents";
 import { LightButton } from "../components/LightButton";
 import { CreateProperty } from "../firebase/firestore";
-import Router from 'next/router'
+import Router from "next/router";
 
 const BrickandCondoUpload = () => {
   const [currentUpload, setCurrentUpload] = React.useState("");
   const [mainImageUploadURL, setMainImageUploadURL] = React.useState("");
-  const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState();
+  const [mainImageBlob, setMainImageBlob] = React.useState({});
+  const [subImageOneBlob, setSubImageOneBlob] = React.useState({});
+  const [subImageTwoBlob, setSubImageTwoBlob] = React.useState({});
+  const [otherImagesBlob, setOtherImagesBlob] = React.useState([{}]);
+  const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState([""]);
   const [otherImagesUploadName, setOtherImagesUploadName] = React.useState("");
   const [mainImageUploadName, setMainImageUploadName] = React.useState("");
   const [subImageOneUploadURL, setSubImageOneUploadURL] = React.useState("");
@@ -40,34 +38,38 @@ const BrickandCondoUpload = () => {
   const [one_time_payment_dollar, setOneTimePaymentDollar] = React.useState();
   const [rental_value_dollar, setRentalValueDollar] = React.useState();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [uploadLoading, setUploadLoading] = React.useState(false);
   const [createLoading, setCreateLoading] = React.useState(false);
-
+  let remainingLoop: number;
+  let lmainImageUploadURL: string;
+  let lotherImagesUploadURL: any;
+  let lsubImageOneUploadURL: string;
+  let lsubImageTwoUploadURL: string;
   const [id] = React.useState(Date.now());
 
   const OtherImages = ["ImageOne", "ImageTwo", "Image3"];
   const onUploadImage = async (e: any, anchor: string) => {
     const selectedFile = e.target.files[0];
-    selectedFile && setIsLoading(true);
     switch (anchor) {
       case "main":
         setCurrentUpload(selectedFile.name);
         setMainImageUploadName(selectedFile.name);
-        fetchImageUrl(selectedFile, `${id}`, "main");
+        setMainImageBlob(selectedFile);
         break;
       case "subImageOne":
         setCurrentUpload(selectedFile.name);
         setSubImageOneUploadName(selectedFile.name);
-        fetchImageUrl(selectedFile, `${id}`, "subImageOne");
+        setSubImageOneBlob(selectedFile);
         break;
       case "subImageTwo":
         setCurrentUpload(selectedFile.name);
         setSubImageTwoUploadName(selectedFile.name);
-        fetchImageUrl(selectedFile, `${id}`, "subImageTwo");
+        setSubImageTwoBlob(selectedFile);
         break;
       case "otherImages":
         setCurrentUpload(selectedFile.name);
         setOtherImagesUploadName(selectedFile.name);
-        fetchImageUrl(selectedFile, `${id}`, "otherImages");
+        setOtherImagesBlob([...otherImagesBlob, selectedFile]);
         break;
       default:
         break;
@@ -103,16 +105,18 @@ const BrickandCondoUpload = () => {
           switch (anchor) {
             case "main":
               setMainImageUploadURL(downloadURL);
+              lmainImageUploadURL = downloadURL;
+              uploadsubImageOne();
               break;
             case "subImageOne":
               setSubImageOneUploadURL(downloadURL);
+              lsubImageOneUploadURL = downloadURL;
+              uploadsubImageTwo();
               break;
             case "subImageTwo":
               setSubImageTwoUploadURL(downloadURL);
-              break;
-            case "otherImages":
-              // const imgs: [any, any] = [...otherImagesUploadURL, downloadURL];
-              // setOtherImagesUploadURL(imgs);
+              lsubImageTwoUploadURL = downloadURL;
+              uploadOtherImages(otherImagesBlob.length - 1);
               break;
             default:
               break;
@@ -122,34 +126,121 @@ const BrickandCondoUpload = () => {
       }
     );
   };
+  const onCreateProperty = async (others: any) => {
+    setUploadLoading(false);
+    if (
+      lmainImageUploadURL &&
+      lsubImageOneUploadURL &&
+      lsubImageTwoUploadURL &&
+      lotherImagesUploadURL.length === otherImagesBlob.length
+    ) {
+      const propertyData = {
+        id,
+        bathroom,
+        rooms,
+        square_foot,
+        images: {
+          main: lmainImageUploadURL,
+          sub_image_one: lsubImageOneUploadURL,
+          sub_image_two: lsubImageTwoUploadURL,
+          other_images: lotherImagesUploadURL || "",
+        },
+        property_name,
+        property_location,
+        property_sublocation,
+        property_description,
+        one_time_payment_naira: one_time_payment_naira || 0,
+        rental_value_naira: rental_value_naira || 0,
+        one_time_payment_dollar: one_time_payment_dollar || 0,
+        rental_value_dollar: rental_value_dollar || 0,
+      };
+      CreateProperty(propertyData, cleanUp);
+    } else {
+      console.log("====================================");
+      console.log("FALSE");
+      console.log("====================================");
+    }
+  };
+  const fetchOtherImageUrl = async (
+    selectedFile: any,
+    dest: string,
+    anchor: string,
+    isLast: boolean
+  ) => {
+    const storageRef = firebase
+      .storage()
+      .ref(`properties/${dest}/${anchor}/${selectedFile}`);
+    const uploadTask = storageRef.put(selectedFile);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED:
+            console.log("Upload is paused");
+            break;
+          case firebase.storage.TaskState.RUNNING:
+            console.log("Upload is running");
+            break;
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        // get the uploaded image url back
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          if (isLast) {
+            lotherImagesUploadURL = [...lotherImagesUploadURL, downloadURL];
+            onCreateProperty(lotherImagesUploadURL);
+            return;
+          }
+          setOtherImagesUploadURL([...otherImagesUploadURL, downloadURL]);
+          lotherImagesUploadURL = [...otherImagesUploadURL, downloadURL];
+          remainingLoop = remainingLoop - 1;
+          if (remainingLoop === 1) {
+            uploadLastOtherImages();
+            return;
+          } else if (!isLast && remainingLoop > 1) {
+            uploadOtherImages(remainingLoop);
+          } else {
+            return;
+          }
+        });
+      }
+    );
+  };
   const cleanUp = () => {
     setCreateLoading(false);
-    Router.push('/BrickandCondoDash')
+    Router.push("/BrickandCondoDash");
   };
-  const onCreateProperty = async () => {
-    const propertyData = {
-      id,
-      bathroom,
-      rooms,
-      square_foot,
-      images: {
-        main: mainImageUploadURL,
-        sub_image_one: subImageOneUploadURL,
-        sub_image_two: subImageTwoUploadURL,
-        other_images: otherImagesUploadURL || "",
-      },
-      property_name,
-      property_location,
-      property_sublocation,
-      property_description,
-      one_time_payment_naira: one_time_payment_naira || 0,
-      rental_value_naira: rental_value_naira || 0,
-      one_time_payment_dollar: one_time_payment_dollar || 0,
-      rental_value_dollar: rental_value_dollar || 0,
-    };
+  const uploadMain = () => {
+    setUploadLoading(true);
     setCreateLoading(true);
-    CreateProperty(propertyData, cleanUp);
+    fetchImageUrl(mainImageBlob, `${id}`, "main");
   };
+  const uploadsubImageOne = () =>
+    fetchImageUrl(subImageOneBlob, `${id}`, "subImageOne");
+  const uploadsubImageTwo = () =>
+    fetchImageUrl(subImageTwoBlob, `${id}`, "subImageTwo");
+  const uploadLastOtherImages = () => {
+    fetchOtherImageUrl(otherImagesBlob[1], `${id}`, `otherImages-${1}`, true);
+  };
+  const uploadOtherImages = (anchor: number) => {
+    remainingLoop = anchor;
+    fetchOtherImageUrl(
+      otherImagesBlob[remainingLoop],
+      `${id}`,
+      `otherImages-${remainingLoop}`,
+      false
+    );
+  };
+
+  React.useEffect(() => {}, [
+    mainImageUploadURL,
+    subImageOneUploadURL,
+    subImageTwoUploadURL,
+  ]);
+
   return (
     <Box>
       <Heading
@@ -211,20 +302,28 @@ const BrickandCondoUpload = () => {
                 onUploadImage(e, "otherImages");
               }
         }
+        disabled={otherImagesBlob.length === 6}
       />
       <Flex align="center" gap={{ lg: 4 }}>
         <Flex gap={{ lg: 4, base: 10 }} my="4">
-          {OtherImages.map((item, index) => {
+          {otherImagesBlob.map((item: any, index) => {
             return (
               <Text key={index} fontFamily="ProductBold" color="primary.300">
-                {item}
+                {item?.name}
               </Text>
             );
           })}
         </Flex>
       </Flex>
       <Box>
-        <DangerButton>Clear</DangerButton>
+        <DangerButton
+          onClick={() => {
+            setOtherImagesBlob([{}]);
+            setOtherImagesUploadName("Add other images");
+          }}
+        >
+          Clear
+        </DangerButton>
       </Box>
 
       <Flex direction="column" my="10">
@@ -401,8 +500,12 @@ const BrickandCondoUpload = () => {
           </Box>
         </Flex>
         <Box w={{ lg: "40%" }} mt={{ base: 4 }}>
-          <LightButton onClick={createLoading ? () => {} : onCreateProperty}>
-            {createLoading ? "Uploading..." : "Upload Property"}
+          <LightButton onClick={createLoading ? () => {} : uploadMain}>
+            {uploadLoading && createLoading
+              ? "Uploading Images..."
+              : createLoading
+              ? "Creating Document...."
+              : "Upload Property"}
           </LightButton>
         </Box>
       </Flex>
