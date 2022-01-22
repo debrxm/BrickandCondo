@@ -14,6 +14,7 @@ import Router from "next/router";
 import { LoggedInBanner } from "../components/LoggedInBanner";
 
 const BrickandCondoUpload = ({ user }: { user: object }) => {
+  const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
   const [currentUpload, setCurrentUpload] = React.useState("");
   const [mainImageUploadURL, setMainImageUploadURL] = React.useState("");
   const [mainImageBlob, setMainImageBlob] = React.useState({});
@@ -236,283 +237,297 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
     );
   };
 
-  React.useEffect(() => {}, [
+  React.useEffect(() => {
+    if(!user) { 
+      setIsAdmin(false);
+      Router.push('/')
+    }
+    else { 
+      setIsAdmin(true);
+    }
+  }, [
     mainImageUploadURL,
     subImageOneUploadURL,
     subImageTwoUploadURL,
+    user
   ]);
 
   return (
-    <Box>
-      <LoggedInBanner email={user} />
-      <Heading
-        fontFamily="ProductBold"
-        fontSize={{ lg: "30px", base: '20px' }}
-        color="primary.300"
-        mt={{base: 4}}
-      >
-        Upload a new property{" "}
-        {isLoading && (
+    <>
+      { 
+        isAdmin && 
           <Box>
-            <DangerButton>Uploading {currentUpload}</DangerButton>
+            <LoggedInBanner email={user} />
+            <Heading
+              fontFamily="ProductBold"
+              fontSize={{ lg: "30px", base: '20px' }}
+              color="primary.300"
+              mt={{base: 4}}
+            >
+            Upload a new property{" "}
+            {isLoading && (
+              <Box>
+                <DangerButton>Uploading {currentUpload}</DangerButton>
+              </Box>
+            )}
+          </Heading>
+          <Box my="8">
+            <Grid gap="8" gridTemplateColumns={{ lg: "7fr 3fr" }}>
+              <Box>
+                <MainUploadComp
+                  text={mainImageUploadName || "Upload Main Image"}
+                  onChange={
+                    isLoading
+                      ? () => {}
+                      : (e: any) => {
+                          onUploadImage(e, "main");
+                        }
+                  }
+                />
+              </Box>
+              <Flex gap="8" direction="column">
+                <MainUploadComp
+                  text={subImageOneUploadName || "Upload Sub Image"}
+                  onChange={
+                    isLoading
+                      ? () => {}
+                      : (e: any) => {
+                          onUploadImage(e, "subImageOne");
+                        }
+                  }
+                />
+                <MainUploadComp
+                  text={subImageTwoUploadName || "Upload Sub Image"}
+                  onChange={
+                    isLoading
+                      ? () => {}
+                      : (e: any) => {
+                          onUploadImage(e, "subImageTwo");
+                        }
+                  }
+                />
+              </Flex>
+            </Grid>
           </Box>
-        )}
-      </Heading>
-      <Box my="8">
-        <Grid gap="8" gridTemplateColumns={{ lg: "7fr 3fr" }}>
-          <Box>
-            <MainUploadComp
-              text={mainImageUploadName || "Upload Main Image"}
-              onChange={
-                isLoading
-                  ? () => {}
-                  : (e: any) => {
-                      onUploadImage(e, "main");
-                    }
-              }
-            />
-          </Box>
-          <Flex gap="8" direction="column">
-            <MainUploadComp
-              text={subImageOneUploadName || "Upload Sub Image"}
-              onChange={
-                isLoading
-                  ? () => {}
-                  : (e: any) => {
-                      onUploadImage(e, "subImageOne");
-                    }
-              }
-            />
-            <MainUploadComp
-              text={subImageTwoUploadName || "Upload Sub Image"}
-              onChange={
-                isLoading
-                  ? () => {}
-                  : (e: any) => {
-                      onUploadImage(e, "subImageTwo");
-                    }
-              }
-            />
+          <AddMulitplePhotos
+            text={otherImagesUploadName || "Add other images"}
+            onChange={
+              isLoading
+                ? () => {}
+                : (e: any) => {
+                    onUploadImage(e, "otherImages");
+                  }
+            }
+            disabled={otherImagesBlob.length === 6}
+          />
+          <Flex align="center" gap={{ lg: 4 }}>
+            <Flex gap={{ lg: 4, base: 10 }} my="4">
+              {otherImagesBlob.map((item: any, index) => {
+                return (
+                  <Text key={index} fontFamily="ProductBold" color="primary.300">
+                    {item?.name}
+                  </Text>
+                );
+              })}
+            </Flex>
           </Flex>
-        </Grid>
-      </Box>
-      <AddMulitplePhotos
-        text={otherImagesUploadName || "Add other images"}
-        onChange={
-          isLoading
-            ? () => {}
-            : (e: any) => {
-                onUploadImage(e, "otherImages");
-              }
-        }
-        disabled={otherImagesBlob.length === 6}
-      />
-      <Flex align="center" gap={{ lg: 4 }}>
-        <Flex gap={{ lg: 4, base: 10 }} my="4">
-          {otherImagesBlob.map((item: any, index) => {
-            return (
-              <Text key={index} fontFamily="ProductBold" color="primary.300">
-                {item?.name}
-              </Text>
-            );
-          })}
-        </Flex>
-      </Flex>
-      <Box>
-        <DangerButton
-          onClick={() => {
-            setOtherImagesBlob([{}]);
-            setOtherImagesUploadName("Add other images");
-          }}
-        >
-          Clear
-        </DangerButton>
-      </Box>
+          <Box>
+            <DangerButton
+              onClick={() => {
+                setOtherImagesBlob([{}]);
+                setOtherImagesUploadName("Add other images");
+              }}
+            >
+              Clear
+            </DangerButton>
+          </Box>
 
-      <Flex direction="column" my="10">
-        <Heading
-          fontSize={{ lg: "25px" }}
-          fontFamily="ProductBold"
-          color="secondary.100"
-        >
-          Property Meta Data
-        </Heading>
+          <Flex direction="column" my="10">
+            <Heading
+              fontSize={{ lg: "25px" }}
+              fontFamily="ProductBold"
+              color="secondary.100"
+            >
+              Property Meta Data
+            </Heading>
 
-        <Flex
-          mt="10"
-          w="fit-content"
-          gap={{ lg: 4 }}
-          direction={{ lg: "row", base: "column" }}
-        >
-          <CustomInput
-            type="number"
-            id="BathNum"
-            label="How many Baths?"
-            onChange={
-              isLoading
-                ? () => {}
-                : (e: any) => {
-                    setBathroom(e.target.value);
-                  }
-            }
-          />
-          <CustomInput
-            type="number"
-            id="RoomNum"
-            label="How many Rooms?"
-            onChange={
-              isLoading
-                ? () => {}
-                : (e: any) => {
-                    setRooms(e.target.value);
-                  }
-            }
-          />
-          <CustomInput
-            type="number"
-            id="BathText"
-            label="Total Square foot"
-            onChange={
-              isLoading
-                ? () => {}
-                : (e: any) => {
-                    setSquareFoot(e.target.value);
-                  }
-            }
-          />
-        </Flex>
-      </Flex>
-      <Divider mt={{ lg: "8" }} colorScheme="secondary" />
-      <Flex direction="column" my="10">
-        <Heading
-          fontSize={{ lg: "25px" }}
-          mb={{ base: "4" }}
-          fontFamily="ProductBold"
-          color="secondary.100"
-        >
-          Property Main Data
-        </Heading>
-
-        <Flex
-          gap={{ lg: 4, base: 10 }}
-          direction={{ lg: "row", base: "column" }}
-        >
-          <Box w={{ lg: "80%", base: "100%" }} my={{ lg: 4 }}>
-            <Flex direction="column" gap={{ lg: 4, base: 6 }}>
+            <Flex
+              mt="10"
+              w="fit-content"
+              gap={{ lg: 4 }}
+              direction={{ lg: "row", base: "column" }}
+            >
               <CustomInput
-                type="text"
-                id="propertyName"
-                label="Property Name"
+                type="number"
+                id="BathNum"
+                label="How many Baths?"
                 onChange={
                   isLoading
                     ? () => {}
                     : (e: any) => {
-                        setPropertyName(e.target.value);
+                        setBathroom(e.target.value);
                       }
                 }
               />
               <CustomInput
-                type="text"
-                id="propertySubLocation"
-                label="Property SubLocation"
+                type="number"
+                id="RoomNum"
+                label="How many Rooms?"
                 onChange={
                   isLoading
                     ? () => {}
                     : (e: any) => {
-                        setPropertySubLocation(e.target.value);
+                        setRooms(e.target.value);
                       }
                 }
               />
               <CustomInput
-                type="text"
-                id="propertyLocation"
-                label="Property Location"
+                type="number"
+                id="BathText"
+                label="Total Square foot"
                 onChange={
                   isLoading
                     ? () => {}
                     : (e: any) => {
-                        setPropertyLocation(e.target.value);
-                      }
-                }
-              />
-              <CustomTextArea
-                type="text"
-                id="DescriptionData"
-                label={`Property's Description`}
-                onChange={
-                  isLoading
-                    ? () => {}
-                    : (e: any) => {
-                        setPropertyDescription(e.target.value);
+                        setSquareFoot(e.target.value);
                       }
                 }
               />
             </Flex>
-          </Box>
-          <Box w={{ lg: "20%", base: "100%" }} my={{ lg: 4 }}>
-            <Flex direction="column" gap={{ lg: "4" }} h={{ lg: "100%" }}>
-              <CustomInput
-                type="number"
-                id="oneTimePaymentNaira"
-                label="One Time Payment- Naira"
-                onChange={
-                  isLoading
-                    ? () => {}
-                    : (e: any) => {
-                        setOneTimePaymentNaira(e.target.value);
-                      }
-                }
-              />
-              <CustomInput
-                type="number"
-                id="rentalValueNaira"
-                label="Rental Value- Naira"
-                onChange={
-                  isLoading
-                    ? () => {}
-                    : (e: any) => {
-                        setRentalValueNaira(e.target.value);
-                      }
-                }
-              />
-              <CustomInput
-                type="number"
-                id="oneTimePaymentDollar"
-                label="One Time Payment- Dollar"
-                onChange={
-                  isLoading
-                    ? () => {}
-                    : (e: any) => {
-                        setOneTimePaymentDollar(e.target.value);
-                      }
-                }
-              />
-              <CustomInput
-                type="number"
-                id="rentalValueDollar"
-                label="Rental Value- Dollar"
-                onChange={
-                  isLoading
-                    ? () => {}
-                    : (e: any) => {
-                        setRentalValueDollar(e.target.value);
-                      }
-                }
-              />
+          </Flex>
+          <Divider mt={{ lg: "8" }} colorScheme="secondary" />
+          <Flex direction="column" my="10">
+            <Heading
+              fontSize={{ lg: "25px" }}
+              mb={{ base: "4" }}
+              fontFamily="ProductBold"
+              color="secondary.100"
+            >
+              Property Main Data
+            </Heading>
+
+            <Flex
+              gap={{ lg: 4, base: 10 }}
+              direction={{ lg: "row", base: "column" }}
+            >
+              <Box w={{ lg: "80%", base: "100%" }} my={{ lg: 4 }}>
+                <Flex direction="column" gap={{ lg: 4, base: 6 }}>
+                  <CustomInput
+                    type="text"
+                    id="propertyName"
+                    label="Property Name"
+                    onChange={
+                      isLoading
+                        ? () => {}
+                        : (e: any) => {
+                            setPropertyName(e.target.value);
+                          }
+                    }
+                  />
+                  <CustomInput
+                    type="text"
+                    id="propertySubLocation"
+                    label="Property SubLocation"
+                    onChange={
+                      isLoading
+                        ? () => {}
+                        : (e: any) => {
+                            setPropertySubLocation(e.target.value);
+                          }
+                    }
+                  />
+                  <CustomInput
+                    type="text"
+                    id="propertyLocation"
+                    label="Property Location"
+                    onChange={
+                      isLoading
+                        ? () => {}
+                        : (e: any) => {
+                            setPropertyLocation(e.target.value);
+                          }
+                    }
+                  />
+                  <CustomTextArea
+                    type="text"
+                    id="DescriptionData"
+                    label={`Property's Description`}
+                    onChange={
+                      isLoading
+                        ? () => {}
+                        : (e: any) => {
+                            setPropertyDescription(e.target.value);
+                          }
+                    }
+                  />
+                </Flex>
+              </Box>
+              <Box w={{ lg: "20%", base: "100%" }} my={{ lg: 4 }}>
+                <Flex direction="column" gap={{ lg: "4" }} h={{ lg: "100%" }}>
+                  <CustomInput
+                    type="number"
+                    id="oneTimePaymentNaira"
+                    label="One Time Payment- Naira"
+                    onChange={
+                      isLoading
+                        ? () => {}
+                        : (e: any) => {
+                            setOneTimePaymentNaira(e.target.value);
+                          }
+                    }
+                  />
+                  <CustomInput
+                    type="number"
+                    id="rentalValueNaira"
+                    label="Rental Value- Naira"
+                    onChange={
+                      isLoading
+                        ? () => {}
+                        : (e: any) => {
+                            setRentalValueNaira(e.target.value);
+                          }
+                    }
+                  />
+                  <CustomInput
+                    type="number"
+                    id="oneTimePaymentDollar"
+                    label="One Time Payment- Dollar"
+                    onChange={
+                      isLoading
+                        ? () => {}
+                        : (e: any) => {
+                            setOneTimePaymentDollar(e.target.value);
+                          }
+                    }
+                  />
+                  <CustomInput
+                    type="number"
+                    id="rentalValueDollar"
+                    label="Rental Value- Dollar"
+                    onChange={
+                      isLoading
+                        ? () => {}
+                        : (e: any) => {
+                            setRentalValueDollar(e.target.value);
+                          }
+                    }
+                  />
+                </Flex>
+              </Box>
             </Flex>
-          </Box>
-        </Flex>
-        <Box w={{ lg: "40%" }} mt={{ base: 4 }}>
-          <LightButton onClick={createLoading ? () => {} : uploadMain}>
-            {uploadLoading && createLoading
-              ? "Uploading Images..."
-              : createLoading
-              ? "Creating Document...."
-              : "Upload Property"}
-          </LightButton>
+            <Box w={{ lg: "40%" }} mt={{ base: 4 }}>
+              <LightButton onClick={createLoading ? () => {} : uploadMain}>
+                {uploadLoading && createLoading
+                  ? "Uploading Images..."
+                  : createLoading
+                  ? "Creating Document...."
+                  : "Upload Property"}
+              </LightButton>
+            </Box>
+          </Flex>
         </Box>
-      </Flex>
-    </Box>
+      }
+    </>
   );
 };
 

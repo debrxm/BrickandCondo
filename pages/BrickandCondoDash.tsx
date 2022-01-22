@@ -6,11 +6,14 @@ import { LightButton } from "../components/LightButton";
 import { LoggedInBanner } from "../components/LoggedInBanner";
 import { ManagePropertyCard } from "../components/ManagePropertyCard";
 import { firestore } from "../firebase/config";
+import Router from 'next/router'
 
 const BrickandCondoDash = ({ user }: { user: object }) => {
   const [properties, setProperties] = React.useState([{}]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [hasProperty, setHasProperty] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState<boolean|null>(null)
+
 
   const propertiesRef = firestore.collection("properties");
   const getProperties = async () => {
@@ -32,7 +35,12 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
   };
   React.useEffect(() => {
     getProperties();
-  }, [""]);
+    if(!user) { 
+      setIsAdmin(false);
+      Router.push('/')
+    }
+    else {setIsAdmin(true)}
+  }, [user]);
 
   const DeleteThisFakeData = [
     {
@@ -49,48 +57,53 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
     },
   ];
   return (
-    <Flex direction="column">
-      <LoggedInBanner email={user} />
-      <Flex direction="column">
-        <Flex align="center" my={{ lg: 10, base: 10 }} direction={{base: 'column', lg: 'row'}}>
-          <Heading
-            fontFamily="ProductBold"
-            color="secondary.100"
-            fontSize={{lg:'5xl', base: '3xl'}}
-            w={{ lg: "80%", base: '100%' }}
-            mb={{base: '4'}}
-          >
-            Welcome, Admin
-          </Heading>
-          <Box w={{base: '100%', lg: '40%'}}>
-            <Link href="BrickandCondoUpload">
-              <LightButton>Upload New Property</LightButton>
-            </Link>
-          </Box>
-        </Flex>
-        <Flex direction="column" mt={{ lg: 20 }}>
-          <Heading
-            fontFamily="ProductBold"
-            color="secondary.100"
-            fontSize={{lg: "2xl", base: '2xl'}}
-            w={{ lg: "80%" }}
-          >
-            Propeties to manage:
-          </Heading>
-          <Flex gap={{ lg: 4, base: 4 }} mt={{ lg: 4 }} direction={{base: 'column', lg: 'row'}}>
-            {properties.map((item: any, index) => {
-              return (
-                <ManagePropertyCard
-                  key={index}
-                  property_name={item.property_name}
-                  propTotalVisits={item.propTotalVisits}
-                />
-              );
-            })}
+    <>
+      { 
+        isAdmin && 
+        <Flex direction="column">
+          <LoggedInBanner email={user} />
+          <Flex direction="column">
+            <Flex align="center" my={{ lg: 10, base: 10 }} direction={{base: 'column', lg: 'row'}}>
+              <Heading
+                fontFamily="ProductBold"
+                color="secondary.100"
+                fontSize={{lg:'5xl', base: '3xl'}}
+                w={{ lg: "80%", base: '100%' }}
+                mb={{base: '4'}}
+              >
+                Welcome, Admin
+              </Heading>
+              <Box w={{base: '100%', lg: '40%'}}>
+                <Link href="BrickandCondoUpload">
+                  <LightButton>Upload New Property</LightButton>
+                </Link>
+              </Box>
+            </Flex>
+            <Flex direction="column" mt={{ lg: 20 }}>
+              <Heading
+                fontFamily="ProductBold"
+                color="secondary.100"
+                fontSize={{lg: "2xl", base: '2xl'}}
+                w={{ lg: "80%" }}
+              >
+                Propeties to manage:
+              </Heading>
+              <Flex gap={{ lg: 4, base: 4 }} mt={{ lg: 4 }} direction={{base: 'column', lg: 'row'}}>
+                {properties.map((item: any, index) => {
+                  return (
+                    <ManagePropertyCard
+                      key={index}
+                      property_name={item.property_name}
+                      propTotalVisits={item.propTotalVisits}
+                    />
+                  );
+                })}
+              </Flex>
+            </Flex>
           </Flex>
         </Flex>
-      </Flex>
-    </Flex>
+      }
+    </>
   );
 };
 
