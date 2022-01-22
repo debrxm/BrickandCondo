@@ -11,7 +11,7 @@ export const LoggedInBanner = ({email}:{email:object}) => {
       py={{lg:4, base: 6}}
       px={{lg:4, base: 4}}
       my={{lg: 8}}
-      fontSize={{base: '15px'}}
+      fontSize={{base: '13px'}}
     >
       Logged in as: {email?.email}
     </Tag>

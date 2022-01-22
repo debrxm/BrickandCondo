@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/link-passhref */
-import { Flex, Grid, Heading } from "@chakra-ui/react";
+import { Box, Flex, Grid, Heading } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
 import { LightButton } from "../components/LightButton";
@@ -52,29 +52,32 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
     <Flex direction="column">
       <LoggedInBanner email={user} />
       <Flex direction="column">
-        <Flex align="center" mt={{ lg: 10 }}>
+        <Flex align="center" my={{ lg: 10, base: 10 }} direction={{base: 'column', lg: 'row'}}>
           <Heading
             fontFamily="ProductBold"
             color="secondary.100"
-            fontSize="5xl"
-            w={{ lg: "80%" }}
+            fontSize={{lg:'5xl', base: '3xl'}}
+            w={{ lg: "80%", base: '100%' }}
+            mb={{base: '4'}}
           >
             Welcome, Admin
           </Heading>
-          <Link href="BrickandCondoUpload">
-            <LightButton>Upload New Property</LightButton>
-          </Link>
+          <Box w={{base: '100%', lg: '40%'}}>
+            <Link href="BrickandCondoUpload">
+              <LightButton>Upload New Property</LightButton>
+            </Link>
+          </Box>
         </Flex>
         <Flex direction="column" mt={{ lg: 20 }}>
           <Heading
             fontFamily="ProductBold"
             color="secondary.100"
-            fontSize="2xl"
+            fontSize={{lg: "2xl", base: '2xl'}}
             w={{ lg: "80%" }}
           >
             Propeties to manage:
           </Heading>
-          <Flex gap={{ lg: 4 }} mt={{ lg: 4 }}>
+          <Flex gap={{ lg: 4, base: 4 }} mt={{ lg: 4 }} direction={{base: 'column', lg: 'row'}}>
             {properties.map((item: any, index) => {
               return (
                 <ManagePropertyCard

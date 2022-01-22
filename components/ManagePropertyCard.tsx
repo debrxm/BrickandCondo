@@ -21,7 +21,7 @@ export const ManagePropertyCard = ({
       color="white"
       w="100%"
     >
-      <Flex direction='column' flexWrap='wrap' gap={{lg:10, base: 10}}>
+      <Flex direction='column' flexWrap='nowrap' gap={{lg:10, base: 10}}>
         <Box>
           <Text>Property Name:</Text>
           <Heading
