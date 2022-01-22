@@ -1,6 +1,5 @@
 import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import Link from 'next/link'
-import { DarkFullWidthCard } from './DarkFullWidthCard'
 import { LightButton } from './LightButton'
 
 type ManagePropertyCardType = { 
@@ -21,7 +20,7 @@ export const ManagePropertyCard = ({
       color='white'
       w='100%'
     >
-      <Flex direction='column' flexWrap='wrap' gap={{lg:10}}>
+      <Flex direction='column' flexWrap='wrap' gap={{lg:10, base: 10}}>
         <Box>
           <Text>Property Name:</Text>
           <Heading 

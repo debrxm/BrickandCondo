@@ -1,4 +1,4 @@
-import { Flex, Grid, Heading } from '@chakra-ui/react';
+import { Flex, Grid, Heading, Box } from '@chakra-ui/react';
 import Link from 'next/link';
 import React from 'react'; 
 import { LightButton } from '../components/LightButton';
@@ -24,18 +24,20 @@ const BrickandCondoDash = ({user}: {user: object}) => {
     <Flex direction='column'>
       <LoggedInBanner email={user}/>
       <Flex direction='column'>
-        <Flex align='center' mt={{lg: 10}}>
+        <Flex align='center' mt={{lg: 10, base: 10}} direction={{base: 'column', lg:'row'}}>
           <Heading 
             fontFamily='ProductBold'
             color='secondary.100'
-            fontSize='5xl'
-            w={{lg:'80%'}}
+            fontSize={{lg:'5xl', base: '4xl'}}
+            w={{lg:'80%', base: '100%'}}
           >
             Welcome, Admin
           </Heading>
-          <Link href='BrickandCondoUpload'><LightButton>Upload New Property</LightButton></Link>
+          <Box w={{base: '100%', lg:'20%'}}>
+            <Link href='BrickandCondoUpload'><LightButton>Upload New Property</LightButton></Link>
+          </Box>
         </Flex>
-        <Flex direction='column' mt={{lg:20}}> 
+        <Flex direction='column' mt={{lg: 20, base: 20}}> 
           <Heading 
             fontFamily='ProductBold'
             color='secondary.100'
@@ -44,7 +46,7 @@ const BrickandCondoDash = ({user}: {user: object}) => {
           >
             Propeties to manage:
           </Heading>
-          <Flex gap={{lg:4}} mt={{lg:4}}> 
+          <Flex gap={{lg:4, base: 4}} mt={{base:4}} direction={{lg:'row', base: 'column'}}> 
             {
               DeleteThisFakeData.map((item, index) => { 
                 return ( 

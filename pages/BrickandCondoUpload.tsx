@@ -156,8 +156,9 @@ const BrickandCondoUpload = ({user}: {user: object}) => {
       <LoggedInBanner email={user}/>
       <Heading
         fontFamily="ProductBold"
-        fontSize={{ lg: "30px" }}
+        fontSize={{ lg: "30px", base: '20px' }}
         color="primary.300"
+        mt={{base: 4}}
       >
         Upload a new property{" "}
         {isLoading && (
