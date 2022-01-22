@@ -1,7 +1,9 @@
 import React from "react";
-import { Flex, Box, Text, Input, Icon, Tag, HStack } from "@chakra-ui/react";
+import { Flex, Box, Text, Input, Image as ChkImg, Tag, HStack } from "@chakra-ui/react";
 import Image from "next/image";
 import UploadIcon from "../public/Uploadicon.svg";
+import DeleteIcon from "../public/DeleteIcon.svg";
+
 
 export const MainUploadComp = ({
   text,
@@ -67,8 +69,8 @@ export const AddMulitplePhotos = ({
   disabled,
 }: {
   text: string;
-  onChange: any;
-  disabled: boolean;
+  onChange?: any;
+  disabled?: boolean;
 }) => {
   return (
     <Flex
@@ -104,3 +106,98 @@ export const AddMulitplePhotos = ({
     </Flex>
   );
 };
+
+
+export const EditMainUploadComp = ({
+  text,
+  onChange,
+  imageURL
+}: {
+  text: string;
+  onChange?: any;
+  imageURL?: string;
+}) => {
+  return (
+    <Flex
+      py="60px"
+      h='100%'
+      align="center"
+      justifyContent="center"
+      borderRadius="xl"
+      boxShadow="0px 0px 10px rgba(0, 0, 0, 0.12)"
+      bg={`linear-gradient(0deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)),url(${imageURL})`}
+      bgSize="cover"
+      bgPosition="center"
+    >
+      <label>
+        <Box
+          cursor="pointer"
+          bgPosition="left"
+          bgSize="cover"
+          bgRepeat="no-repeat"
+        >
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            wrap="wrap"
+            direction="column"
+          >
+            <Box w="40px" h="40px" mb="22px">
+              <Image src={UploadIcon} alt="" />
+            </Box>
+            <Text
+              fontSize="18px"
+              textTransform="capitalize"
+              color="primary.300"
+              fontFamily="ProductLight"
+            >
+              {text}
+            </Text>
+          </Flex>
+        </Box>
+        <Input
+          display="none"
+          type="file"
+          name="file"
+          accept="image/gif, image/jpeg, image/png"
+          onChange={onChange}
+        />
+      </label>
+    </Flex>
+  );
+};
+
+
+export const AddedImagesPreview = ({imageURL}: {imageURL: string}) => { 
+  return ( 
+    <Flex 
+      justifyContent='center'
+      w='100%' 
+      h='100%' 
+      bg='white' 
+      py={{base: 5}}
+      px={{base: 4}}
+      gap={{base: 5}}
+      boxShadow="0px 0px 10px rgba(0, 0, 0, 0.12)"
+      borderRadius='xl'
+      direction={{base: 'column', lg: 'row'}}
+    > 
+      <ChkImg 
+        borderRadius='xl' 
+        src={imageURL} 
+        w={{lg:'50px', base: '100%'}} 
+        h={{lg:'50px', base: '100%'}}
+      />
+      <Box
+        cursor='pointer'
+        w={{lg:'50px', base: '100%'}} 
+        h={{lg:'50px', base: '100%'}}
+      >
+        <Image 
+          src={DeleteIcon} 
+          alt="" 
+        />
+      </Box>
+    </Flex>
+  )
+}

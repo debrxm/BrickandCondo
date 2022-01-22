@@ -12,12 +12,14 @@ import { auth } from "../firebase/config";
 import { createUserProfile } from "../firebase/auth";
 import { DarkFullWidthCard } from "../components/DarkFullWidthCard";
 import { LightButton } from "../components/LightButton";
+import Router from 'next/router';
 
-const BrickandcondoLogin = (props: any) => {
+const BrickandcondoLogin = ({user}: {user: object}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isAdmin, setIsAdmin] = React.useState<boolean|null>(false);
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
@@ -47,6 +49,17 @@ const BrickandcondoLogin = (props: any) => {
       setLoading(false);
     }
   };
+
+
+  React.useEffect(() =>  { 
+    if(user) { 
+      setIsAdmin(true)
+      Router.push('/BrickandCondoDash')
+    }
+    else { 
+      setIsAdmin(false); 
+    }
+  }, [user])
 
   return (
     <DarkFullWidthCard>

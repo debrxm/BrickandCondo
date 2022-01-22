@@ -49,7 +49,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   let lsubImageTwoUploadURL: string;
   const [id] = React.useState(Date.now());
 
-  const OtherImages = ["ImageOne", "ImageTwo", "Image3"];
+
   const onUploadImage = async (e: any, anchor: string) => {
     const selectedFile = e.target.files[0];
     switch (anchor) {
@@ -240,7 +240,6 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   React.useEffect(() => {
     if(!user) { 
       setIsAdmin(false);
-      Router.push('/')
     }
     else { 
       setIsAdmin(true);

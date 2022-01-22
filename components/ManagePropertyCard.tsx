@@ -6,10 +6,12 @@ import { LightButton } from "./LightButton";
 type ManagePropertyCardType = {
   property_name: string;
   propTotalVisits: string;
+  propertyID?: any
 };
 export const ManagePropertyCard = ({
   property_name,
   propTotalVisits,
+  propertyID
 }: ManagePropertyCardType) => {
   return (
     <Box
@@ -35,19 +37,19 @@ export const ManagePropertyCard = ({
         </Box>
 
         <Box>
-          <Text>Property Name:</Text>
+          <Text>Property Scheduled Visits:</Text>
           <Heading
             fontFamily="ProductBold"
             color="white"
             fontSize="2xl"
             w={{ lg: "80%" }}
           >
-            {property_name}
+            {propTotalVisits}
           </Heading>
         </Box>
 
         <Box w="fit-content">
-          <Link href="BrickandCondoUpload">
+          <Link href={`/prty/${propertyID}`}>
             <LightButton>Manage</LightButton>
           </Link>
         </Box>

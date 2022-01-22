@@ -5,7 +5,7 @@ import React from "react";
 import { LightButton } from "../components/LightButton";
 import { LoggedInBanner } from "../components/LoggedInBanner";
 import { ManagePropertyCard } from "../components/ManagePropertyCard";
-import { firestore } from "../firebase/config";
+import { firestore, auth } from "../firebase/config";
 import Router from 'next/router'
 
 const BrickandCondoDash = ({ user }: { user: object }) => {
@@ -35,12 +35,11 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
   };
   React.useEffect(() => {
     getProperties();
-    if(!user) { 
+    if(!auth.currentUser) { 
       setIsAdmin(false);
-      Router.push('/')
     }
     else {setIsAdmin(true)}
-  }, [user]);
+  }, [JSON.stringify(user)]);
 
   const DeleteThisFakeData = [
     {
@@ -59,7 +58,7 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
   return (
     <>
       { 
-        isAdmin && 
+        isAdmin &&
         <Flex direction="column">
           <LoggedInBanner email={user} />
           <Flex direction="column">
@@ -93,6 +92,7 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
                   return (
                     <ManagePropertyCard
                       key={index}
+                      propertyID={48393839}
                       property_name={item.property_name}
                       propTotalVisits={item.propTotalVisits}
                     />
