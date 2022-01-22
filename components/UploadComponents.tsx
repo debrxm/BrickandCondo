@@ -64,9 +64,11 @@ export const MainUploadComp = ({
 export const AddMulitplePhotos = ({
   text,
   onChange,
+  disabled,
 }: {
   text: string;
   onChange: any;
+  disabled: boolean;
 }) => {
   return (
     <Flex
@@ -96,7 +98,7 @@ export const AddMulitplePhotos = ({
           name="file"
           accept="image/gif, image/jpeg, image/png"
           onChange={onChange}
-          multiple
+          disabled={disabled}
         />
       </label>
     </Flex>
