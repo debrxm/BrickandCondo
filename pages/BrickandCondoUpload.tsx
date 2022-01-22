@@ -11,8 +11,9 @@ import {
 import { LightButton } from "../components/LightButton";
 import { CreateProperty } from "../firebase/firestore";
 import Router from "next/router";
+import { LoggedInBanner } from "../components/LoggedInBanner";
 
-const BrickandCondoUpload = () => {
+const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [currentUpload, setCurrentUpload] = React.useState("");
   const [mainImageUploadURL, setMainImageUploadURL] = React.useState("");
   const [mainImageBlob, setMainImageBlob] = React.useState({});
@@ -243,6 +244,7 @@ const BrickandCondoUpload = () => {
 
   return (
     <Box>
+      <LoggedInBanner email={user} />
       <Heading
         fontFamily="ProductBold"
         fontSize={{ lg: "30px" }}
