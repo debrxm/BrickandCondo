@@ -49,7 +49,6 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   let lsubImageTwoUploadURL: string;
   const [id] = React.useState(Date.now());
 
-
   const onUploadImage = async (e: any, anchor: string) => {
     const selectedFile = e.target.files[0];
     switch (anchor) {
@@ -238,37 +237,25 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   };
 
   React.useEffect(() => {
-    if(!user) { 
+    if (!user) {
       setIsAdmin(false);
-    }
-    else { 
+    } else {
       setIsAdmin(true);
     }
-  }, [
-    mainImageUploadURL,
-    subImageOneUploadURL,
-    subImageTwoUploadURL,
-    user
-  ]);
+  }, [mainImageUploadURL, subImageOneUploadURL, subImageTwoUploadURL, user]);
 
   return (
     <>
-      { 
-        isAdmin && 
-          <Box>
-            <LoggedInBanner email={user} />
-            <Heading
-              fontFamily="ProductBold"
-              fontSize={{ lg: "30px", base: '20px' }}
-              color="primary.300"
-              mt={{base: 4}}
-            >
-            Upload a new property{" "}
-            {isLoading && (
-              <Box>
-                <DangerButton>Uploading {currentUpload}</DangerButton>
-              </Box>
-            )}
+      {isAdmin && (
+        <Box>
+          <LoggedInBanner email={user} />
+          <Heading
+            fontFamily="ProductBold"
+            fontSize={{ lg: "30px", base: "20px" }}
+            color="primary.300"
+            mt={{ base: 4 }}
+          >
+            Upload a new property
           </Heading>
           <Box my="8">
             <Grid gap="8" gridTemplateColumns={{ lg: "7fr 3fr" }}>
@@ -323,7 +310,11 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
             <Flex gap={{ lg: 4, base: 10 }} my="4">
               {otherImagesBlob.map((item: any, index) => {
                 return (
-                  <Text key={index} fontFamily="ProductBold" color="primary.300">
+                  <Text
+                    key={index}
+                    fontFamily="ProductBold"
+                    color="primary.300"
+                  >
                     {item?.name}
                   </Text>
                 );
@@ -360,6 +351,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                 type="number"
                 id="BathNum"
                 label="How many Baths?"
+                value={bathroom}
                 onChange={
                   isLoading
                     ? () => {}
@@ -372,6 +364,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                 type="number"
                 id="RoomNum"
                 label="How many Rooms?"
+                value={rooms}
                 onChange={
                   isLoading
                     ? () => {}
@@ -384,6 +377,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                 type="number"
                 id="BathText"
                 label="Total Square foot"
+                value={square_foot}
                 onChange={
                   isLoading
                     ? () => {}
@@ -415,6 +409,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                     type="text"
                     id="propertyName"
                     label="Property Name"
+                    value={property_name}
                     onChange={
                       isLoading
                         ? () => {}
@@ -427,6 +422,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                     type="text"
                     id="propertySubLocation"
                     label="Property SubLocation"
+                    value={property_sublocation}
                     onChange={
                       isLoading
                         ? () => {}
@@ -439,6 +435,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                     type="text"
                     id="propertyLocation"
                     label="Property Location"
+                    value={property_location}
                     onChange={
                       isLoading
                         ? () => {}
@@ -451,6 +448,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                     type="text"
                     id="DescriptionData"
                     label={`Property's Description`}
+                    value={property_description}
                     onChange={
                       isLoading
                         ? () => {}
@@ -467,6 +465,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                     type="number"
                     id="oneTimePaymentNaira"
                     label="One Time Payment- Naira"
+                    value={one_time_payment_naira}
                     onChange={
                       isLoading
                         ? () => {}
@@ -479,6 +478,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                     type="number"
                     id="rentalValueNaira"
                     label="Rental Value- Naira"
+                    value={rental_value_naira}
                     onChange={
                       isLoading
                         ? () => {}
@@ -491,6 +491,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                     type="number"
                     id="oneTimePaymentDollar"
                     label="One Time Payment- Dollar"
+                    value={one_time_payment_dollar}
                     onChange={
                       isLoading
                         ? () => {}
@@ -503,6 +504,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                     type="number"
                     id="rentalValueDollar"
                     label="Rental Value- Dollar"
+                    value={rental_value_dollar}
                     onChange={
                       isLoading
                         ? () => {}
@@ -525,7 +527,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
             </Box>
           </Flex>
         </Box>
-      }
+      )}
     </>
   );
 };

@@ -6,12 +6,12 @@ import { LightButton } from "./LightButton";
 type ManagePropertyCardType = {
   property_name: string;
   propTotalVisits: string;
-  propertyID?: any
+  propertyID?: any;
 };
 export const ManagePropertyCard = ({
   property_name,
   propTotalVisits,
-  propertyID
+  propertyID,
 }: ManagePropertyCardType) => {
   return (
     <Box
@@ -23,7 +23,7 @@ export const ManagePropertyCard = ({
       color="white"
       w="100%"
     >
-      <Flex direction='column' flexWrap='nowrap' gap={{lg:10, base: 10}}>
+      <Flex direction="column" flexWrap="nowrap" gap={{ lg: 10, base: 10 }}>
         <Box>
           <Text>Property Name:</Text>
           <Heading

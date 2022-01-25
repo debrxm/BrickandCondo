@@ -11,11 +11,13 @@ export const CustomInput = ({
   label,
   id,
   type,
+  value,
   onChange,
 }: {
   label: string;
   id: string;
   type: string;
+  value: any;
   onChange: any;
 }) => {
   return (
@@ -34,6 +36,7 @@ export const CustomInput = ({
         bg="white"
         id={id}
         type={type}
+        value={value}
         onChange={onChange}
       />
     </FormControl>
@@ -44,11 +47,13 @@ export const CustomTextArea = ({
   label,
   id,
   type,
+  value,
   onChange,
 }: {
   label: string;
   id: string;
   type: string;
+  value: string;
   onChange: any;
 }) => {
   return (
@@ -70,6 +75,7 @@ export const CustomTextArea = ({
         cols={20}
         h={{ lg: "500px", base: "1000px" }}
         type={type}
+        value={value}
         onChange={onChange}
       />
     </FormControl>

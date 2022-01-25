@@ -1,236 +1,785 @@
-import { Box, Divider, Flex, Heading, Popover, PopoverBody, PopoverContent, PopoverHeader, PopoverTrigger, Text } from '@chakra-ui/react';
-import Link from 'next/link';
-import React from 'react'; 
-import { CustomInput, CustomTextArea } from '../../components/CustomInput';
-import { DangerButton } from '../../components/DangerButton';
-import { LightButton } from '../../components/LightButton';
-import { LoggedInBanner } from '../../components/LoggedInBanner';
-import { ScheduleCard } from '../../components/ScheduleCard';
-import { AddMulitplePhotos, AddedImagesPreview, EditMainUploadComp } from '../../components/UploadComponents';
+/* eslint-disable react/no-unescaped-entities */
+import {
+  Box,
+  Divider,
+  Flex,
+  Heading,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
+  Text,
+} from "@chakra-ui/react";
+import Link from "next/link";
+import React from "react";
+import { CustomInput, CustomTextArea } from "../../components/CustomInput";
+import { DangerButton } from "../../components/DangerButton";
+import { LightButton } from "../../components/LightButton";
+import { LoggedInBanner } from "../../components/LoggedInBanner";
+import { ScheduleCard } from "../../components/ScheduleCard";
+import {
+  AddMulitplePhotos,
+  AddedImagesPreview,
+  EditMainUploadComp,
+} from "../../components/UploadComponents";
+import firebase, { firestore } from "../../firebase/config";
+import Router from "next/router";
+import { DeleteProperty, UpdateProperty } from "../../firebase/firestore";
 
+const fakeScheduledVisit = [
+  {
+    clientName: "Kumuran Davids",
+    scheduledDate: "12th Febuary 2022",
+    clientEmail: "james@gmail.com",
+  },
+  {
+    clientName: "James Akpan",
+    scheduledDate: "1st April 2082",
+    clientEmail: "lmao@drake.com",
+  },
+  {
+    clientName: "Boluwatife Agebelemo",
+    scheduledDate: "11th June 2024",
+    clientEmail: "fola@jumia.com",
+  },
+];
 
-const fakeScheduledVisit = [ 
-  { 
-    clientName: 'Kumuran Davids',
-    scheduledDate: '12th Febuary 2022', 
-    clientEmail: 'james@gmail.com', 
-  }, 
-  { 
-    clientName: 'James Akpan',
-    scheduledDate: '1st April 2082', 
-    clientEmail: 'lmao@drake.com', 
-  }, 
-  { 
-    clientName: 'Boluwatife Agebelemo',
-    scheduledDate: '11th June 2024', 
-    clientEmail: 'fola@jumia.com', 
-  }, 
-]
+const IndividualProperty = ({ user }: { user: object }) => {
+  // let property;
+  const [property, setProperty] = React.useState<any>();
+  const [schedules, setSchedules] = React.useState(fakeScheduledVisit);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
+  const [currentUpload, setCurrentUpload] = React.useState("");
+  const [mainImageUploadURL, setMainImageUploadURL] = React.useState("");
+  const [mainImageBlob, setMainImageBlob] = React.useState<any>();
+  const [subImageOneBlob, setSubImageOneBlob] = React.useState<any>();
+  const [subImageTwoBlob, setSubImageTwoBlob] = React.useState<any>();
+  const [otherImagesBlob, setOtherImagesBlob] = React.useState<any | []>([]);
+  const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState([""]);
+  const [otherImagesUploadName, setOtherImagesUploadName] = React.useState("");
+  const [mainImageUploadName, setMainImageUploadName] = React.useState("");
+  const [subImageOneUploadURL, setSubImageOneUploadURL] = React.useState("");
+  const [subImageOneUploadName, setSubImageOneUploadName] = React.useState("");
+  const [subImageTwoUploadURL, setSubImageTwoUploadURL] = React.useState("");
+  const [subImageTwoUploadName, setSubImageTwoUploadName] = React.useState("");
+  const [bathroom, setBathroom] = React.useState("");
+  const [rooms, setRooms] = React.useState("");
+  const [square_foot, setSquareFoot] = React.useState("");
+  const [property_name, setPropertyName] = React.useState("");
+  const [property_location, setPropertyLocation] = React.useState("");
+  const [property_sublocation, setPropertySubLocation] = React.useState("");
+  const [property_description, setPropertyDescription] = React.useState("");
+  const [one_time_payment_naira, setOneTimePaymentNaira] = React.useState();
+  const [rental_value_naira, setRentalValueNaira] = React.useState();
+  const [one_time_payment_dollar, setOneTimePaymentDollar] = React.useState();
+  const [rental_value_dollar, setRentalValueDollar] = React.useState();
+  const [uploadLoading, setUploadLoading] = React.useState(false);
+  const [updateLoading, setUpdateLoading] = React.useState(false);
+  let remainingLoop: number;
+  let lmainImageUploadURL: string;
+  let lotherImagesUploadURL: any;
+  let lsubImageOneUploadURL: string;
+  let lsubImageTwoUploadURL: string;
+  const [id, setId] = React.useState();
 
-const IndividualProperty = ({user}: {user: object}) => { 
-  return ( 
+  const onUploadImage = async (e: any, anchor: string) => {
+    const selectedFile = e.target.files[0];
+    switch (anchor) {
+      case "main":
+        setCurrentUpload(selectedFile.name);
+        setMainImageUploadName(selectedFile.name);
+        setMainImageBlob(selectedFile);
+        setMainImageUploadURL("");
+        onDeletePropertyImage("main");
+        break;
+      case "subImageOne":
+        setCurrentUpload(selectedFile.name);
+        setSubImageOneUploadName(selectedFile.name);
+        setSubImageOneBlob(selectedFile);
+        setSubImageOneUploadURL("");
+        onDeletePropertyImage("subImageOne");
+        break;
+      case "subImageTwo":
+        setCurrentUpload(selectedFile.name);
+        setSubImageTwoUploadName(selectedFile.name);
+        setSubImageTwoBlob(selectedFile);
+        setSubImageTwoUploadURL("");
+        onDeletePropertyImage("subImageTwo");
+        break;
+      case "otherImages":
+        setCurrentUpload(selectedFile.name);
+        setOtherImagesUploadName(selectedFile.name);
+        setOtherImagesBlob([...otherImagesBlob, selectedFile]);
+        break;
+      default:
+        break;
+    }
+  };
+  const fetchImageUrl = async (
+    selectedFile: any,
+    dest: string,
+    anchor: string
+  ) => {
+    const storageRef = firebase
+      .storage()
+      .ref(`properties/${dest}/${anchor}/${selectedFile}`);
+    const uploadTask = storageRef.put(selectedFile);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED:
+            console.log("Upload is paused");
+            break;
+          case firebase.storage.TaskState.RUNNING:
+            console.log("Upload is running");
+            break;
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        // get the uploaded image url back
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          switch (anchor) {
+            case "main":
+              setMainImageUploadURL(downloadURL);
+              lmainImageUploadURL = downloadURL;
+              if (subImageOneBlob) {
+                uploadsubImageOne();
+              } else if (subImageTwoBlob) {
+                uploadsubImageTwo();
+              } else if (otherImagesBlob.length) {
+                uploadOtherImages(otherImagesBlob.length - 1);
+              } else {
+                onUpdateProperty();
+              }
+              break;
+            case "subImageOne":
+              setSubImageOneUploadURL(downloadURL);
+              lsubImageOneUploadURL = downloadURL;
+              if (subImageTwoBlob) {
+                uploadsubImageTwo();
+              } else if (otherImagesBlob.length) {
+                uploadOtherImages(otherImagesBlob.length - 1);
+              } else {
+                onUpdateProperty();
+              }
+              break;
+            case "subImageTwo":
+              setSubImageTwoUploadURL(downloadURL);
+              lsubImageTwoUploadURL = downloadURL;
+              if (otherImagesBlob.length) {
+                uploadOtherImages(otherImagesBlob.length - 1);
+              } else {
+                onUpdateProperty();
+              }
+              break;
+            default:
+              break;
+          }
+          setIsLoading(false);
+        });
+      }
+    );
+  };
+  const deleteFile = (pathToFile: string, fileName: string) => {
+    const ref = firebase.storage().ref(pathToFile);
+    const childRef = ref.child(fileName);
+    childRef.delete();
+  };
+  const onDeletePropertyImage = async (anchor: string) => {
+    const storageRef = firebase.storage().ref(`properties/${id}/${anchor}`);
+    storageRef
+      .listAll()
+      .then((dir) => {
+        dir.items.forEach((fileRef) => {
+          deleteFile(storageRef.fullPath, fileRef.name);
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const onUpdateProperty = async () => {
+    setUpdateLoading(true);
+    setUploadLoading(false);
+
+    const main = lmainImageUploadURL || mainImageUploadURL;
+    const subOne = lsubImageOneUploadURL || lsubImageOneUploadURL;
+    const subTwo = lsubImageTwoUploadURL || lsubImageTwoUploadURL;
+
+    if (main && subOne && subTwo) {
+      const propertyData = {
+        id,
+        bathroom,
+        rooms,
+        square_foot,
+        images: {
+          main: lmainImageUploadURL,
+          sub_image_one: lsubImageOneUploadURL,
+          sub_image_two: lsubImageTwoUploadURL,
+          other_images: lotherImagesUploadURL || "",
+        },
+        property_name,
+        property_location,
+        property_sublocation,
+        property_description,
+        one_time_payment_naira: one_time_payment_naira || 0,
+        rental_value_naira: rental_value_naira || 0,
+        one_time_payment_dollar: one_time_payment_dollar || 0,
+        rental_value_dollar: rental_value_dollar || 0,
+      };
+      UpdateProperty(propertyData, cleanUp);
+    } else {
+      console.log("====================================");
+      console.log("FALSE");
+      console.log("====================================");
+    }
+  };
+
+  const onDeleteProperty = async () => {
+    DeleteProperty(property, cleanUp);
+  };
+
+  const fetchOtherImageUrl = async (
+    selectedFile: any,
+    dest: string,
+    anchor: string,
+    isLast: boolean
+  ) => {
+    const storageRef = firebase
+      .storage()
+      .ref(`properties/${dest}/${anchor}/${selectedFile}`);
+    const uploadTask = storageRef.put(selectedFile);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED:
+            console.log("Upload is paused");
+            break;
+          case firebase.storage.TaskState.RUNNING:
+            console.log("Upload is running");
+            break;
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        // get the uploaded image url back
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          if (isLast) {
+            onUpdateProperty();
+            return;
+          }
+          setOtherImagesUploadURL([...otherImagesUploadURL, downloadURL]);
+          lotherImagesUploadURL = [...otherImagesUploadURL, downloadURL];
+          remainingLoop = remainingLoop - 1;
+          if (remainingLoop === 0) {
+            uploadLastOtherImages();
+            return;
+          } else if (!isLast && remainingLoop > 0) {
+            uploadOtherImages(remainingLoop);
+          } else {
+            onUpdateProperty();
+            return;
+          }
+        });
+      }
+    );
+  };
+  const cleanUp = () => {
+    setUpdateLoading(false);
+    Router.push("/BrickandCondoDash");
+  };
+  const uploadMain = () => {
+    setUploadLoading(true);
+    setUpdateLoading(true);
+    fetchImageUrl(mainImageBlob, `${id}`, "main");
+  };
+  const uploadsubImageOne = () =>
+    fetchImageUrl(subImageOneBlob, `${id}`, "subImageOne");
+  const uploadsubImageTwo = () => {
+    fetchImageUrl(subImageTwoBlob, `${id}`, "subImageTwo");
+  };
+
+  const uploadLastOtherImages = () => {
+    fetchOtherImageUrl(otherImagesBlob[1], `${id}`, `otherImages-${1}`, true);
+  };
+  const uploadOtherImages = (anchor: number) => {
+    if (otherImagesBlob.length) {
+      remainingLoop = anchor;
+      fetchOtherImageUrl(
+        otherImagesBlob[remainingLoop],
+        `${id}`,
+        `otherImages-${remainingLoop}`,
+        false
+      );
+    }
+  };
+
+  React.useEffect(() => {
+    getProperty();
+    getSchedules();
+    if (!user) {
+      setIsAdmin(false);
+    } else {
+      setIsAdmin(true);
+    }
+  }, [user]);
+
+  const scheduleRef = firestore
+    .collection(`properties`)
+    .doc(`${Router.query.propertyID}`)
+    .collection(`schedules`);
+  const getSchedules = async () => {
+    const snapshot: any = await scheduleRef.get();
+    if (snapshot.exists) {
+      const data: any = snapshot.data();
+      setSchedules(data);
+    }
+  };
+  const propertyRef = firestore
+    .collection("properties")
+    .doc(`${Router.query.propertyID}`);
+  const getProperty = async () => {
+    setUploadLoading(false);
+    setUpdateLoading(false);
+    setIsLoading(true);
+    const snapshot = await propertyRef.get();
+    if (snapshot.exists) {
+      const data: any = snapshot.data();
+      setBathroom(data.bathroom);
+      setRooms(data.rooms);
+      setId(data.id);
+      setSquareFoot(data.square_foot);
+      setPropertyName(data.property_name);
+      setPropertyLocation(data.property_location);
+      setPropertySubLocation(data.property_sublocation);
+      setPropertyDescription(data.property_description);
+      setOneTimePaymentNaira(data.one_time_payment_naira);
+      setRentalValueNaira(data.rental_value_naira);
+      setOneTimePaymentDollar(data.one_time_payment_dollar);
+      setRentalValueDollar(data.rental_value_dollar);
+      lmainImageUploadURL = data.images.main;
+      lsubImageOneUploadURL = data.images.sub_image_one;
+      lsubImageTwoUploadURL = data.images.sub_image_two;
+      lotherImagesUploadURL = data.images.other_images;
+      setMainImageUploadURL(data.images.main);
+      setOtherImagesUploadURL(
+        data.images.other_images.filter((n: string, i: number) => i > 0)
+      );
+      setSubImageOneUploadURL(data.images.sub_image_one);
+      setSubImageTwoUploadURL(data.images.sub_image_two);
+      setProperty(data);
+    }
+
+    setIsLoading(false);
+  };
+  const checkImageChanges = () => {
+    lmainImageUploadURL = property.images.main;
+    lsubImageOneUploadURL = property.images.sub_image_one;
+    lsubImageTwoUploadURL = property.images.sub_image_two;
+    lotherImagesUploadURL = property.images.other_images;
+    if (mainImageBlob) {
+      setUploadLoading(true);
+      setUpdateLoading(true);
+      uploadMain();
+    } else if (subImageOneBlob) {
+      setUploadLoading(true);
+      setUpdateLoading(true);
+      uploadsubImageOne();
+    } else if (subImageTwoBlob) {
+      setUploadLoading(true);
+      setUpdateLoading(true);
+      uploadsubImageTwo();
+    } else if (otherImagesBlob.length) {
+      setUploadLoading(true);
+      setUpdateLoading(true);
+      uploadOtherImages(otherImagesBlob.length - 1);
+    } else {
+      onUpdateProperty();
+    }
+  };
+
+  return isLoading ? (
+    <Flex direction="column"></Flex>
+  ) : (
     <Flex direction="column">
       <LoggedInBanner email={user} />
       <Popover>
         <PopoverTrigger>
-          <Flex direction='column' w='fit-content' my={{base:4}}> 
+          <Flex direction="column" w="fit-content" my={{ base: 4 }}>
             <DangerButton>Delete This Property</DangerButton>
           </Flex>
         </PopoverTrigger>
         <PopoverContent>
           <PopoverHeader>
-            <Heading fontFamily='ProductBold' fontSize='2xl'>Are you sure?</Heading>
+            <Heading fontFamily="ProductBold" fontSize="2xl">
+              Are you sure?
+            </Heading>
           </PopoverHeader>
-          <PopoverBody>  
+          <PopoverBody>
             <Text
-              mb={{base: 4}} 
-              fontFamily='ProductLight' 
-              fontSize={{base: '16px'}}
+              mb={{ base: 4 }}
+              fontFamily="ProductLight"
+              fontSize={{ base: "16px" }}
             >
               Are you sure? You can't retrieve this property once deleted.
             </Text>
-            <DangerButton>Yes, Delete</DangerButton>
+            <DangerButton onClick={onDeleteProperty}>Yes, Delete</DangerButton>
           </PopoverBody>
         </PopoverContent>
       </Popover>
 
-      <Flex my={{base: 10}} justifyContent='flex-start' direction={{base: 'column', lg:'row'}}>
-        <Heading w={{base: '100%', lg: '80%'}} fontSize='3xl' color='secondary.100' fontFamily='ProductBold'>Updating: House 23, New layout</Heading>
+      <Flex
+        my={{ base: 10 }}
+        justifyContent="flex-start"
+        direction={{ base: "column", lg: "row" }}
+      >
+        <Heading
+          w={{ base: "100%", lg: "80%" }}
+          fontSize="3xl"
+          color="secondary.100"
+          fontFamily="ProductBold"
+        >
+          Updating: {property.property_name}
+        </Heading>
       </Flex>
 
-      <Flex gap={{base: 4}} direction={{base: 'column', lg: 'row'}}>
-       <Box w={{lg: '80%', base:'100%'}}>
-        <EditMainUploadComp 
-          text='Change Main Image'
-          imageURL='https://www.trulia.com/pictures/thumbs_4/zillowstatic/fp/271fe938251bcc3921fa947afa16b907-full.webp'
-        />
-       </Box>
-       <Flex gap={{base: 4}} direction={{base: 'column'}} w={{lg: '20%', base:'100%'}}>
-        <Box>
-          <EditMainUploadComp 
-            text='Change Sub Image'
-            imageURL='https://www.trulia.com/pictures/thumbs_4/zillowstatic/fp/271fe938251bcc3921fa947afa16b907-full.webp'
+      <Flex gap={{ base: 4 }} direction={{ base: "column", lg: "row" }}>
+        <Box w={{ lg: "80%", base: "100%" }}>
+          <EditMainUploadComp
+            imageURL={mainImageUploadURL}
+            text={mainImageUploadName || "Change Main Image"}
+            onChange={
+              isLoading
+                ? () => {}
+                : (e: any) => {
+                    onUploadImage(e, "main");
+                  }
+            }
           />
         </Box>
-        <Box>
-          <EditMainUploadComp 
-            text='Change Sub Image'
-            imageURL='https://www.trulia.com/pictures/thumbs_4/zillowstatic/fp/271fe938251bcc3921fa947afa16b907-full.webp'
-          />
-        </Box>
-       </Flex>
+        <Flex
+          gap={{ base: 4 }}
+          direction={{ base: "column" }}
+          w={{ lg: "20%", base: "100%" }}
+        >
+          <Box>
+            <EditMainUploadComp
+              imageURL={subImageOneUploadURL}
+              text={subImageOneUploadName || "Change Sub Image"}
+              onChange={
+                isLoading
+                  ? () => {}
+                  : (e: any) => {
+                      onUploadImage(e, "subImageOne");
+                    }
+              }
+            />
+          </Box>
+          <Box>
+            <EditMainUploadComp
+              imageURL={subImageTwoUploadURL}
+              text={subImageTwoUploadName || "Change Sub Image"}
+              onChange={
+                isLoading
+                  ? () => {}
+                  : (e: any) => {
+                      onUploadImage(e, "subImageTwo");
+                    }
+              }
+            />
+          </Box>
+        </Flex>
       </Flex>
 
-      <Flex direction='column' my={{base: 8}} gap={{base: 4}}>
-        <AddMulitplePhotos text='Add more images' />
-        <Flex gap={{base: 4}} w={{lg:'fit-content', base: '100%'}}>
-          { 
-            [1,2,3].map((item, index) => {
-              return ( 
-                <AddedImagesPreview imageURL='https://www.trulia.com/pictures/thumbs_4/zillowstatic/fp/271fe938251bcc3921fa947afa16b907-full.webp'/>
-              )
-            })
+      <Flex direction="column" my={{ base: 8 }} gap={{ base: 4 }}>
+        <AddMulitplePhotos
+          text={otherImagesUploadName || "Add other images"}
+          onChange={
+            isLoading
+              ? () => {}
+              : (e: any) => {
+                  onUploadImage(e, "otherImages");
+                }
           }
+          disabled={otherImagesBlob.length + otherImagesUploadURL.length >= 6}
+        />
+        <Flex align="center" gap={{ lg: 4 }}>
+          <Flex gap={{ lg: 4, base: 10 }} my="4">
+            {otherImagesBlob.map(
+              (item: any, index: React.Key | null | undefined) => {
+                return (
+                  <Text
+                    key={index}
+                    fontFamily="ProductBold"
+                    color="primary.300"
+                  >
+                    {item?.name}
+                  </Text>
+                );
+              }
+            )}
+            {otherImagesBlob.length ? (
+              <Box>
+                <DangerButton
+                  onClick={() => {
+                    setOtherImagesBlob([]);
+                    setOtherImagesUploadName("Add other images");
+                  }}
+                >
+                  Clear
+                </DangerButton>
+              </Box>
+            ) : null}
+          </Flex>
+        </Flex>
+        <Flex gap={{ base: 4 }} w={{ lg: "fit-content", base: "100%" }}>
+          {otherImagesUploadURL.map((item, index) => {
+            return (
+              <AddedImagesPreview
+                key={index}
+                index={index}
+                propertyId={property.id}
+                otherImagesUploadURL={otherImagesUploadURL}
+                setOtherImagesUploadURL={setOtherImagesUploadURL}
+                imageURL={item}
+              />
+            );
+          })}
         </Flex>
       </Flex>
 
       <Flex direction="column" my="10">
-            <Heading
-              fontSize={{ lg: "25px" }}
-              fontFamily="ProductBold"
-              color="secondary.100"
-            >
-              Property Meta Data
-            </Heading>
+        <Heading
+          fontSize={{ lg: "25px" }}
+          fontFamily="ProductBold"
+          color="secondary.100"
+        >
+          Property Meta Data
+        </Heading>
 
-            <Flex
-              mt="10"
-              w="fit-content"
-              gap={{ lg: 4 }}
-              direction={{ lg: "row", base: "column" }}
-            >
-              <CustomInput
-                type="number"
-                id="BathNum"
-                label="How many Baths?"
-              />
-              <CustomInput
-                type="number"
-                id="RoomNum"
-                label="How many Rooms?"
-
-              />
-              <CustomInput
-                type="number"
-                id="BathText"
-                label="Total Square foot"
-              />
-            </Flex>
-          </Flex>
-
-         <Flex>
-          <Divider mt={{ lg: "8" }} colorScheme="secondary" />
-         </Flex>
-
-         <Flex direction="column" my="10">
-            <Heading
-              fontSize={{ lg: "25px" }}
-              mb={{ base: "4" }}
-              fontFamily="ProductBold"
-              color="secondary.100"
-            >
-              Property Main Data
-            </Heading>
-
-            <Flex
-              gap={{ lg: 4, base: 10 }}
-              direction={{ lg: "row", base: "column" }}
-            >
-              <Box w={{ lg: "80%", base: "100%" }} my={{ lg: 4 }}>
-                <Flex direction="column" gap={{ lg: 4, base: 6 }}>
-                  <CustomInput
-                    type="text"
-                    id="propertyName"
-                    label="Property Name"
-                  />
-                  <CustomInput
-                    type="text"
-                    id="propertySubLocation"
-                    label="Property SubLocation"
-                  />
-                  <CustomInput
-                    type="text"
-                    id="propertyLocation"
-                    label="Property Location"
-                  />
-                  <CustomTextArea
-                    type="text"
-                    id="DescriptionData"
-                    label={`Property's Description`}
-                  />
-                </Flex>
-              </Box>
-              <Box w={{ lg: "20%", base: "100%" }} my={{ lg: 4 }}>
-                <Flex direction="column" gap={{ lg: "4" }} h={{ lg: "100%" }}>
-                  <CustomInput
-                    type="number"
-                    id="oneTimePaymentNaira"
-                    label="One Time Payment- Naira"
-                  />
-                  <CustomInput
-                    type="number"
-                    id="rentalValueNaira"
-                    label="Rental Value- Naira"
-                  />
-                  <CustomInput
-                    type="number"
-                    id="oneTimePaymentDollar"
-                    label="One Time Payment- Dollar"
-                  />
-                  <CustomInput
-                    type="number"
-                    id="rentalValueDollar"
-                    label="Rental Value- Dollar"
-                  />
-                </Flex>
-              </Box>
-            </Flex>
-            <Box w={{ lg: "40%" }} mt={{ base: 4 }}>
-              <LightButton>
-                  Update Property
-              </LightButton>
-            </Box>
-          </Flex> 
-
-          <Divider 
-            my={{ lg: "8" }} 
-            colorScheme="secondary"
-          /> 
-          <Heading
-            fontSize={{ lg: "25px" }}
-            fontFamily="ProductBold"
-            color="secondary.100"
-            mb={8}
-          >
-            Scheduled Date
-          </Heading>
-          <Flex direction={{base: 'column', lg: 'row'}} gap={{base: 4,}}>
-            { 
-              fakeScheduledVisit.map((item, index) => { 
-                return (
-                  <ScheduleCard
-                    clientName={item.clientName}
-                    scheduledDate={item.scheduledDate}
-                    clientEmail={item.clientEmail}
-                  />
-                )
-              })
+        <Flex
+          mt="10"
+          w="fit-content"
+          gap={{ lg: 4 }}
+          direction={{ lg: "row", base: "column" }}
+        >
+          <CustomInput
+            type="number"
+            id="BathNum"
+            label="How many Baths?"
+            value={bathroom}
+            onChange={
+              isLoading
+                ? () => {}
+                : (e: any) => {
+                    setBathroom(e.target.value);
+                  }
             }
-          </Flex>
-          
+          />
+          <CustomInput
+            type="number"
+            id="RoomNum"
+            label="How many Rooms?"
+            value={rooms}
+            onChange={
+              isLoading
+                ? () => {}
+                : (e: any) => {
+                    setRooms(e.target.value);
+                  }
+            }
+          />
+          <CustomInput
+            type="number"
+            id="BathText"
+            label="Total Square foot"
+            value={square_foot}
+            onChange={
+              isLoading
+                ? () => {}
+                : (e: any) => {
+                    setSquareFoot(e.target.value);
+                  }
+            }
+          />
+        </Flex>
+      </Flex>
 
+      <Flex>
+        <Divider mt={{ lg: "8" }} colorScheme="secondary" />
+      </Flex>
+
+      <Flex direction="column" my="10">
+        <Heading
+          fontSize={{ lg: "25px" }}
+          mb={{ base: "4" }}
+          fontFamily="ProductBold"
+          color="secondary.100"
+        >
+          Property Main Data
+        </Heading>
+
+        <Flex
+          gap={{ lg: 4, base: 10 }}
+          direction={{ lg: "row", base: "column" }}
+        >
+          <Box w={{ lg: "80%", base: "100%" }} my={{ lg: 4 }}>
+            <Flex direction="column" gap={{ lg: 4, base: 6 }}>
+              <CustomInput
+                type="text"
+                id="propertyName"
+                label="Property Name"
+                value={property_name}
+                onChange={
+                  isLoading
+                    ? () => {}
+                    : (e: any) => {
+                        setPropertyName(e.target.value);
+                      }
+                }
+              />
+              <CustomInput
+                type="text"
+                id="propertySubLocation"
+                label="Property SubLocation"
+                value={property_sublocation}
+                onChange={
+                  isLoading
+                    ? () => {}
+                    : (e: any) => {
+                        setPropertySubLocation(e.target.value);
+                      }
+                }
+              />
+              <CustomInput
+                type="text"
+                id="propertyLocation"
+                label="Property Location"
+                value={property_location}
+                onChange={
+                  isLoading
+                    ? () => {}
+                    : (e: any) => {
+                        setPropertyLocation(e.target.value);
+                      }
+                }
+              />
+              <CustomTextArea
+                type="text"
+                id="DescriptionData"
+                label={`Property's Description`}
+                value={property_description}
+                onChange={
+                  isLoading
+                    ? () => {}
+                    : (e: any) => {
+                        setPropertyDescription(e.target.value);
+                      }
+                }
+              />
+            </Flex>
+          </Box>
+          <Box w={{ lg: "20%", base: "100%" }} my={{ lg: 4 }}>
+            <Flex direction="column" gap={{ lg: "4" }} h={{ lg: "100%" }}>
+              <CustomInput
+                type="number"
+                id="oneTimePaymentNaira"
+                label="One Time Payment- Naira"
+                value={one_time_payment_naira}
+                onChange={
+                  isLoading
+                    ? () => {}
+                    : (e: any) => {
+                        setOneTimePaymentNaira(e.target.value);
+                      }
+                }
+              />
+              <CustomInput
+                type="number"
+                id="rentalValueNaira"
+                label="Rental Value- Naira"
+                value={rental_value_naira}
+                onChange={
+                  isLoading
+                    ? () => {}
+                    : (e: any) => {
+                        setRentalValueNaira(e.target.value);
+                      }
+                }
+              />
+              <CustomInput
+                type="number"
+                id="oneTimePaymentDollar"
+                label="One Time Payment- Dollar"
+                value={one_time_payment_dollar}
+                onChange={
+                  isLoading
+                    ? () => {}
+                    : (e: any) => {
+                        setOneTimePaymentDollar(e.target.value);
+                      }
+                }
+              />
+              <CustomInput
+                type="number"
+                id="rentalValueDollar"
+                label="Rental Value- Dollar"
+                value={rental_value_dollar}
+                onChange={
+                  isLoading
+                    ? () => {}
+                    : (e: any) => {
+                        setRentalValueDollar(e.target.value);
+                      }
+                }
+              />
+            </Flex>
+          </Box>
+        </Flex>
+        <Box w={{ lg: "40%" }} mt={{ base: 4 }}>
+          <LightButton onClick={checkImageChanges}>
+            {uploadLoading && updateLoading
+              ? "Uploading Images..."
+              : updateLoading
+              ? "Updating Document...."
+              : "Update Property"}
+          </LightButton>
+        </Box>
+      </Flex>
+
+      <Divider my={{ lg: "8" }} colorScheme="secondary" />
+      <Heading
+        fontSize={{ lg: "25px" }}
+        fontFamily="ProductBold"
+        color="secondary.100"
+        mb={8}
+      >
+        Scheduled Date
+      </Heading>
+      <Flex direction={{ base: "column", lg: "row" }} gap={{ base: 4 }}>
+        {schedules.map((item, index) => {
+          return (
+            <ScheduleCard
+              key={index}
+              clientName={item.clientName}
+              scheduledDate={item.scheduledDate}
+              clientEmail={item.clientEmail}
+            />
+          );
+        })}
+      </Flex>
     </Flex>
-  )
-}
+  );
+};
 
 export default IndividualProperty;

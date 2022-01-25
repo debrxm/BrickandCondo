@@ -1,9 +1,17 @@
 import React from "react";
-import { Flex, Box, Text, Input, Image as ChkImg, Tag, HStack } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Text,
+  Input,
+  Image as ChkImg,
+  Tag,
+  HStack,
+} from "@chakra-ui/react";
 import Image from "next/image";
+import firebase from "../firebase/config";
 import UploadIcon from "../public/Uploadicon.svg";
 import DeleteIcon from "../public/DeleteIcon.svg";
-
 
 export const MainUploadComp = ({
   text,
@@ -107,11 +115,10 @@ export const AddMulitplePhotos = ({
   );
 };
 
-
 export const EditMainUploadComp = ({
   text,
   onChange,
-  imageURL
+  imageURL,
 }: {
   text: string;
   onChange?: any;
@@ -120,7 +127,7 @@ export const EditMainUploadComp = ({
   return (
     <Flex
       py="60px"
-      h='100%'
+      h="100%"
       align="center"
       justifyContent="center"
       borderRadius="xl"
@@ -167,37 +174,68 @@ export const EditMainUploadComp = ({
   );
 };
 
-
-export const AddedImagesPreview = ({imageURL}: {imageURL: string}) => { 
-  return ( 
-    <Flex 
-      justifyContent='center'
-      w='100%' 
-      h='100%' 
-      bg='white' 
-      py={{base: 5}}
-      px={{base: 4}}
-      gap={{base: 5}}
+export const AddedImagesPreview = ({
+  imageURL,
+  index,
+  propertyId,
+  otherImagesUploadURL,
+  setOtherImagesUploadURL,
+}: {
+  imageURL: string;
+  index: number;
+  propertyId: number;
+  otherImagesUploadURL: any;
+  setOtherImagesUploadURL: any;
+}) => {
+  const deleteFile = (pathToFile: string, fileName: string) => {
+    const ref = firebase.storage().ref(pathToFile);
+    const childRef = ref.child(fileName);
+    childRef.delete();
+  };
+  return (
+    <Flex
+      justifyContent="center"
+      w="100%"
+      h="100%"
+      bg="white"
+      py={{ base: 5 }}
+      px={{ base: 4 }}
+      gap={{ base: 5 }}
       boxShadow="0px 0px 10px rgba(0, 0, 0, 0.12)"
-      borderRadius='xl'
-      direction={{base: 'column', lg: 'row'}}
-    > 
-      <ChkImg 
-        borderRadius='xl' 
-        src={imageURL} 
-        w={{lg:'50px', base: '100%'}} 
-        h={{lg:'50px', base: '100%'}}
+      borderRadius="xl"
+      direction={{ base: "column", lg: "row" }}
+    >
+      <ChkImg
+        borderRadius="xl"
+        src={imageURL}
+        w={{ lg: "50px", base: "100%" }}
+        h={{ lg: "50px", base: "100%" }}
       />
       <Box
-        cursor='pointer'
-        w={{lg:'50px', base: '100%'}} 
-        h={{lg:'50px', base: '100%'}}
+        cursor="pointer"
+        w={{ lg: "50px", base: "100%" }}
+        h={{ lg: "50px", base: "100%" }}
+        onClick={() => {
+          const storageRef = firebase
+            .storage()
+            .ref(`properties/${propertyId}/otherImages-${index}`);
+          storageRef
+            .listAll()
+            .then((dir) => {
+              dir.items.forEach((fileRef) => {
+                deleteFile(storageRef.fullPath, fileRef.name);
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          setOtherImagesUploadURL(
+            otherImagesUploadURL.filter((n: any, i: any) => i != index)
+          );
+        }}
       >
-        <Image 
-          src={DeleteIcon} 
-          alt="" 
-        />
+        <Image src={DeleteIcon} alt="" />
       </Box>
     </Flex>
-  )
-}
+  );
+};
