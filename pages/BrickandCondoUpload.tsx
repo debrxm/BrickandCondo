@@ -42,9 +42,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [uploadLoading, setUploadLoading] = React.useState(false);
   const [createLoading, setCreateLoading] = React.useState(false);
-  let remainingLoop: number;
   let lmainImageUploadURL: string;
-  let lotherImagesUploadURL: any;
   let lsubImageOneUploadURL: string;
   let lsubImageTwoUploadURL: string;
   const [id] = React.useState(Date.now());
@@ -66,11 +64,6 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
         setCurrentUpload(selectedFile.name);
         setSubImageTwoUploadName(selectedFile.name);
         setSubImageTwoBlob(selectedFile);
-        break;
-      case "otherImages":
-        setCurrentUpload(selectedFile.name);
-        setOtherImagesUploadName(selectedFile.name);
-        setOtherImagesBlob([...otherImagesBlob, selectedFile]);
         break;
       default:
         break;
@@ -117,7 +110,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
             case "subImageTwo":
               setSubImageTwoUploadURL(downloadURL);
               lsubImageTwoUploadURL = downloadURL;
-              uploadOtherImages(otherImagesBlob.length - 1);
+              onCreateProperty();
               break;
             default:
               break;
@@ -127,14 +120,9 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
       }
     );
   };
-  const onCreateProperty = async (others: any) => {
+  const onCreateProperty = async () => {
     setUploadLoading(false);
-    if (
-      lmainImageUploadURL &&
-      lsubImageOneUploadURL &&
-      lsubImageTwoUploadURL &&
-      lotherImagesUploadURL.length === otherImagesBlob.length
-    ) {
+    if (lmainImageUploadURL && lsubImageOneUploadURL && lsubImageTwoUploadURL) {
       const propertyData = {
         id,
         bathroom,
@@ -144,7 +132,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
           main: lmainImageUploadURL,
           sub_image_one: lsubImageOneUploadURL,
           sub_image_two: lsubImageTwoUploadURL,
-          other_images: lotherImagesUploadURL || "",
+          other_images: otherImagesUploadURL || "",
         },
         property_name,
         property_location,
@@ -162,54 +150,6 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
       console.log("====================================");
     }
   };
-  const fetchOtherImageUrl = async (
-    selectedFile: any,
-    dest: string,
-    anchor: string,
-    isLast: boolean
-  ) => {
-    const storageRef = firebase
-      .storage()
-      .ref(`properties/${dest}/${anchor}/${selectedFile}`);
-    const uploadTask = storageRef.put(selectedFile);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        switch (snapshot.state) {
-          case firebase.storage.TaskState.PAUSED:
-            console.log("Upload is paused");
-            break;
-          case firebase.storage.TaskState.RUNNING:
-            console.log("Upload is running");
-            break;
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-      () => {
-        // get the uploaded image url back
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          if (isLast) {
-            lotherImagesUploadURL = [...lotherImagesUploadURL, downloadURL];
-            onCreateProperty(lotherImagesUploadURL);
-            return;
-          }
-          setOtherImagesUploadURL([...otherImagesUploadURL, downloadURL]);
-          lotherImagesUploadURL = [...otherImagesUploadURL, downloadURL];
-          remainingLoop = remainingLoop - 1;
-          if (remainingLoop === 1) {
-            uploadLastOtherImages();
-            return;
-          } else if (!isLast && remainingLoop > 1) {
-            uploadOtherImages(remainingLoop);
-          } else {
-            return;
-          }
-        });
-      }
-    );
-  };
   const cleanUp = () => {
     setCreateLoading(false);
     Router.push("/BrickandCondoDash");
@@ -223,18 +163,6 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
     fetchImageUrl(subImageOneBlob, `${id}`, "subImageOne");
   const uploadsubImageTwo = () =>
     fetchImageUrl(subImageTwoBlob, `${id}`, "subImageTwo");
-  const uploadLastOtherImages = () => {
-    fetchOtherImageUrl(otherImagesBlob[1], `${id}`, `otherImages-${1}`, true);
-  };
-  const uploadOtherImages = (anchor: number) => {
-    remainingLoop = anchor;
-    fetchOtherImageUrl(
-      otherImagesBlob[remainingLoop],
-      `${id}`,
-      `otherImages-${remainingLoop}`,
-      false
-    );
-  };
 
   React.useEffect(() => {
     if (!user) {
@@ -294,42 +222,6 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                 />
               </Flex>
             </Grid>
-          </Box>
-          <AddMulitplePhotos
-            text={otherImagesUploadName || "Add other images"}
-            onChange={
-              isLoading
-                ? () => {}
-                : (e: any) => {
-                    onUploadImage(e, "otherImages");
-                  }
-            }
-            disabled={otherImagesBlob.length === 6}
-          />
-          <Flex align="center" gap={{ lg: 4 }}>
-            <Flex gap={{ lg: 4, base: 10 }} my="4">
-              {otherImagesBlob.map((item: any, index) => {
-                return (
-                  <Text
-                    key={index}
-                    fontFamily="ProductBold"
-                    color="primary.300"
-                  >
-                    {item?.name}
-                  </Text>
-                );
-              })}
-            </Flex>
-          </Flex>
-          <Box>
-            <DangerButton
-              onClick={() => {
-                setOtherImagesBlob([{}]);
-                setOtherImagesUploadName("Add other images");
-              }}
-            >
-              Clear
-            </DangerButton>
           </Box>
 
           <Flex direction="column" my="10">
