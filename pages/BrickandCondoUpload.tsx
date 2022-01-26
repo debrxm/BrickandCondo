@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Divider, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Divider, Flex, Grid, Heading, Input, Text } from "@chakra-ui/react";
 import React from "react";
 import { CustomInput, CustomTextArea } from "../components/CustomInput";
 import { DangerButton } from "../components/DangerButton";
@@ -12,6 +12,8 @@ import { LightButton } from "../components/LightButton";
 import { CreateProperty } from "../firebase/firestore";
 import Router from "next/router";
 import { LoggedInBanner } from "../components/LoggedInBanner";
+import Image from 'next/image';
+import AddIcon from '../public/addIcon.svg'
 
 const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
@@ -223,6 +225,42 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
               </Flex>
             </Grid>
           </Box>
+
+          <Flex 
+            my={{base: 8}}
+            bg='white'
+            w={{base: '80%'}}
+            gap={{base: 4}}
+            fontFamily='ProductLight'
+            borderRadius='xl'
+            p={{base: 4}}
+            cursor='pointer'
+          >
+            <Input 
+              border='none'
+              _focus={{outline: 'none'}}
+            />
+            <Image src={AddIcon} />
+          </Flex>
+
+          <Flex 
+            my={{base: 8}}
+            gap={{base: 4}}
+            direction='column'
+          >
+            <Heading fontFamily='ProductBold' fontSize='2xl'>Added Images:</Heading>
+            <Flex direction='column'>
+              { 
+                ['sampleOne', 'sampleTwo', 'sampleThree', 'sampleFour'].map((item, index) => {
+                  return ( 
+                    <Text fontFamily='ProductLight' key={index}>
+                      {item}
+                    </Text>
+                  )
+                })
+              }
+            </Flex>
+          </Flex>
 
           <Flex direction="column" my="10">
             <Heading
