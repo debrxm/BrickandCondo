@@ -59,7 +59,7 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
     <>
       {isAdmin && (
         <Flex direction="column">
-          <LoggedInBanner email={user} />
+          <LoggedInBanner email={{email:{user}}} />
           <Flex direction="column">
             <Flex
               align="center"
