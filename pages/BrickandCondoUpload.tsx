@@ -1,5 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Divider, Flex, Grid, Heading, Input, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Flex,
+  Grid,
+  Heading,
+  Input,
+  Text,
+} from "@chakra-ui/react";
 import React from "react";
 import { CustomInput, CustomTextArea } from "../components/CustomInput";
 import { DangerButton } from "../components/DangerButton";
@@ -12,8 +20,8 @@ import { LightButton } from "../components/LightButton";
 import { CreateProperty } from "../firebase/firestore";
 import Router from "next/router";
 import { LoggedInBanner } from "../components/LoggedInBanner";
-import Image from 'next/image';
-import AddIcon from '../public/addIcon.svg'
+import Image from "next/image";
+import AddIcon from "../public/addIcon.svg";
 
 const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
@@ -23,8 +31,10 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [subImageOneBlob, setSubImageOneBlob] = React.useState({});
   const [subImageTwoBlob, setSubImageTwoBlob] = React.useState({});
   const [otherImagesBlob, setOtherImagesBlob] = React.useState([{}]);
-  const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState([""]);
-  const [otherImagesUploadName, setOtherImagesUploadName] = React.useState("");
+  const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState<
+    any | []
+  >([]);
+  const [otherImageUrl, setOtherImageUrl] = React.useState("");
   const [mainImageUploadName, setMainImageUploadName] = React.useState("");
   const [subImageOneUploadURL, setSubImageOneUploadURL] = React.useState("");
   const [subImageOneUploadName, setSubImageOneUploadName] = React.useState("");
@@ -122,6 +132,13 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
       }
     );
   };
+  const onAddOtherImagesUploadURL = (url: string) => {
+    if (otherImageUrl.trim() === "") {
+      return;
+    }
+    setOtherImagesUploadURL([...otherImagesUploadURL, url]);
+    setOtherImageUrl("");
+  };
   const onCreateProperty = async () => {
     setUploadLoading(false);
     if (lmainImageUploadURL && lsubImageOneUploadURL && lsubImageTwoUploadURL) {
@@ -134,7 +151,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
           main: lmainImageUploadURL,
           sub_image_one: lsubImageOneUploadURL,
           sub_image_two: lsubImageTwoUploadURL,
-          other_images: otherImagesUploadURL || "",
+          other_images: otherImagesUploadURL || [],
         },
         property_name,
         property_location,
@@ -226,39 +243,47 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
             </Grid>
           </Box>
 
-          <Flex 
-            my={{base: 8}}
-            bg='white'
-            w={{base: '80%'}}
-            gap={{base: 4}}
-            fontFamily='ProductLight'
-            borderRadius='xl'
-            p={{base: 4}}
-            cursor='pointer'
+          <Flex
+            my={{ base: 8 }}
+            bg="white"
+            w={{ base: "80%" }}
+            gap={{ base: 4 }}
+            fontFamily="ProductLight"
+            borderRadius="xl"
+            p={{ base: 4 }}
+            cursor="pointer"
           >
-            <Input 
-              border='none'
-              _focus={{outline: 'none'}}
+            <Input
+              border="none"
+              _focus={{ outline: "none" }}
+              value={otherImageUrl}
+              onChange={
+                isLoading
+                  ? () => {}
+                  : (e: any) => {
+                      setOtherImageUrl(e.target.value);
+                    }
+              }
             />
-            <Image src={AddIcon} />
+            <Image
+              alt=""
+              src={AddIcon}
+              onClick={() => onAddOtherImagesUploadURL(otherImageUrl)}
+            />
           </Flex>
 
-          <Flex 
-            my={{base: 8}}
-            gap={{base: 4}}
-            direction='column'
-          >
-            <Heading fontFamily='ProductBold' fontSize='2xl'>Added Images:</Heading>
-            <Flex direction='column'>
-              { 
-                ['sampleOne', 'sampleTwo', 'sampleThree', 'sampleFour'].map((item, index) => {
-                  return ( 
-                    <Text fontFamily='ProductLight' key={index}>
-                      {item}
-                    </Text>
-                  )
-                })
-              }
+          <Flex my={{ base: 8 }} gap={{ base: 4 }} direction="column">
+            <Heading fontFamily="ProductBold" fontSize="2xl">
+              Added Images:
+            </Heading>
+            <Flex direction="column">
+              {otherImagesUploadURL.map((item: string, index: number) => {
+                return (
+                  <Text fontFamily="ProductLight" key={index}>
+                    {item}
+                  </Text>
+                );
+              })}
             </Flex>
           </Flex>
 
