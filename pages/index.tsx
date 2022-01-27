@@ -192,9 +192,9 @@ const Home: NextPage = () => {
         gridTemplateColumns={{base: 'repeat(1, 1fr)', lg: 'repeat(2, 1fr)'}}
       >
         { 
-          FakeData.map((item) => { 
+          FakeData.map((item, index) => { 
             return ( 
-              <PropertyPreviewCard />
+              <PropertyPreviewCard key={index}/>
             )
           })
         }
