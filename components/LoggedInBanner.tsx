@@ -13,7 +13,7 @@ export const LoggedInBanner = ({email}:{email:{email: Object}}) => {
       my={{lg: 8}}
       fontSize={{base: '13px'}}
     >
-      Logged in as: {email.email.user.email}
+      Logged in as:
     </Tag>
   )
 }
