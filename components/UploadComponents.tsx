@@ -5,8 +5,6 @@ import {
   Text,
   Input,
   Image as ChkImg,
-  Tag,
-  HStack,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import firebase from "../firebase/config";
@@ -183,9 +181,9 @@ export const AddedImagesPreview = ({
 }: {
   imageURL: string;
   index: number;
-  propertyId: number;
-  otherImagesUploadURL: any;
-  setOtherImagesUploadURL: any;
+  propertyId?: number;
+  otherImagesUploadURL?: any;
+  setOtherImagesUploadURL?: any;
 }) => {
   const deleteFile = (pathToFile: string, fileName: string) => {
     const ref = firebase.storage().ref(pathToFile);
