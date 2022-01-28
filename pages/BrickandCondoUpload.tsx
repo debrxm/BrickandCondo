@@ -281,10 +281,11 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
               {otherImagesUploadURL.map((item: string, index: number) => {
                 return (
                   <>
-                    <Box w='fit-content'>
+                    <Box w='fit-content' key={index}>
                       <AddedImagesPreview 
                         imageURL={item}
                         index={index}
+                        key={index}
                       />
                     </Box>
                   </>

@@ -464,7 +464,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
         <Flex gap={{base: 4}}>
           {otherImagesUploadURL.map((item: string, index: number) => {
             return (
-              <Box w='fit-content'>
+              <Box w='fit-content' key={index}>
                 <AddedImagesPreview
                   imageURL={item}
                   index={index}
