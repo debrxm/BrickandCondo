@@ -24,7 +24,7 @@ const Home: NextPage = () => {
   const [propertiesRef, setPropertiesRef] = React.useState<any>(
     firestore.collection("properties").limit(10)
   );
-  const [query, setQuery] = React.useState<string>();
+  const [query, setQuery] = React.useState<string>('');
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isMoreLoading, setIsMoreLoading] = React.useState<boolean>(false);
   const [lastDoc, setLastDoc] = React.useState<any | {}>({});
@@ -218,7 +218,7 @@ const Home: NextPage = () => {
 
       <Flex> 
         { 
-          query !== 'Filter By Location' ? 
+          query !== 'Filter By Location' && query !== '' ? 
           <Heading my={{base: 10}} fontSize={{base: '25px'}} fontFamily={'ProductBold'}>Properties around: {query}</Heading>
           : 
           <Heading my={{base: 10}} fontSize={{base: '25px'}} fontFamily={'ProductBold'}>Showing all properties</Heading>
