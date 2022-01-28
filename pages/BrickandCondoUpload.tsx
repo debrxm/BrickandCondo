@@ -13,7 +13,7 @@ import { CustomInput, CustomTextArea } from "../components/CustomInput";
 import { DangerButton } from "../components/DangerButton";
 import firebase from "../firebase/config";
 import {
-  AddMulitplePhotos,
+  AddedImagesPreview,
   MainUploadComp,
 } from "../components/UploadComponents";
 import { LightButton } from "../components/LightButton";
@@ -277,12 +277,17 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
             <Heading fontFamily="ProductBold" fontSize="2xl">
               Added Images:
             </Heading>
-            <Flex direction="column">
+            <Flex gap={{base: 4,}}>
               {otherImagesUploadURL.map((item: string, index: number) => {
                 return (
-                  <Text fontFamily="ProductLight" key={index}>
-                    {item}
-                  </Text>
+                  <>
+                    <Box w='fit-content'>
+                      <AddedImagesPreview 
+                        imageURL={item}
+                        index={index}
+                      />
+                    </Box>
+                  </>
                 );
               })}
             </Flex>
