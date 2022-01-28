@@ -10,6 +10,7 @@ const FullProperty = () => {
     const snapshot = await propertyRef.get();
     if (snapshot.exists) {
       const data: any = snapshot.data();
+      console.log(data);
       setProperty(data);
     }
     setIsLoading(false);
@@ -18,7 +19,7 @@ const FullProperty = () => {
     const propertyID: any = localStorage.getItem("propertyID");
     getProperty(propertyID);
   }, [""]);
-  return <h1>niceeee</h1>;
+  return <h1>{property?.property_name}</h1>;
 };
 
 export default FullProperty;

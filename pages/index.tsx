@@ -15,7 +15,7 @@ import React from "react";
 import { PropertyPreviewCard } from "../components/PropertyPreviewCard";
 import { firestore } from "../firebase/config";
 
-const Location = ["Lekki", "Magodo", "Ikorodu", "Bakew", "Small London"];
+const Location = ["All", "Lekki", "Magodo", "Ikorodu", "Bakew", "Small London"];
 
 const Home: NextPage = () => {
   //Hooks
@@ -24,6 +24,7 @@ const Home: NextPage = () => {
   const [propertiesRef, setPropertiesRef] = React.useState<any>(
     firestore.collection("properties").limit(10)
   );
+  const [query, setQuery] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isMoreLoading, setIsMoreLoading] = React.useState<boolean>(false);
   const [lastDoc, setLastDoc] = React.useState<any | {}>({});
@@ -31,12 +32,18 @@ const Home: NextPage = () => {
   //Small Components
   const LocationItem = ({ item }: { item: string }) => {
     const changeLocation = () => {
-      setPropertiesRef(
-        firestore
-          .collection("properties")
-          .where("property_location", "==", item)
-          .limit(10)
-      );
+      if (item === "All") {
+        setPropertiesRef(firestore.collection("properties").limit(10));
+        setQuery("Filter By Location");
+      } else {
+        setPropertiesRef(
+          firestore
+            .collection("properties")
+            .where("property_location", "==", item.toLowerCase())
+            .limit(10)
+        );
+        setQuery(item);
+      }
       onToggle();
     };
     return (
@@ -71,7 +78,7 @@ const Home: NextPage = () => {
         boxShadow="0px 9px 11px 9px rgba(0, 0, 0, 0.04);"
       >
         <Text fontFamily="PropertyLight" color="#C5C5C5">
-          Filter By Location
+          {query || "Filter By Location"}
         </Text>
         <Box w={{ base: "45px" }} h={{ base: "45px" }}>
           <Image alt="" src={searchIcon} />
@@ -106,13 +113,10 @@ const Home: NextPage = () => {
       if (!snapShot.empty) {
         setHasProperty(true);
         let newProperties = [];
-
         setLastDoc(snapShot.docs[snapShot.docs.length - 1]);
-
         for (let i = 0; i < snapShot.docs.length; i++) {
           newProperties.push(snapShot.docs[i].data());
         }
-
         setProperties(newProperties);
       } else {
         setLastDoc(null);
@@ -125,6 +129,7 @@ const Home: NextPage = () => {
     if (lastDoc) {
       setIsMoreLoading(true);
       let snapshot = await propertiesRef
+        .orderBy("id")
         .startAfter(lastDoc.data().id)
         .limit(10);
       snapshot.onSnapshot((snapShot: any) => {
@@ -148,7 +153,7 @@ const Home: NextPage = () => {
   };
   React.useEffect(() => {
     getProperties();
-  }, [propertiesRef]);
+  }, [query, propertiesRef]);
 
   return (
     <Flex direction="column">
