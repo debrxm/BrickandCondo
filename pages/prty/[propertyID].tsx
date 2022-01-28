@@ -468,6 +468,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
                 <AddedImagesPreview
                   imageURL={item}
                   index={index}
+                  key={index}
                 />
               </Box>
             );
