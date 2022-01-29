@@ -277,7 +277,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
             <Heading fontFamily="ProductBold" fontSize="2xl">
               Added Images:
             </Heading>
-            <Flex gap={{base: 4,}}>
+            <Flex gap={{ base: 4 }}>
               {otherImagesUploadURL.map((item: string, index: number) => {
                 return (
                   <>
