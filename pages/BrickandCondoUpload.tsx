@@ -277,17 +277,17 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
             <Heading fontFamily="ProductBold" fontSize="2xl">
               Added Images:
             </Heading>
-            <Flex gap={{base: 4,}}>
+            <Flex gap={{ base: 4 }}>
               {otherImagesUploadURL.map((item: string, index: number) => {
                 return (
-                  <>
-                    <Box w='fit-content'>
-                      <AddedImagesPreview 
-                        imageURL={item}
-                        index={index}
-                      />
-                    </Box>
-                  </>
+                  <Box w="fit-content" key={index}>
+                    <AddedImagesPreview
+                      imageURL={item}
+                      index={index}
+                      otherImagesUploadURL={otherImagesUploadURL}
+                      setOtherImagesUploadURL={setOtherImagesUploadURL}
+                    />
+                  </Box>
                 );
               })}
             </Flex>

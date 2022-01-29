@@ -105,7 +105,7 @@ const Home: NextPage = () => {
       </Flex>
     );
   };
-  
+
   const getProperties = async () => {
     setIsLoading(true);
     const snapshot = await propertiesRef;
@@ -118,6 +118,7 @@ const Home: NextPage = () => {
           newProperties.push(snapShot.docs[i].data());
         }
         setProperties(newProperties);
+        if (snapShot.docs.length < 10) setLastDoc(null);
       } else {
         setLastDoc(null);
       }
@@ -216,13 +217,24 @@ const Home: NextPage = () => {
         </Fade>
       </Flex>
 
-      <Flex> 
-        { 
-          query !== 'Filter By Location' ? 
-          <Heading my={{base: 10}} fontSize={{base: '25px'}} fontFamily={'ProductBold'}>Properties around: {query}</Heading>
-          : 
-          <Heading my={{base: 10}} fontSize={{base: '25px'}} fontFamily={'ProductBold'}>Showing all properties</Heading>
-        }
+      <Flex>
+        {query !== "Filter By Location" ? (
+          <Heading
+            my={{ base: 10 }}
+            fontSize={{ base: "25px" }}
+            fontFamily={"ProductBold"}
+          >
+            Properties around: {query}
+          </Heading>
+        ) : (
+          <Heading
+            my={{ base: 10 }}
+            fontSize={{ base: "25px" }}
+            fontFamily={"ProductBold"}
+          >
+            Showing all properties
+          </Heading>
+        )}
       </Flex>
       <Grid
         mb={{ lg: 40, base: 32 }}
@@ -231,25 +243,27 @@ const Home: NextPage = () => {
         direction={{ base: "column", lg: "row" }}
         gridTemplateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(2, 1fr)" }}
       >
-        {properties.map((item:object, index:number) => {
+        {properties.map((item: object, index: number) => {
           return <PropertyPreviewCard key={index} data={item} />;
         })}
       </Grid>
-      <Flex direction="row" justify="center" align="center" gap={2}>
-        <Divider
-          orientation="horizontal"
-          w={{ lg: "40%", base: "30%", md: "40%" }}
-          borderColor="primary.200"
-        />
-        <Text onClick={getMore} cursor="pointer" fontFamily="ProductLight">
-          Load More
-        </Text>
-        <Divider
-          orientation="horizontal"
-          w={{ lg: "40%", base: "30%", md: "40%" }}
-          borderColor="primary.200"
-        />
-      </Flex>
+      {lastDoc && (
+        <Flex direction="row" justify="center" align="center" gap={2}>
+          <Divider
+            orientation="horizontal"
+            w={{ lg: "40%", base: "30%", md: "40%" }}
+            borderColor="primary.200"
+          />
+          <Text onClick={getMore} cursor="pointer" fontFamily="ProductLight">
+            Load More
+          </Text>
+          <Divider
+            orientation="horizontal"
+            w={{ lg: "40%", base: "30%", md: "40%" }}
+            borderColor="primary.200"
+          />
+        </Flex>
+      )}
     </Flex>
   );
 };
