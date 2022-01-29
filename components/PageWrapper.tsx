@@ -9,7 +9,7 @@ const Header = () => {
   return ( 
     <Box 
       w={{base: '90px'}}
-      mb={16}
+      mb={{lg:4}}
     >
       <Image src={DarkLogo} priority />
     </Box>
