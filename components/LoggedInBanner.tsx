@@ -1,9 +1,9 @@
 import { Tag } from '@chakra-ui/react';
 import React from 'react'; 
 
-export const LoggedInBanner = ({email}:{email:{email: {user: {email: string}}}}) => { 
-  console.log(email.email.user.email)
-  return ( 
+export const LoggedInBanner = ({email}: any) => {
+
+  return (
     <Tag
       w={{lg:'fit-content', base:'fit-content'}}
       bg='secondary.100'
@@ -14,7 +14,7 @@ export const LoggedInBanner = ({email}:{email:{email: {user: {email: string}}}})
       my={{lg: 8}}
       fontSize={{base: '13px'}}
     >
-      Logged in as: {email.email.user.email}
+      Logged in as: {email[1]}
     </Tag>
   )
 }
