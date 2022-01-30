@@ -3,6 +3,13 @@ import React from 'react';
 
 export const LoggedInBanner = ({email}: any) => {
 
+  let emailArr; 
+  let fullEmail; 
+  if(email) { 
+    emailArr = [...Object.values(email)];
+    fullEmail = emailArr.filter((item: any | string) => {return item.toString().slice(-4) === '.com'})
+  }
+  
   return (
     <Tag
       w={{lg:'fit-content', base:'fit-content'}}
@@ -14,7 +21,7 @@ export const LoggedInBanner = ({email}: any) => {
       my={{lg: 8}}
       fontSize={{base: '13px'}}
     >
-      Logged in as: {email[1]}
+      Logged in as: {fullEmail}
     </Tag>
   )
 }

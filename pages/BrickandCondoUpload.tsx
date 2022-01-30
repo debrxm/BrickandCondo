@@ -196,7 +196,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
     <>
       {isAdmin && (
         <Box>
-          <LoggedInBanner email={{email:{user}}} />
+          <LoggedInBanner email={user && {...Object.values(user)}} />
           <Heading
             fontFamily="ProductBold"
             fontSize={{ lg: "30px", base: "20px" }}
