@@ -10,6 +10,7 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Text,
+  Input,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
@@ -18,6 +19,8 @@ import { DangerButton } from "../../components/DangerButton";
 import { LightButton } from "../../components/LightButton";
 import { LoggedInBanner } from "../../components/LoggedInBanner";
 import { ScheduleCard } from "../../components/ScheduleCard";
+import Image from "next/image";
+import AddIcon from "../../public/addIcon.svg";
 import {
   AddMulitplePhotos,
   AddedImagesPreview,
@@ -56,9 +59,10 @@ const IndividualProperty = ({ user }: { user: object }) => {
   const [mainImageBlob, setMainImageBlob] = React.useState<any>();
   const [subImageOneBlob, setSubImageOneBlob] = React.useState<any>();
   const [subImageTwoBlob, setSubImageTwoBlob] = React.useState<any>();
-  const [otherImagesBlob, setOtherImagesBlob] = React.useState<any | []>([]);
-  const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState([""]);
-  const [otherImagesUploadName, setOtherImagesUploadName] = React.useState("");
+  const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState<
+    any | []
+  >([]);
+  const [otherImageUrl, setOtherImageUrl] = React.useState("");
   const [mainImageUploadName, setMainImageUploadName] = React.useState("");
   const [subImageOneUploadURL, setSubImageOneUploadURL] = React.useState("");
   const [subImageOneUploadName, setSubImageOneUploadName] = React.useState("");
@@ -77,7 +81,6 @@ const IndividualProperty = ({ user }: { user: object }) => {
   const [rental_value_dollar, setRentalValueDollar] = React.useState();
   const [uploadLoading, setUploadLoading] = React.useState(false);
   const [updateLoading, setUpdateLoading] = React.useState(false);
-  let remainingLoop: number;
   let lmainImageUploadURL: string;
   let lotherImagesUploadURL: any;
   let lsubImageOneUploadURL: string;
@@ -107,11 +110,6 @@ const IndividualProperty = ({ user }: { user: object }) => {
         setSubImageTwoBlob(selectedFile);
         setSubImageTwoUploadURL("");
         onDeletePropertyImage("subImageTwo");
-        break;
-      case "otherImages":
-        setCurrentUpload(selectedFile.name);
-        setOtherImagesUploadName(selectedFile.name);
-        setOtherImagesBlob([...otherImagesBlob, selectedFile]);
         break;
       default:
         break;
@@ -152,8 +150,6 @@ const IndividualProperty = ({ user }: { user: object }) => {
                 uploadsubImageOne();
               } else if (subImageTwoBlob) {
                 uploadsubImageTwo();
-              } else if (otherImagesBlob.length) {
-                uploadOtherImages(otherImagesBlob.length - 1);
               } else {
                 onUpdateProperty();
               }
@@ -163,8 +159,6 @@ const IndividualProperty = ({ user }: { user: object }) => {
               lsubImageOneUploadURL = downloadURL;
               if (subImageTwoBlob) {
                 uploadsubImageTwo();
-              } else if (otherImagesBlob.length) {
-                uploadOtherImages(otherImagesBlob.length - 1);
               } else {
                 onUpdateProperty();
               }
@@ -172,11 +166,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
             case "subImageTwo":
               setSubImageTwoUploadURL(downloadURL);
               lsubImageTwoUploadURL = downloadURL;
-              if (otherImagesBlob.length) {
-                uploadOtherImages(otherImagesBlob.length - 1);
-              } else {
-                onUpdateProperty();
-              }
+              onUpdateProperty();
               break;
             default:
               break;
@@ -205,6 +195,14 @@ const IndividualProperty = ({ user }: { user: object }) => {
       });
   };
 
+  const onAddOtherImagesUploadURL = (url: string) => {
+    if (otherImageUrl.trim() === "") {
+      return;
+    }
+    setOtherImagesUploadURL([...otherImagesUploadURL, url]);
+    setOtherImageUrl("");
+  };
+
   const onUpdateProperty = async () => {
     setUpdateLoading(true);
     setUploadLoading(false);
@@ -223,7 +221,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
           main: lmainImageUploadURL,
           sub_image_one: lsubImageOneUploadURL,
           sub_image_two: lsubImageTwoUploadURL,
-          other_images: lotherImagesUploadURL || "",
+          other_images: otherImagesUploadURL || [],
         },
         property_name,
         property_location,
@@ -246,54 +244,6 @@ const IndividualProperty = ({ user }: { user: object }) => {
     DeleteProperty(property, cleanUp);
   };
 
-  const fetchOtherImageUrl = async (
-    selectedFile: any,
-    dest: string,
-    anchor: string,
-    isLast: boolean
-  ) => {
-    const storageRef = firebase
-      .storage()
-      .ref(`properties/${dest}/${anchor}/${selectedFile}`);
-    const uploadTask = storageRef.put(selectedFile);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        switch (snapshot.state) {
-          case firebase.storage.TaskState.PAUSED:
-            console.log("Upload is paused");
-            break;
-          case firebase.storage.TaskState.RUNNING:
-            console.log("Upload is running");
-            break;
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-      () => {
-        // get the uploaded image url back
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          if (isLast) {
-            onUpdateProperty();
-            return;
-          }
-          setOtherImagesUploadURL([...otherImagesUploadURL, downloadURL]);
-          lotherImagesUploadURL = [...otherImagesUploadURL, downloadURL];
-          remainingLoop = remainingLoop - 1;
-          if (remainingLoop === 0) {
-            uploadLastOtherImages();
-            return;
-          } else if (!isLast && remainingLoop > 0) {
-            uploadOtherImages(remainingLoop);
-          } else {
-            onUpdateProperty();
-            return;
-          }
-        });
-      }
-    );
-  };
   const cleanUp = () => {
     setUpdateLoading(false);
     Router.push("/BrickandCondoDash");
@@ -308,25 +258,10 @@ const IndividualProperty = ({ user }: { user: object }) => {
   const uploadsubImageTwo = () => {
     fetchImageUrl(subImageTwoBlob, `${id}`, "subImageTwo");
   };
-
-  const uploadLastOtherImages = () => {
-    fetchOtherImageUrl(otherImagesBlob[1], `${id}`, `otherImages-${1}`, true);
-  };
-  const uploadOtherImages = (anchor: number) => {
-    if (otherImagesBlob.length) {
-      remainingLoop = anchor;
-      fetchOtherImageUrl(
-        otherImagesBlob[remainingLoop],
-        `${id}`,
-        `otherImages-${remainingLoop}`,
-        false
-      );
-    }
-  };
-
   React.useEffect(() => {
-    getProperty();
-    getSchedules();
+    const propertyID: any = localStorage.getItem("propertyID");
+    getProperty(propertyID);
+    getSchedules(propertyID);
     if (!user) {
       setIsAdmin(false);
     } else {
@@ -334,24 +269,22 @@ const IndividualProperty = ({ user }: { user: object }) => {
     }
   }, [user]);
 
-  const scheduleRef = firestore
-    .collection(`properties`)
-    .doc(`${Router.query.propertyID}`)
-    .collection(`schedules`);
-  const getSchedules = async () => {
+  const getSchedules = async (propertyID: number) => {
+    const scheduleRef = firestore
+      .collection(`properties`)
+      .doc(`${propertyID}`)
+      .collection(`schedules`);
     const snapshot: any = await scheduleRef.get();
     if (snapshot.exists) {
       const data: any = snapshot.data();
       setSchedules(data);
     }
   };
-  const propertyRef = firestore
-    .collection("properties")
-    .doc(`${Router.query.propertyID}`);
-  const getProperty = async () => {
+  const getProperty = async (propertyID: number) => {
     setUploadLoading(false);
     setUpdateLoading(false);
     setIsLoading(true);
+    const propertyRef = firestore.collection("properties").doc(`${propertyID}`);
     const snapshot = await propertyRef.get();
     if (snapshot.exists) {
       const data: any = snapshot.data();
@@ -372,9 +305,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
       lsubImageTwoUploadURL = data.images.sub_image_two;
       lotherImagesUploadURL = data.images.other_images;
       setMainImageUploadURL(data.images.main);
-      setOtherImagesUploadURL(
-        data.images.other_images.filter((n: string, i: number) => i > 0)
-      );
+      setOtherImagesUploadURL(data.images.other_images);
       setSubImageOneUploadURL(data.images.sub_image_one);
       setSubImageTwoUploadURL(data.images.sub_image_two);
       setProperty(data);
@@ -399,10 +330,6 @@ const IndividualProperty = ({ user }: { user: object }) => {
       setUploadLoading(true);
       setUpdateLoading(true);
       uploadsubImageTwo();
-    } else if (otherImagesBlob.length) {
-      setUploadLoading(true);
-      setUpdateLoading(true);
-      uploadOtherImages(otherImagesBlob.length - 1);
     } else {
       onUpdateProperty();
     }
@@ -501,58 +428,46 @@ const IndividualProperty = ({ user }: { user: object }) => {
         </Flex>
       </Flex>
 
-      <Flex direction="column" my={{ base: 8 }} gap={{ base: 4 }}>
-        <AddMulitplePhotos
-          text={otherImagesUploadName || "Add other images"}
+      <Flex
+        my={{ base: 8 }}
+        bg="white"
+        w={{ base: "80%" }}
+        gap={{ base: 4 }}
+        fontFamily="ProductLight"
+        borderRadius="xl"
+        p={{ base: 4 }}
+        cursor="pointer"
+      >
+        <Input
+          border="none"
+          _focus={{ outline: "none" }}
+          placeholder="Paste other image link here"
+          value={otherImageUrl}
           onChange={
             isLoading
               ? () => {}
               : (e: any) => {
-                  onUploadImage(e, "otherImages");
+                  setOtherImageUrl(e.target.value);
                 }
           }
-          disabled={otherImagesBlob.length + otherImagesUploadURL.length >= 6}
         />
-        <Flex align="center" gap={{ lg: 4 }}>
-          <Flex gap={{ lg: 4, base: 10 }} my="4">
-            {otherImagesBlob.map(
-              (item: any, index: React.Key | null | undefined) => {
-                return (
-                  <Text
-                    key={index}
-                    fontFamily="ProductBold"
-                    color="primary.300"
-                  >
-                    {item?.name}
-                  </Text>
-                );
-              }
-            )}
-            {otherImagesBlob.length ? (
-              <Box>
-                <DangerButton
-                  onClick={() => {
-                    setOtherImagesBlob([]);
-                    setOtherImagesUploadName("Add other images");
-                  }}
-                >
-                  Clear
-                </DangerButton>
-              </Box>
-            ) : null}
-          </Flex>
-        </Flex>
-        <Flex gap={{ base: 4 }} w={{ lg: "fit-content", base: "100%" }}>
-          {otherImagesUploadURL.map((item, index) => {
+        <Image
+          alt=""
+          src={AddIcon}
+          onClick={() => onAddOtherImagesUploadURL(otherImageUrl)}
+        />
+      </Flex>
+
+      <Flex my={{ base: 8 }} gap={{ base: 4 }} direction="column">
+        <Heading fontFamily="ProductBold" fontSize="2xl">
+          Added Images:
+        </Heading>
+        <Flex direction="column">
+          {otherImagesUploadURL.map((item: string, index: number) => {
             return (
-              <AddedImagesPreview
-                key={index}
-                index={index}
-                propertyId={property.id}
-                otherImagesUploadURL={otherImagesUploadURL}
-                setOtherImagesUploadURL={setOtherImagesUploadURL}
-                imageURL={item}
-              />
+              <Text fontFamily="ProductLight" key={index}>
+                {item}
+              </Text>
             );
           })}
         </Flex>
@@ -566,6 +481,8 @@ const IndividualProperty = ({ user }: { user: object }) => {
         >
           Property Meta Data
         </Heading>
+
+        <Flex my={{ base: 8 }} gap={{ base: 4 }} direction="column"></Flex>
 
         <Flex
           mt="10"

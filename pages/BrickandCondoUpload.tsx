@@ -1,5 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Divider, Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Flex,
+  Grid,
+  Heading,
+  Input,
+  Text,
+} from "@chakra-ui/react";
 import React from "react";
 import { CustomInput, CustomTextArea } from "../components/CustomInput";
 import { DangerButton } from "../components/DangerButton";
@@ -13,6 +21,8 @@ import { LightButton } from "../components/LightButton";
 import { CreateProperty } from "../firebase/firestore";
 import Router from "next/router";
 import { LoggedInBanner } from "../components/LoggedInBanner";
+import Image from "next/image";
+import AddIcon from "../public/addIcon.svg";
 
 const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
@@ -47,9 +57,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [uploadOtherImageLoading, setUploadOtherImageLoading] =
     React.useState(false);
   const [createLoading, setCreateLoading] = React.useState(false);
-  let remainingLoop: number;
   let lmainImageUploadURL: string;
-  let lotherImagesUploadURL: any;
   let lsubImageOneUploadURL: string;
   let lsubImageTwoUploadURL: string;
   const [id] = React.useState(Date.now());
@@ -139,12 +147,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   };
   const onCreateProperty = async () => {
     setUploadLoading(false);
-    if (
-      lmainImageUploadURL &&
-      lsubImageOneUploadURL &&
-      lsubImageTwoUploadURL &&
-      lotherImagesUploadURL.length === otherImagesBlob.length
-    ) {
+    if (lmainImageUploadURL && lsubImageOneUploadURL && lsubImageTwoUploadURL) {
       const propertyData = {
         id,
         bathroom,
@@ -154,10 +157,11 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
           main: lmainImageUploadURL,
           sub_image_one: lsubImageOneUploadURL,
           sub_image_two: lsubImageTwoUploadURL,
-          other_images: otherImagesUploadURL || "",
+          other_images: otherImagesUploadURL || [],
         },
+        created_at: Date.now(),
         property_name,
-        property_location,
+        property_location: property_location.toLowerCase(),
         property_sublocation,
         property_description,
         one_time_payment_naira: one_time_payment_naira || 0,
@@ -201,7 +205,6 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
         // get the uploaded image url back
         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
           setOtherImagesUploadURL([...otherImagesUploadURL, downloadURL]);
-          lotherImagesUploadURL = [...otherImagesUploadURL, downloadURL];
           setUploadOtherImageLoading(false);
         });
       }

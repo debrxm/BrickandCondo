@@ -50,7 +50,11 @@ export const ManagePropertyCard = ({
 
         <Box w="fit-content">
           <Link href={`/prty/${propertyID}`}>
-            <LightButton>Manage</LightButton>
+            <LightButton
+              onClick={() => localStorage.setItem("propertyID", propertyID)}
+            >
+              Manage
+            </LightButton>
           </Link>
         </Box>
       </Flex>
