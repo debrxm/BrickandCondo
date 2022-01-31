@@ -338,7 +338,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
     <Flex direction="column"></Flex>
   ) : (
     <Flex direction="column">
-      <LoggedInBanner email={user} />
+      <LoggedInBanner email={{email:{user}}} />
       <Popover>
         <PopoverTrigger>
           <Flex direction="column" w="fit-content" my={{ base: 4 }}>

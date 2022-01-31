@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Flex,
-  Box,
-  Text,
-  Input,
-  Image as ChkImg,
-  Tag,
-  HStack,
-} from "@chakra-ui/react";
+import { Flex, Box, Text, Input, Image as ChkImg } from "@chakra-ui/react";
 import Image from "next/image";
 import firebase from "../firebase/config";
 import UploadIcon from "../public/Uploadicon.svg";

@@ -6,7 +6,6 @@ import { LightButton } from "../components/LightButton";
 import { LoggedInBanner } from "../components/LoggedInBanner";
 import { ManagePropertyCard } from "../components/ManagePropertyCard";
 import { firestore, auth } from "../firebase/config";
-import Router from "next/router";
 
 const BrickandCondoDash = ({ user }: { user: object }) => {
   const [properties, setProperties] = React.useState([{}]);
@@ -59,7 +58,7 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
     <>
       {isAdmin && (
         <Flex direction="column">
-          <LoggedInBanner email={user} />
+          <LoggedInBanner email={{email:{user}}} />
           <Flex direction="column">
             <Flex
               align="center"

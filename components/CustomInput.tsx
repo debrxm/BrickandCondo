@@ -1,11 +1,11 @@
 import {
   FormControl,
-  FormHelperText,
+  Text,
   FormLabel,
   Input,
   Textarea,
 } from "@chakra-ui/react";
-import React from "React";
+import React from "react";
 
 export const CustomInput = ({
   label,
@@ -20,6 +20,7 @@ export const CustomInput = ({
   value: any;
   onChange: any;
 }) => {
+  let formattedNum = Number(value).toLocaleString();
   return (
     <FormControl fontFamily="ProductLight">
       <FormLabel
@@ -27,7 +28,10 @@ export const CustomInput = ({
         color="secondary.100"
         htmlFor={type}
       >
-        {label}
+        {label} 
+        { 
+          (type === 'number' && value > 999) && <Text fontFamily='ProductLight'>{formattedNum}</Text>
+        }
       </FormLabel>
       <Input
         boxShadow="0px 0px 22px rgba(0, 0, 0, 0.08)"
