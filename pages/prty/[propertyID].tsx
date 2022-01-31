@@ -12,7 +12,6 @@ import {
   Text,
   Input,
 } from "@chakra-ui/react";
-import Link from "next/link";
 import React from "react";
 import { CustomInput, CustomTextArea } from "../../components/CustomInput";
 import { DangerButton } from "../../components/DangerButton";
@@ -462,12 +461,18 @@ const IndividualProperty = ({ user }: { user: object }) => {
         <Heading fontFamily="ProductBold" fontSize="2xl">
           Added Images:
         </Heading>
-        <Flex direction="column">
+        <Flex gap={{ base: 4 }}>
           {otherImagesUploadURL.map((item: string, index: number) => {
             return (
-              <Text fontFamily="ProductLight" key={index}>
-                {item}
-              </Text>
+              <Box w="fit-content" key={index}>
+                <AddedImagesPreview
+                  imageURL={item}
+                  index={index}
+                  propertyId={property.id}
+                  otherImagesUploadURL={otherImagesUploadURL}
+                  setOtherImagesUploadURL={setOtherImagesUploadURL}
+                />
+              </Box>
             );
           })}
         </Flex>

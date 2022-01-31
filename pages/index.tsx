@@ -50,7 +50,7 @@ const Home: NextPage = () => {
       <Text
         onClick={changeLocation}
         _hover={{ bg: "secondary.100", color: "white" }}
-        fontFamily="PropertyLight"
+        fontFamily="ProductLight"
         borderRadius="xl"
         color="secondary.100"
         bg="white"
@@ -77,7 +77,7 @@ const Home: NextPage = () => {
         px={{ lg: 8, base: 4 }}
         boxShadow="0px 9px 11px 9px rgba(0, 0, 0, 0.04);"
       >
-        <Text fontFamily="PropertyLight" color="#C5C5C5">
+        <Text fontFamily="ProductBold" color="#C5C5C5">
           {query || "Filter By Location"}
         </Text>
         <Box w={{ base: "45px" }} h={{ base: "45px" }}>
@@ -105,9 +105,9 @@ const Home: NextPage = () => {
       </Flex>
     );
   };
+
   const getProperties = async () => {
     setIsLoading(true);
-
     const snapshot = await propertiesRef;
     snapshot.onSnapshot((snapShot: any) => {
       if (!snapShot.empty) {
@@ -118,6 +118,7 @@ const Home: NextPage = () => {
           newProperties.push(snapShot.docs[i].data());
         }
         setProperties(newProperties);
+        if (snapShot.docs.length < 10) setLastDoc(null);
       } else {
         setLastDoc(null);
       }
@@ -175,7 +176,7 @@ const Home: NextPage = () => {
           <Heading
             mb={{ base: 6 }}
             fontSize={{ base: "4xl", lg: "6xl" }}
-            fontFamily="PropertyBold"
+            fontFamily="ProductBold"
             color="white"
           >
             Purchase your next Property-
@@ -205,7 +206,7 @@ const Home: NextPage = () => {
             direction="column"
             w={{ lg: "25%", base: "70%" }}
             position={{ lg: "absolute", base: "absolute" }}
-            bottom={{ base: "-93%", lg: "7%" }}
+            bottom={{ base: "7%", lg: "7%" }}
             left={{ base: "7%", lg: "36%" }}
             gap={{ base: 4, lg: 4 }}
             transition="display 4s"
@@ -216,6 +217,25 @@ const Home: NextPage = () => {
         </Fade>
       </Flex>
 
+      <Flex>
+        {query !== "Filter By Location" ? (
+          <Heading
+            my={{ base: 10 }}
+            fontSize={{ base: "25px" }}
+            fontFamily={"ProductBold"}
+          >
+            Properties around: {query}
+          </Heading>
+        ) : (
+          <Heading
+            my={{ base: 10 }}
+            fontSize={{ base: "25px" }}
+            fontFamily={"ProductBold"}
+          >
+            Showing all properties
+          </Heading>
+        )}
+      </Flex>
       <Grid
         mb={{ lg: 40, base: 32 }}
         rowGap={{ base: "28" }}
@@ -223,25 +243,27 @@ const Home: NextPage = () => {
         direction={{ base: "column", lg: "row" }}
         gridTemplateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(2, 1fr)" }}
       >
-        {properties.map((item: any, index: number) => {
+        {properties.map((item: object, index: number) => {
           return <PropertyPreviewCard key={index} data={item} />;
         })}
       </Grid>
-      <Flex direction="row" justify="center" align="center" gap={2}>
-        <Divider
-          orientation="horizontal"
-          w={{ lg: "40%", base: "30%", md: "40%" }}
-          borderColor="primary.200"
-        />
-        <Text onClick={getMore} cursor="pointer" fontFamily="ProductLight">
-          Load More
-        </Text>
-        <Divider
-          orientation="horizontal"
-          w={{ lg: "40%", base: "30%", md: "40%" }}
-          borderColor="primary.200"
-        />
-      </Flex>
+      {lastDoc && (
+        <Flex direction="row" justify="center" align="center" gap={2}>
+          <Divider
+            orientation="horizontal"
+            w={{ lg: "40%", base: "30%", md: "40%" }}
+            borderColor="primary.200"
+          />
+          <Text onClick={getMore} cursor="pointer" fontFamily="ProductLight">
+            Load More
+          </Text>
+          <Divider
+            orientation="horizontal"
+            w={{ lg: "40%", base: "30%", md: "40%" }}
+            borderColor="primary.200"
+          />
+        </Flex>
+      )}
     </Flex>
   );
 };
