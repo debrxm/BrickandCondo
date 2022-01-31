@@ -81,6 +81,7 @@ export const CustomTextArea = ({
         type={type}
         value={value}
         onChange={onChange}
+        lineHeight='2.2'
       />
     </FormControl>
   );

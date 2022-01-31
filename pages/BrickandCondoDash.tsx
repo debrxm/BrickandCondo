@@ -8,7 +8,8 @@ import { ManagePropertyCard } from "../components/ManagePropertyCard";
 import { firestore, auth } from "../firebase/config";
 
 const BrickandCondoDash = ({ user }: { user: object }) => {
-  const [properties, setProperties] = React.useState([{}]);
+  
+  const [properties, setProperties] = React.useState<object | any>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [hasProperty, setHasProperty] = React.useState(false);
   const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
@@ -26,6 +27,7 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
           };
           loadedProperties.push(data);
         }
+        console.log(typeof loadedProperties)
         setProperties(loadedProperties);
       }
     });
@@ -54,11 +56,12 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
       propTotalVisits: "1",
     },
   ];
+
   return (
     <>
       {isAdmin && (
         <Flex direction="column">
-          <LoggedInBanner email={{email:{user}}} />
+          <LoggedInBanner email={user && {...Object.values(user)}} />
           <Flex direction="column">
             <Flex
               align="center"
@@ -94,16 +97,30 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
                 mt={{ lg: 4 }}
                 direction={{ base: "column", lg: "row" }}
               >
-                {properties.map((item: any, index) => {
-                  return (
-                    <ManagePropertyCard
-                      key={index}
-                      propertyID={item.id}
-                      property_name={item.property_name}
-                      propTotalVisits={item.propTotalVisits}
-                    />
-                  );
-                })}
+                {
+                  Object.values(properties)[0] ? 
+                  properties.map((item: any, index: number) => {
+                    console.log(Object.values(properties)[0]);
+                    return (
+                      <ManagePropertyCard
+                        key={index}
+                        propertyID={item.id}
+                        property_name={item.property_name}
+                        propTotalVisits={item.propTotalVisits}
+                      />
+                    );
+                  })
+
+                  : 
+                  <Heading
+                    fontFamily="ProductBold"
+                    color="secondary.200"
+                    fontSize={{ lg: "2xl", base: "2xl" }}
+                    w={{ lg: "80%" }}
+                  >
+                    They are currently no properties to manage
+                  </Heading>
+                }
               </Flex>
             </Flex>
           </Flex>

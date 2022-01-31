@@ -8,12 +8,14 @@ import DarkLogo from '../public/blackLogoBrickandCondo.png';
 const Header = () => { 
   return ( 
     <Box pt={8} m='0 auto' w={{base: '95%'}}>
-      <Box 
-        w={{base: '90px'}}
-        mb={{lg:4}}
-      >
-        <Image src={DarkLogo} priority />
-      </Box>
+      <Link href='/'>
+        <Box 
+          w={{base: '90px'}}
+          mb={{lg:4}}
+        >
+          <Image src={DarkLogo} priority />
+        </Box>
+      </Link>
     </Box>
   )
 }
