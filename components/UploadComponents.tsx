@@ -177,14 +177,22 @@ export const EditMainUploadComp = ({
 export const AddedImagesPreview = ({
   imageURL,
   index,
+  propertyId,
   otherImagesUploadURL,
   setOtherImagesUploadURL,
 }: {
   imageURL: string;
   index: number;
+  propertyId: number;
   otherImagesUploadURL: any;
   setOtherImagesUploadURL: any;
 }) => {
+  const deleteFile = (pathToFile: string, fileName: string) => {
+    const ref = firebase.storage().ref(pathToFile);
+    const childRef = ref.child(fileName);
+
+    childRef.delete();
+  };
   return (
     <Flex
       justifyContent="center"
@@ -209,6 +217,19 @@ export const AddedImagesPreview = ({
         w={{ lg: "50px", base: "100%" }}
         h={{ lg: "50px", base: "100%" }}
         onClick={() => {
+          const storageRef = firebase
+            .storage()
+            .ref(`properties/${propertyId}/otherImages-${index}`);
+          storageRef
+            .listAll()
+            .then((dir) => {
+              dir.items.forEach((fileRef) => {
+                deleteFile(storageRef.fullPath, fileRef.name);
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
           setOtherImagesUploadURL(
             otherImagesUploadURL.filter((n: any, i: any) => i != index)
           );
