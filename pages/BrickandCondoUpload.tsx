@@ -5,6 +5,7 @@ import { CustomInput, CustomTextArea } from "../components/CustomInput";
 import { DangerButton } from "../components/DangerButton";
 import firebase from "../firebase/config";
 import {
+  AddedImagesPreview,
   AddMulitplePhotos,
   MainUploadComp,
 } from "../components/UploadComponents";
@@ -20,8 +21,10 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [mainImageBlob, setMainImageBlob] = React.useState({});
   const [subImageOneBlob, setSubImageOneBlob] = React.useState({});
   const [subImageTwoBlob, setSubImageTwoBlob] = React.useState({});
-  const [otherImagesBlob, setOtherImagesBlob] = React.useState([{}]);
-  const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState([""]);
+  const [otherImagesBlob, setOtherImagesBlob] = React.useState<any | []>([]);
+  const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState<
+    any | []
+  >([]);
   const [otherImagesUploadName, setOtherImagesUploadName] = React.useState("");
   const [mainImageUploadName, setMainImageUploadName] = React.useState("");
   const [subImageOneUploadURL, setSubImageOneUploadURL] = React.useState("");
@@ -41,6 +44,8 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [rental_value_dollar, setRentalValueDollar] = React.useState();
   const [isLoading, setIsLoading] = React.useState(false);
   const [uploadLoading, setUploadLoading] = React.useState(false);
+  const [uploadOtherImageLoading, setUploadOtherImageLoading] =
+    React.useState(false);
   const [createLoading, setCreateLoading] = React.useState(false);
   let remainingLoop: number;
   let lmainImageUploadURL: string;
@@ -71,6 +76,11 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
         setCurrentUpload(selectedFile.name);
         setOtherImagesUploadName(selectedFile.name);
         setOtherImagesBlob([...otherImagesBlob, selectedFile]);
+        fetchOtherImageUrl(
+          selectedFile,
+          `${id}`,
+          `otherImages-${otherImagesBlob.length}`
+        );
         break;
       default:
         break;
@@ -117,7 +127,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
             case "subImageTwo":
               setSubImageTwoUploadURL(downloadURL);
               lsubImageTwoUploadURL = downloadURL;
-              uploadOtherImages(otherImagesBlob.length - 1);
+              onCreateProperty();
               break;
             default:
               break;
@@ -127,7 +137,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
       }
     );
   };
-  const onCreateProperty = async (others: any) => {
+  const onCreateProperty = async () => {
     setUploadLoading(false);
     if (
       lmainImageUploadURL &&
@@ -144,7 +154,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
           main: lmainImageUploadURL,
           sub_image_one: lsubImageOneUploadURL,
           sub_image_two: lsubImageTwoUploadURL,
-          other_images: lotherImagesUploadURL || "",
+          other_images: otherImagesUploadURL || "",
         },
         property_name,
         property_location,
@@ -165,9 +175,9 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   const fetchOtherImageUrl = async (
     selectedFile: any,
     dest: string,
-    anchor: string,
-    isLast: boolean
+    anchor: string
   ) => {
+    setUploadOtherImageLoading(true);
     const storageRef = firebase
       .storage()
       .ref(`properties/${dest}/${anchor}/${selectedFile}`);
@@ -190,22 +200,9 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
       () => {
         // get the uploaded image url back
         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          if (isLast) {
-            lotherImagesUploadURL = [...lotherImagesUploadURL, downloadURL];
-            onCreateProperty(lotherImagesUploadURL);
-            return;
-          }
           setOtherImagesUploadURL([...otherImagesUploadURL, downloadURL]);
           lotherImagesUploadURL = [...otherImagesUploadURL, downloadURL];
-          remainingLoop = remainingLoop - 1;
-          if (remainingLoop === 1) {
-            uploadLastOtherImages();
-            return;
-          } else if (!isLast && remainingLoop > 1) {
-            uploadOtherImages(remainingLoop);
-          } else {
-            return;
-          }
+          setUploadOtherImageLoading(false);
         });
       }
     );
@@ -223,18 +220,6 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
     fetchImageUrl(subImageOneBlob, `${id}`, "subImageOne");
   const uploadsubImageTwo = () =>
     fetchImageUrl(subImageTwoBlob, `${id}`, "subImageTwo");
-  const uploadLastOtherImages = () => {
-    fetchOtherImageUrl(otherImagesBlob[1], `${id}`, `otherImages-${1}`, true);
-  };
-  const uploadOtherImages = (anchor: number) => {
-    remainingLoop = anchor;
-    fetchOtherImageUrl(
-      otherImagesBlob[remainingLoop],
-      `${id}`,
-      `otherImages-${remainingLoop}`,
-      false
-    );
-  };
 
   React.useEffect(() => {
     if (!user) {
@@ -242,7 +227,16 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
     } else {
       setIsAdmin(true);
     }
-  }, [mainImageUploadURL, subImageOneUploadURL, subImageTwoUploadURL, user]);
+    console.log("====================================");
+    console.log(otherImagesUploadURL);
+    console.log("====================================");
+  }, [
+    mainImageUploadURL,
+    subImageOneUploadURL,
+    subImageTwoUploadURL,
+    otherImagesUploadURL,
+    user,
+  ]);
 
   return (
     <>
@@ -298,34 +292,45 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
           <AddMulitplePhotos
             text={otherImagesUploadName || "Add other images"}
             onChange={
-              isLoading
+              isLoading || uploadOtherImageLoading
                 ? () => {}
                 : (e: any) => {
                     onUploadImage(e, "otherImages");
                   }
             }
-            disabled={otherImagesBlob.length === 6}
+            disabled={uploadOtherImageLoading}
           />
-          <Flex align="center" gap={{ lg: 4 }}>
+          {uploadOtherImageLoading && (
             <Flex gap={{ lg: 4, base: 10 }} my="4">
-              {otherImagesBlob.map((item: any, index) => {
-                return (
-                  <Text
-                    key={index}
-                    fontFamily="ProductBold"
-                    color="primary.300"
-                  >
-                    {item?.name}
-                  </Text>
-                );
-              })}
+              <Text fontFamily="ProductBold" color="primary.300">
+                Uploading...
+              </Text>
             </Flex>
+          )}
+          <Flex
+            gap={{ lg: 4, base: 4 }}
+            w={{ lg: "fit-content", base: "100%" }}
+            my="4"
+          >
+            {otherImagesUploadURL.map((item: any, index: number) => {
+              return (
+                <AddedImagesPreview
+                  key={index}
+                  index={index}
+                  propertyId={id}
+                  otherImagesUploadURL={otherImagesUploadURL}
+                  setOtherImagesUploadURL={setOtherImagesUploadURL}
+                  imageURL={item}
+                />
+              );
+            })}
           </Flex>
           <Box>
             <DangerButton
               onClick={() => {
-                setOtherImagesBlob([{}]);
+                setOtherImagesBlob([]);
                 setOtherImagesUploadName("Add other images");
+                setOtherImagesUploadURL([]);
               }}
             >
               Clear
