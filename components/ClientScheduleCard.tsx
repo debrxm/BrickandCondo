@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Box,
   Flex,
   FormControl,
   FormHelperText,
@@ -8,6 +9,7 @@ import {
   Input,
 } from "@chakra-ui/react";
 import { firestore } from "../firebase/config";
+import { LightButton } from "./LightButton";
 
 export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
   const [name, setName] = React.useState("");
@@ -134,6 +136,11 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
             }
           />
         </FormControl>
+        <Box w={{ lg: "40%" }} mt={{ base: 4 }} my={"10"}>
+          <LightButton onClick={isLoading ? () => {} : onSubmit}>
+            {isLoading ? "Sending..." : "Submit"}
+          </LightButton>
+        </Box>
       </form>
     </Flex>
   );
