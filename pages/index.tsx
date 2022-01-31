@@ -223,7 +223,7 @@ const Home: NextPage = () => {
         direction={{ base: "column", lg: "row" }}
         gridTemplateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(2, 1fr)" }}
       >
-        {properties.map((item, index) => {
+        {properties.map((item: any, index: number) => {
           return <PropertyPreviewCard key={index} data={item} />;
         })}
       </Grid>
