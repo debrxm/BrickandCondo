@@ -15,16 +15,15 @@ import React from "react";
 import { PropertyPreviewCard } from "../components/PropertyPreviewCard";
 import { firestore } from "../firebase/config";
 
-const Location = ["All", "Lekki", "Magodo", "Ikorodu", "Bakew", "Small London"];
-
 const Home: NextPage = () => {
   //Hooks
   const { isOpen, onToggle } = useDisclosure();
   const [hasProperty, setHasProperty] = React.useState(false);
+  const [Location, setLocation] = React.useState<any | []>([]);
   const [propertiesRef, setPropertiesRef] = React.useState<any>(
     firestore.collection("properties").limit(10)
   );
-  const [query, setQuery] = React.useState<string>('');
+  const [query, setQuery] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isMoreLoading, setIsMoreLoading] = React.useState<boolean>(false);
   const [lastDoc, setLastDoc] = React.useState<any | {}>({});
@@ -98,7 +97,7 @@ const Home: NextPage = () => {
         transition="all 4s"
       >
         <Flex direction="column" gap="4">
-          {Location.map((item, index) => {
+          {Location.map((item: string, index: number) => {
             return <LocationItem item={item} key={index} />;
           })}
         </Flex>
@@ -152,8 +151,27 @@ const Home: NextPage = () => {
       setIsMoreLoading(false);
     }
   };
+  const checkLocation = async () => {
+    const loc = ["All", "Lekki", "Magodo", "Ikorodu", "Bakew", "Small London"];
+    setIsLoading(true);
+    const availableLocation: any = [];
+    loc.forEach(async (item: string, index: number) => {
+      const snapshot = await firestore
+        .collection("properties")
+        .where("property_location", "==", item.toLowerCase())
+        .get();
+
+      if (!snapshot.empty) {
+        availableLocation.push(item);
+        setLocation(availableLocation);
+
+        getProperties();
+      }
+    });
+    setIsLoading(false);
+  };
   React.useEffect(() => {
-    getProperties();
+    checkLocation();
   }, [query, propertiesRef]);
 
   return (
@@ -217,13 +235,24 @@ const Home: NextPage = () => {
         </Fade>
       </Flex>
 
-      <Flex> 
-        { 
-          query !== 'Filter By Location' && query !== '' ? 
-          <Heading my={{base: 10}} fontSize={{base: '25px'}} fontFamily={'ProductBold'}>Properties around: {query}</Heading>
-          : 
-          <Heading my={{base: 10}} fontSize={{base: '25px'}} fontFamily={'ProductBold'}>Showing all properties</Heading>
-        }
+      <Flex>
+        {query !== "Filter By Location" && query !== "" ? (
+          <Heading
+            my={{ base: 10 }}
+            fontSize={{ base: "25px" }}
+            fontFamily={"ProductBold"}
+          >
+            Properties around: {query}
+          </Heading>
+        ) : (
+          <Heading
+            my={{ base: 10 }}
+            fontSize={{ base: "25px" }}
+            fontFamily={"ProductBold"}
+          >
+            Showing all properties
+          </Heading>
+        )}
       </Flex>
       <Flex
         mb={{ lg: 40, base: 32 }}

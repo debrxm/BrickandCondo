@@ -9,10 +9,13 @@ import bathRmIcnBlack from "../../public/bathRmIconBlack.svg";
 import bedRmIconBlack from "../../public/bedRmIcnBlack.svg";
 import ImgSampleIcon from "../../public/ImgSampleIcon.svg";
 import { ClientScheduleCard } from "../../components/ClientScheduleCard";
-import { LightButton } from '../../components/LightButton';
+import { LightButton } from "../../components/LightButton";
 
 const FullProperty = () => {
+  // Property 0bject including the images
   const [property, setProperty] = React.useState<any>();
+  // 3 other properties array
+  const [otherProperties, setOtherProperties] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [showNaira, setShowNaira] = React.useState(true);
   const getProperty = async (propertyID: number) => {
@@ -21,52 +24,93 @@ const FullProperty = () => {
     const snapshot = await propertyRef.get();
     if (snapshot.exists) {
       const data: any = snapshot.data();
-      console.log(data);
       setProperty(data);
+      console.log(data);
+
+      getOtherProperty(data.property_location);
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
+  };
+  const getOtherProperty = async (loc: string) => {
+    console.log(loc);
+
+    const propertyRef = firestore
+      .collection("properties")
+      .where("property_location", "==", loc.toLowerCase());
+    const snapshot = await propertyRef;
+    snapshot.onSnapshot((snapShot: any) => {
+      if (!snapShot.empty) {
+        let newProperties = [];
+        for (let i = 0; i < snapShot.docs.length; i++) {
+          newProperties.push(snapShot.docs[i].data());
+        }
+        setOtherProperties(newProperties);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    });
   };
   React.useEffect(() => {
     const propertyID: any = localStorage.getItem("propertyID");
     getProperty(propertyID);
   }, [""]);
 
-  let dateAttr = new Date(); 
-  console.log(dateAttr.toLocaleDateString())
+  let dateAttr = new Date();
+  console.log(dateAttr.toLocaleDateString());
 
-  const CostPriceCard = () => { 
-    return ( 
-      <Flex direction='column' display={property?.id ? 'flex' : 'none'}>
-        <Box my={{base: 8}}>
-          <LightButton onClick={() => {setShowNaira(!showNaira)}}>
-          {
-            showNaira ? 'Show Dollar Equivalent' : 'Show Naira Equivalent'
-          }
+  const CostPriceCard = () => {
+    return (
+      <Flex direction="column" display={property?.id ? "flex" : "none"}>
+        <Box my={{ base: 8 }}>
+          <LightButton
+            onClick={() => {
+              setShowNaira(!showNaira);
+            }}
+          >
+            {showNaira ? "Show Dollar Equivalent" : "Show Naira Equivalent"}
           </LightButton>
         </Box>
-        <Flex gap={{base: 8}}>
+        <Flex gap={{ base: 8 }}>
           <Box>
-            <Text fontFamily='ProductBold' color='secondary.200'>
-              {showNaira ? 'Naira' : 'Dollar'}
+            <Text fontFamily="ProductBold" color="secondary.200">
+              {showNaira ? "Naira" : "Dollar"}
             </Text>
-            <Heading 
-              fontSize='5xl' 
-              fontFamily='ProductBold' 
-              color='secondary.100'
-            > 
-              {showNaira ? Number(property?.one_time_payment_naira).toLocaleString() : Number(property?.one_time_payment_dollar).toLocaleString()} 
+            <Heading
+              fontSize="5xl"
+              fontFamily="ProductBold"
+              color="secondary.100"
+            >
+              {showNaira
+                ? Number(property?.one_time_payment_naira).toLocaleString()
+                : Number(property?.one_time_payment_dollar).toLocaleString()}
             </Heading>
-            <Text fontFamily='ProductBold' color='secondary.200'>One-Time Payment.</Text>
+            <Text fontFamily="ProductBold" color="secondary.200">
+              One-Time Payment.
+            </Text>
           </Box>
           <Box>
-            <Text fontFamily='ProductBold' color='secondary.200'>{showNaira ? 'Naira' : 'Dollar'}</Text>
-            <Heading fontSize='5xl' fontFamily='ProductBold' color='secondary.100'>{showNaira ? Number(property?.rental_value_naira).toLocaleString() : Number(property?.rental_value_dollar).toLocaleString()} </Heading>
-            <Text fontFamily='ProductBold' color='secondary.200'>Rental Value</Text>
+            <Text fontFamily="ProductBold" color="secondary.200">
+              {showNaira ? "Naira" : "Dollar"}
+            </Text>
+            <Heading
+              fontSize="5xl"
+              fontFamily="ProductBold"
+              color="secondary.100"
+            >
+              {showNaira
+                ? Number(property?.rental_value_naira).toLocaleString()
+                : Number(property?.rental_value_dollar).toLocaleString()}{" "}
+            </Heading>
+            <Text fontFamily="ProductBold" color="secondary.200">
+              Rental Value
+            </Text>
           </Box>
-        </Flex>          
+        </Flex>
       </Flex>
-    )
-  }
+    );
+  };
   return (
     <Flex direction="column">
       <Flex
@@ -226,12 +270,21 @@ const FullProperty = () => {
 
       <Flex gap={{ base: 6 }}>
         <Flex w={{ lg: "70%", base: "100%" }}>
-          <Text w={{base: "90%"}} fontSize="lg" fontFamily="ProductLight" lineHeight="2">
+          <Text
+            w={{ base: "90%" }}
+            fontSize="lg"
+            fontFamily="ProductLight"
+            lineHeight="2"
+          >
             {property?.property_description}
           </Text>
         </Flex>
 
-        <Flex gap={{base: 4}} w={{ lg: "30%", base: "100%" }} direction={{base: 'column'}}>
+        <Flex
+          gap={{ base: 4 }}
+          w={{ lg: "30%", base: "100%" }}
+          direction={{ base: "column" }}
+        >
           {/* <CostPriceCard /> */}
           <ClientScheduleCard propertyID={property?.id} />
         </Flex>
