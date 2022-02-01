@@ -225,17 +225,16 @@ const Home: NextPage = () => {
           <Heading my={{base: 10}} fontSize={{base: '25px'}} fontFamily={'ProductBold'}>Showing all properties</Heading>
         }
       </Flex>
-      <Grid
+      <Flex
         mb={{ lg: 40, base: 32 }}
         rowGap={{ base: "28" }}
         columnGap={{ base: "25" }}
-        direction={{ base: "column", lg: "row" }}
-        gridTemplateColumns={{ base: "repeat(1, 1fr)", lg: "repeat(2, 1fr)" }}
+        // direction={{ base: "column", lg: "row" }}
       >
         {properties.map((item: object, index: number) => {
           return <PropertyPreviewCard key={index} data={item} />;
         })}
-      </Grid>
+      </Flex>
       {lastDoc && (
         <Flex direction="row" justify="center" align="center" gap={2}>
           <Divider

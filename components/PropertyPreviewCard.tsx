@@ -9,7 +9,8 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
   return (
     <Link href={`/p/${data.id}`}>
       <Flex
-        direction="column"
+        w='100%'
+        direction={{lg:"column", base: 'row'}}
         pt={{lg:"30rem", base: '24rem'}}
         bg={`linear-gradient(180.03deg, rgba(0, 0, 0, 0) 50%, #000000 99.97%), url(${data?.images?.main})`}
         bgPosition="center"
@@ -31,7 +32,7 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
           >
             {data.property_name}
           </Heading>
-          <Text fontFamily="ProductLight" color="white">
+          <Text w='50%' fontFamily="ProductLight" color="white">
             {data.property_sublocation}
           </Text>
         </Flex>

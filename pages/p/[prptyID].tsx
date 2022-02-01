@@ -9,10 +9,12 @@ import bathRmIcnBlack from "../../public/bathRmIconBlack.svg";
 import bedRmIconBlack from "../../public/bedRmIcnBlack.svg";
 import ImgSampleIcon from "../../public/ImgSampleIcon.svg";
 import { ClientScheduleCard } from "../../components/ClientScheduleCard";
+import { LightButton } from '../../components/LightButton';
 
 const FullProperty = () => {
   const [property, setProperty] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showNaira, setShowNaira] = React.useState(true);
   const getProperty = async (propertyID: number) => {
     setIsLoading(true);
     const propertyRef = firestore.collection("properties").doc(`${propertyID}`);
@@ -28,6 +30,43 @@ const FullProperty = () => {
     const propertyID: any = localStorage.getItem("propertyID");
     getProperty(propertyID);
   }, [""]);
+
+  let dateAttr = new Date(); 
+  console.log(dateAttr.toLocaleDateString())
+
+  const CostPriceCard = () => { 
+    return ( 
+      <Flex direction='column' display={property?.id ? 'flex' : 'none'}>
+        <Box my={{base: 8}}>
+          <LightButton onClick={() => {setShowNaira(!showNaira)}}>
+          {
+            showNaira ? 'Show Dollar Equivalent' : 'Show Naira Equivalent'
+          }
+          </LightButton>
+        </Box>
+        <Flex gap={{base: 8}}>
+          <Box>
+            <Text fontFamily='ProductBold' color='secondary.200'>
+              {showNaira ? 'Naira' : 'Dollar'}
+            </Text>
+            <Heading 
+              fontSize='5xl' 
+              fontFamily='ProductBold' 
+              color='secondary.100'
+            > 
+              {showNaira ? Number(property?.one_time_payment_naira).toLocaleString() : Number(property?.one_time_payment_dollar).toLocaleString()} 
+            </Heading>
+            <Text fontFamily='ProductBold' color='secondary.200'>One-Time Payment.</Text>
+          </Box>
+          <Box>
+            <Text fontFamily='ProductBold' color='secondary.200'>{showNaira ? 'Naira' : 'Dollar'}</Text>
+            <Heading fontSize='5xl' fontFamily='ProductBold' color='secondary.100'>{showNaira ? Number(property?.rental_value_naira).toLocaleString() : Number(property?.rental_value_dollar).toLocaleString()} </Heading>
+            <Text fontFamily='ProductBold' color='secondary.200'>Rental Value</Text>
+          </Box>
+        </Flex>          
+      </Flex>
+    )
+  }
   return (
     <Flex direction="column">
       <Flex
@@ -168,7 +207,7 @@ const FullProperty = () => {
         direction={{ lg: "row", base: "column" }}
         align="center"
       >
-        <Flex direction="column" w={{ lg: "60%" }}>
+        <Flex direction="column" w={{ lg: "70%" }}>
           <Heading fontFamily="ProductBold" color="primary.300" fontSize="3xl">
             {property?.property_name}
           </Heading>
@@ -180,25 +219,21 @@ const FullProperty = () => {
           </Heading>
         </Flex>
 
-        <Flex w="100%">
-          <Divider
-            mt={{ lg: "8" }}
-            border="1px"
-            borderColor="secondary.100"
-            borderRadius="10px"
-          />
+        <Flex w="30%">
+          <CostPriceCard />
         </Flex>
       </Flex>
 
       <Flex gap={{ base: 6 }}>
         <Flex w={{ lg: "70%", base: "100%" }}>
-          <Text fontSize="lg" fontFamily="ProductLight" lineHeight="2">
+          <Text w={{base: "90%"}} fontSize="lg" fontFamily="ProductLight" lineHeight="2">
             {property?.property_description}
           </Text>
         </Flex>
 
-        <Flex w={{ lg: "30%", base: "100%" }}>
-          <ClientScheduleCard propertyID={property.id} />
+        <Flex gap={{base: 4}} w={{ lg: "30%", base: "100%" }} direction={{base: 'column'}}>
+          {/* <CostPriceCard /> */}
+          <ClientScheduleCard propertyID={property?.id} />
         </Flex>
       </Flex>
     </Flex>

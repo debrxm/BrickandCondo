@@ -4,6 +4,7 @@ import { Button } from "@chakra-ui/react";
 export const LightButton = (props: any) => {
   return (
     <Button
+      disabled={props.disabled}
       fontFamily='ProductBold'
       px={10}
       color="white"
