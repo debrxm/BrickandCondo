@@ -13,7 +13,7 @@ import {
   Input,
 } from "@chakra-ui/react";
 import React from "react";
-import { CustomInput, CustomTextArea } from "../../components/CustomInput";
+import { CustomInput, CustomSelect, CustomTextArea } from "../../components/CustomInput";
 import { DangerButton } from "../../components/DangerButton";
 import { LightButton } from "../../components/LightButton";
 import { LoggedInBanner } from "../../components/LoggedInBanner";
@@ -338,7 +338,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
     <Flex direction="column"></Flex>
   ) : (
     <Flex direction="column">
-      <LoggedInBanner email={{email:{user}}} />
+      <LoggedInBanner email={user && { ...Object.values(user) }} />
       <Popover>
         <PopoverTrigger>
           <Flex direction="column" w="fit-content" my={{ base: 4 }}>
@@ -583,18 +583,9 @@ const IndividualProperty = ({ user }: { user: object }) => {
                       }
                 }
               />
-              <CustomInput
-                type="text"
-                id="propertyLocation"
-                label="Property Location"
-                value={property_location}
-                onChange={
-                  isLoading
-                    ? () => {}
-                    : (e: any) => {
-                        setPropertyLocation(e.target.value);
-                      }
-                }
+              <CustomSelect
+                defaultValue={property_location}
+                updateSelect={(data: {data:any, target: any}) => {!isLoading && setPropertyLocation(data.target.value)}} label='Property Location'
               />
               <CustomTextArea
                 type="text"

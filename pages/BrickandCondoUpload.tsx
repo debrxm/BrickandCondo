@@ -9,7 +9,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React from "react";
-import { CustomInput, CustomTextArea } from "../components/CustomInput";
+import { CustomInput, CustomSelect, CustomTextArea } from "../components/CustomInput";
 import { DangerButton } from "../components/DangerButton";
 import firebase from "../firebase/config";
 import {
@@ -21,8 +21,6 @@ import { LightButton } from "../components/LightButton";
 import { CreateProperty } from "../firebase/firestore";
 import Router from "next/router";
 import { LoggedInBanner } from "../components/LoggedInBanner";
-import Image from "next/image";
-import AddIcon from "../public/addIcon.svg";
 
 const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
@@ -439,19 +437,8 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                           }
                     }
                   />
-                  <CustomInput
-                    type="text"
-                    id="propertyLocation"
-                    label="Property Location"
-                    value={property_location}
-                    onChange={
-                      isLoading
-                        ? () => {}
-                        : (e: any) => {
-                            setPropertyLocation(e.target.value);
-                          }
-                    }
-                  />
+                  <CustomSelect
+                    updateSelect={(data: {data:any, target: any}) => {!isLoading && setPropertyLocation(data.target.value)}} label='Property Location'/>
                   <CustomTextArea
                     type="text"
                     id="DescriptionData"

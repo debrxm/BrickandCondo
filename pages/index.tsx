@@ -227,9 +227,9 @@ const Home: NextPage = () => {
       </Flex>
       <Flex
         mb={{ lg: 40, base: 32 }}
-        rowGap={{ base: "28" }}
-        columnGap={{ base: "25" }}
-        // direction={{ base: "column", lg: "row" }}
+        direction={{ base: "column", lg: "row" }}
+        flexWrap='wrap'
+        gap='2%'
       >
         {properties.map((item: object, index: number) => {
           return <PropertyPreviewCard key={index} data={item} />;

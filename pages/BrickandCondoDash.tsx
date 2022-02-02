@@ -93,9 +93,10 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
                 Propeties to manage:
               </Heading>
               <Flex
-                gap={{ lg: 4, base: 4 }}
+                gap={{ lg: 2, base: 4 }}
                 mt={{ lg: 4 }}
                 direction={{ base: "column", lg: "row" }}
+                flexWrap='wrap'
               >
                 {
                   Object.values(properties)[0] ? 

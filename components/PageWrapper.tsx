@@ -23,7 +23,7 @@ const Header = () => {
 const Footer = () => { 
   return ( 
     <Box  
-      mt={{lg:64, base: 32}}
+      mt={{lg:10, base: 32}}
       py={16}
       px={12}
       borderRadius='3xl'

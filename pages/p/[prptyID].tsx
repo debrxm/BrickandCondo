@@ -21,7 +21,6 @@ const FullProperty = () => {
     const snapshot = await propertyRef.get();
     if (snapshot.exists) {
       const data: any = snapshot.data();
-      console.log(data);
       setProperty(data);
     }
     setIsLoading(false);
@@ -232,7 +231,6 @@ const FullProperty = () => {
         </Flex>
 
         <Flex gap={{base: 4}} w={{ lg: "30%", base: "100%" }} direction={{base: 'column'}}>
-          {/* <CostPriceCard /> */}
           <ClientScheduleCard propertyID={property?.id} />
         </Flex>
       </Flex>

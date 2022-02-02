@@ -4,6 +4,7 @@ import {
   FormLabel,
   Input,
   Textarea,
+  Select,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -27,6 +28,7 @@ export const CustomInput = ({
         textTransform="capitalize"
         color="secondary.100"
         htmlFor={type}
+        fontFamily='ProductLight'
       >
         {label} 
         { 
@@ -86,3 +88,27 @@ export const CustomTextArea = ({
     </FormControl>
   );
 };
+
+
+export const CustomSelect = ({
+  label, 
+  updateSelect,
+  defaultValue
+}: {
+  label: string, 
+  updateSelect: any,
+  defaultValue?: string
+}) => { 
+  return ( 
+    <>
+    <Text color="secondary.100" fontFamily='ProductLight'>{label}</Text>
+    <Select defaultValue={defaultValue ? defaultValue : ''} onChange={updateSelect} fontFamily='ProductBold' bg='white' _focus={{outline: 'none'}} placeholder='Select option'>
+      <option value='Lekki'>Lekki</option>
+      <option value='Ikoyi'>Ikoyi</option>
+      <option value='VI'>VI</option>
+      <option value='Ajah'>Ajah</option>
+      <option value='Sangotedo'>Sangotedo</option>
+    </Select>
+    </>
+  )
+}

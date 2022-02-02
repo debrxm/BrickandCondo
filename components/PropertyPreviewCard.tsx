@@ -9,9 +9,9 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
   return (
     <Link href={`/p/${data.id}`}>
       <Flex
-        w='100%'
+        w={{lg:'48%', base: '100%'}}
         direction={{lg:"column", base: 'row'}}
-        pt={{lg:"30rem", base: '24rem'}}
+        pt={{lg:"24rem", base: '24rem'}}
         bg={`linear-gradient(180.03deg, rgba(0, 0, 0, 0) 50%, #000000 99.97%), url(${data?.images?.main})`}
         bgPosition="center"
         bgSize="cover"
@@ -21,6 +21,7 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
         position="relative"
         cursor="pointer"
         onClick={() => localStorage.setItem("propertyID", data.id)}
+        mb={{base: 20}}
       >
         <Flex direction="column" pb={16}>
           <Heading
