@@ -16,7 +16,7 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
         bgPosition="center"
         bgSize="cover"
         pl={{ base: 10 }}
-        pr={{ lg: 28, base: 20 }}
+        // pr={{ lg: 28, base: 20 }}
         borderRadius={{ lg: "3xl", base: "2xl" }}
         position="relative"
         cursor="pointer"
@@ -33,7 +33,7 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
           >
             {data.property_name}
           </Heading>
-          <Text w='50%' fontFamily="ProductLight" color="white">
+          <Text w={{lg:'50%', base: '90%'}} fontFamily="ProductLight" color="white">
             {data.property_sublocation}
           </Text>
         </Flex>
@@ -73,7 +73,7 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
               <Image alt="" src={SqftIcon} />
             </Box>
             <Text fontFamily="ProductLight" color="white">
-              {data.square_foot} Sqft.
+              {Number(data.square_foot).toLocaleString()} Sqft.
             </Text>
           </Flex>
         </Flex>

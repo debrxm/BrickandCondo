@@ -35,7 +35,7 @@ const FullProperty = () => {
 
   const CostPriceCard = () => { 
     return ( 
-      <Flex direction='column' display={property?.id ? 'flex' : 'none'}>
+      <Flex direction='column' w={{base: '100%', md: '50%', lg: '100%'}} display={property?.id ? 'flex' : 'none'}>
         <Box my={{base: 8}}>
           <LightButton onClick={() => {setShowNaira(!showNaira)}}>
           {
@@ -43,13 +43,13 @@ const FullProperty = () => {
           }
           </LightButton>
         </Box>
-        <Flex gap={{base: 8}}>
-          <Box>
+        <Flex gap={{base: 8}} w='100%'> 
+          <Box w={{base: '50%', lg: '100%'}}>
             <Text fontFamily='ProductBold' color='secondary.200'>
               {showNaira ? 'Naira' : 'Dollar'}
             </Text>
             <Heading 
-              fontSize='5xl' 
+              fontSize={{lg:'5xl', base: '3xl'}} 
               fontFamily='ProductBold' 
               color='secondary.100'
             > 
@@ -57,9 +57,9 @@ const FullProperty = () => {
             </Heading>
             <Text fontFamily='ProductBold' color='secondary.200'>One-Time Payment.</Text>
           </Box>
-          <Box>
+          <Box w={{base: '50%', lg: '100%'}}>
             <Text fontFamily='ProductBold' color='secondary.200'>{showNaira ? 'Naira' : 'Dollar'}</Text>
-            <Heading fontSize='5xl' fontFamily='ProductBold' color='secondary.100'>{showNaira ? Number(property?.rental_value_naira).toLocaleString() : Number(property?.rental_value_dollar).toLocaleString()} </Heading>
+            <Heading fontSize={{lg:'5xl', base: '3xl'}} fontFamily='ProductBold' color='secondary.100'>{showNaira ? Number(property?.rental_value_naira).toLocaleString() : Number(property?.rental_value_dollar).toLocaleString()} </Heading>
             <Text fontFamily='ProductBold' color='secondary.200'>Rental Value</Text>
           </Box>
         </Flex>          
@@ -98,7 +98,7 @@ const FullProperty = () => {
       >
         <Box w={{ lg: "70%", base: "100%" }}>
           <Flex
-            h="100%"
+            h={{lg: "100%", base: "20vh"}}
             align="center"
             justifyContent="center"
             borderRadius="xl"
@@ -114,12 +114,12 @@ const FullProperty = () => {
         </Box>
         <Flex
           gap={{ base: 4 }}
-          direction={{ base: "column" }}
+          direction={{ base: "row", lg: 'column' }}
           w={{ lg: "30%", base: "100%" }}
         >
-          <Box h="100%">
+          <Box h="100%" w={{base: '50%', lg: '100%'}}>
             <Flex
-              h="100%"
+              h={{lg: '100%', base: '25vh'}}
               align="center"
               justifyContent="center"
               borderRadius="xl"
@@ -133,9 +133,9 @@ const FullProperty = () => {
               bgPosition="center"
             />
           </Box>
-          <Box h="100%">
+          <Box h={{lg: '100%', base: '25vh'}} w={{base: '50%', lg: '100%'}}>
             <Flex
-              h="100%"
+              h={{lg: '100%', base: '25vh'}}
               align="center"
               justifyContent="center"
               borderRadius="xl"
@@ -152,7 +152,7 @@ const FullProperty = () => {
         </Flex>
       </Flex>
 
-      <Flex>
+      <Flex gap={{base: '8', lg: '0'}} direction={{lg: 'row', base: 'column'}}>
         <Flex width={{ lg: "80%" }}>
           <Flex align="center" gap="10">
             <Flex direction={{ base: "column" }} rowGap="2">
@@ -184,16 +184,18 @@ const FullProperty = () => {
 
         <Flex width={{ lg: "20%" }}>
           <Flex
+            justify='center'
+            w={{lg: '100%'}}
             align="center"
             gap="4"
             bg="white"
-            px="4"
-            py="2"
+            px={{base:4, lg: 4, md: 6}}
+            py={{base:4, lg: 4, md: 4}}
             borderRadius="xl"
             cursor="pointer"
             boxShadow="0px 0px 22px rgba(0, 0, 0, 0.08);"
           >
-            <Box w="40px" h="40px">
+            <Box w="30px" h="30px">
               <Image alt="" src={ImgSampleIcon} />
             </Box>
             <Text fontFamily="ProductBold">See more images</Text>
@@ -204,28 +206,25 @@ const FullProperty = () => {
       <Flex
         my={{ lg: 10, base: 8 }}
         direction={{ lg: "row", base: "column" }}
-        align="center"
+        align={{lg: "center"}}
       >
-        <Flex direction="column" w={{ lg: "70%" }}>
-          <Heading fontFamily="ProductBold" color="primary.300" fontSize="3xl">
+        <Flex direction="column" w={{ lg: "70%", base: '100%' }}>
+          <Heading fontFamily="ProductBold" color="secondary.100" fontSize="3xl" textTransform='capitalize'>
             {property?.property_name}
           </Heading>
-          <Heading fontFamily="ProductBold" color="primary.300" fontSize="3xl">
-            {property?.property_location}
-          </Heading>
-          <Heading fontFamily="ProductBold" color="primary.300" fontSize="3xl">
-            {property?.property_sublocation}
+          <Heading fontFamily="ProductLight" color="primary.300" fontSize="2xl" textTransform='capitalize'>
+            {property?.property_location}, {property?.property_sublocation}
           </Heading>
         </Flex>
 
-        <Flex w="30%">
+        <Flex w={{lg: "30%", base: '100%'}}>
           <CostPriceCard />
         </Flex>
       </Flex>
 
-      <Flex gap={{ base: 6 }}>
+      <Flex gap={{ base: 6 }} direction={{base: 'column', lg: 'row'}}>
         <Flex w={{ lg: "70%", base: "100%" }}>
-          <Text w={{base: "90%"}} fontSize="lg" fontFamily="ProductLight" lineHeight="2">
+          <Text w={{base: "100%", lg: '90%'}} fontSize="lg" fontFamily="ProductLight" lineHeight="2">
             {property?.property_description}
           </Text>
         </Flex>

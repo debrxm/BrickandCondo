@@ -89,8 +89,9 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
                 color="secondary.100"
                 fontSize={{ lg: "2xl", base: "2xl" }}
                 w={{ lg: "80%" }}
+                mb={{base: 4}}
               >
-                Propeties to manage:
+                Properties to manage:
               </Heading>
               <Flex
                 gap={{ lg: 2, base: 4 }}
