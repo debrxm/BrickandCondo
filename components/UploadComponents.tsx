@@ -169,12 +169,14 @@ export const EditMainUploadComp = ({
 export const AddedImagesPreview = ({
   imageURL,
   index,
+  pathId,
   propertyId,
   otherImagesUploadURL,
   setOtherImagesUploadURL,
 }: {
   imageURL: string;
   index: number;
+  pathId: number;
   propertyId: number;
   otherImagesUploadURL: any;
   setOtherImagesUploadURL: any;
@@ -211,7 +213,7 @@ export const AddedImagesPreview = ({
         onClick={() => {
           const storageRef = firebase
             .storage()
-            .ref(`properties/${propertyId}/otherImages-${index}`);
+            .ref(`properties/${propertyId}/otherImages-${pathId}`);
           storageRef
             .listAll()
             .then((dir) => {

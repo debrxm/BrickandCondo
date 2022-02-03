@@ -9,18 +9,19 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
   return (
     <Link href={`/p/${data.id}`}>
       <Flex
-        w='100%'
+        w={{lg:'48%', base: '100%'}}
         direction={{lg:"column", base: 'row'}}
-        pt={{lg:"30rem", base: '24rem'}}
+        pt={{lg:"24rem", base: '24rem'}}
         bg={`linear-gradient(180.03deg, rgba(0, 0, 0, 0) 50%, #000000 99.97%), url(${data?.images?.main})`}
         bgPosition="center"
         bgSize="cover"
         pl={{ base: 10 }}
-        pr={{ lg: 28, base: 20 }}
+        // pr={{ lg: 28, base: 20 }}
         borderRadius={{ lg: "3xl", base: "2xl" }}
         position="relative"
         cursor="pointer"
         onClick={() => localStorage.setItem("propertyID", data.id)}
+        mb={{base: 20}}
       >
         <Flex direction="column" pb={16}>
           <Heading
@@ -32,7 +33,7 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
           >
             {data.property_name}
           </Heading>
-          <Text w='50%' fontFamily="ProductLight" color="white">
+          <Text w={{lg:'50%', base: '90%'}} fontFamily="ProductLight" color="white">
             {data.property_sublocation}
           </Text>
         </Flex>
@@ -72,7 +73,7 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
               <Image alt="" src={SqftIcon} />
             </Box>
             <Text fontFamily="ProductLight" color="white">
-              {data.square_foot} Sqft.
+              {Number(data.square_foot).toLocaleString()} Sqft.
             </Text>
           </Flex>
         </Flex>

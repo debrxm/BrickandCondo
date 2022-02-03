@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Box,
   Flex,
@@ -7,15 +7,15 @@ import {
   FormLabel,
   Heading,
   Input,
-} from "@chakra-ui/react";
-import { firestore } from "../firebase/config";
-import { LightButton } from "./LightButton";
+} from '@chakra-ui/react';
+import { firestore } from '../firebase/config';
+import { LightButton } from './LightButton';
 
 export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
-  const [name, setName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [phone, setPhone] = React.useState("");
-  const [date, setDate] = React.useState("");
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [phone, setPhone] = React.useState('');
+  const [date, setDate] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [status, setStatus] = React.useState<any | {}>({});
   const onSubmit = async () => {
@@ -31,9 +31,9 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
         clientEmail: email,
         scheduledDate: date,
       });
-      setStatus({ code: 200, message: "Success" });
+      setStatus({ code: 200, message: 'Success' });
     } catch (error) {
-      setStatus({ code: 404, message: "Failed" });
+      setStatus({ code: 404, message: 'Failed' });
     }
     setIsLoading(false);
   };
@@ -42,18 +42,18 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
   
   return (
     <Flex
-      w="100%"
-      py={{ lg: 14 }}
-      px={{ lg: 8 }}
-      bg="secondary.100"
-      borderRadius="xl"
-      direction="column"
+      w={{base:'100%', md: '50%', lg: '100%'}}
+      py={{ lg: 14, base: 8 }}
+      px={{ lg: 8, base: 10 }}
+      bg='secondary.100'
+      borderRadius='xl'
+      direction='column'
     >
       <Heading
-        color="white"
-        textTransform="capitalize"
-        fontFamily="ProductBold"
-        fontSize="2xl"
+        color='white'
+        textTransform='capitalize'
+        fontFamily='ProductBold'
+        fontSize='2xl'
         mb={{base: 4}}
       >
         schedule a date to see this property- we can’t wait to meet you!
@@ -62,21 +62,21 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
       <form onSubmit={onSubmit} style={{fontFamily:'ProductLight'}}>
         {status && (
           <FormLabel
-            style={{ color: "#ffffff", textAlign: "center" }}
-            htmlFor="name"
+            style={{ color: '#ffffff', textAlign: 'center' }}
+            htmlFor='name'
           >
             {status.message}
           </FormLabel>
         )}
-        <FormControl fontFamily="ProductLight" mb={{base: 4}}>
-          <FormLabel fontFamily="ProductLight" style={{ color: "#ffffff" }} htmlFor="name">
+        <FormControl fontFamily='ProductLight' mb={{base: 4}}>
+          <FormLabel fontFamily='ProductLight' style={{ color: '#ffffff' }} htmlFor='name'>
             Full name
           </FormLabel>
           <Input
             fontFamily='ProductLight'
-            id="name"
-            type="text"
-            style={{ color: "#ffffff" }}
+            id='name'
+            type='text'
+            style={{ color: '#ffffff' }}
             value={name}
             onChange={
               isLoading
@@ -88,14 +88,14 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
           />
         </FormControl>
         <FormControl  mb={{base: 4}}>
-          <FormLabel style={{ color: "#ffffff" }} htmlFor="email">
+          <FormLabel style={{ color: '#ffffff' }} htmlFor='email'>
             Email address
           </FormLabel>
           <Input
             fontFamily='ProductLight'
-            id="email"
-            type="email"
-            style={{ color: "#ffffff" }}
+            id='email'
+            type='email'
+            style={{ color: '#ffffff' }}
             value={email}
             onChange={
               isLoading
@@ -107,14 +107,14 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
           />
         </FormControl>
         <FormControl  mb={{base: 4}}>
-          <FormLabel style={{ color: "#ffffff" }} htmlFor="phoneNumber">
+          <FormLabel style={{ color: '#ffffff' }} htmlFor='phoneNumber'>
             Phone Number
           </FormLabel>
           <Input
             fontFamily='ProductLight'
-            id="phoneNumber"
-            type="number"
-            style={{ color: "#ffffff" }}
+            id='phoneNumber'
+            type='number'
+            style={{ color: '#ffffff' }}
             value={phone}
             onChange={
               isLoading
@@ -126,14 +126,14 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
           />
         </FormControl>
         <FormControl  mb={{base: 4}}>
-          <FormLabel style={{ color: "#ffffff" }} htmlFor="date">
+          <FormLabel style={{ color: '#ffffff' }} htmlFor='date'>
             Select a date
           </FormLabel>
           <Input
             fontFamily='ProductLight'
-            id="date"
-            type="date"
-            style={{ color: "#ffffff" }}
+            id='date'
+            type='date'
+            style={{ color: '#ffffff' }}
             value={date}
             min={dateArr.join('-')}
             onChange={
@@ -145,12 +145,12 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
             }
           />
         </FormControl>
-        <Box w={{ lg: "40%" }} mt={{ base: 4 }} mb={{base: 4}}>
+        <Box w={{ lg: '40%' }} mt={{ base: 4 }} mb={{base: 4}}>
           <LightButton 
             onClick={isLoading ? () => {} : onSubmit}
             disabled={!(name && email && phone && date)}
           >
-            {isLoading ? "Sending..." : "Submit"}
+            {isLoading ? 'Sending...' : 'Submit'}
           </LightButton>
         </Box>
       </form>

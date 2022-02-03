@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   const [hasProperty, setHasProperty] = React.useState(false);
   const [Location, setLocation] = React.useState<any | []>([]);
   const [propertiesRef, setPropertiesRef] = React.useState<any>(
-    firestore.collection("properties").limit(10)
+    firestore.collection("properties").limit(10).orderBy("created_at", "desc")
   );
   const [query, setQuery] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -152,7 +152,18 @@ const Home: NextPage = () => {
     }
   };
   const checkLocation = async () => {
-    const loc = ["All", "Lekki", "Magodo", "Ikorodu", "Bakew", "Small London"];
+    const loc = [
+      "All",
+      "Lekki",
+      "Magodo",
+      "Ikorodu",
+      "Bakew",
+      "Small London",
+      "Ikoyi",
+      "VI",
+      "Ajah",
+      "Sangotedo",
+    ];
     setIsLoading(true);
     const availableLocation: any = [];
     loc.forEach(async (item: string, index: number) => {
@@ -256,9 +267,9 @@ const Home: NextPage = () => {
       </Flex>
       <Flex
         mb={{ lg: 40, base: 32 }}
-        rowGap={{ base: "28" }}
-        columnGap={{ base: "25" }}
-        // direction={{ base: "column", lg: "row" }}
+        direction={{ base: "column", lg: "row" }}
+        flexWrap="wrap"
+        gap="2%"
       >
         {properties.map((item: object, index: number) => {
           return <PropertyPreviewCard key={index} data={item} />;

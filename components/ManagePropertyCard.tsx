@@ -21,7 +21,7 @@ export const ManagePropertyCard = ({
       px={8}
       fontFamily="ProductLight"
       color="white"
-      w={{base: '100%', lg: 'fit-content'}}
+      w={{base: '100%', lg: '48%'}}
     >
       <Flex direction="column" flexWrap="nowrap" gap={{ lg: 10, base: 10 }}>
         <Box>

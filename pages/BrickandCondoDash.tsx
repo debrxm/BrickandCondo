@@ -8,7 +8,6 @@ import { ManagePropertyCard } from "../components/ManagePropertyCard";
 import { firestore, auth } from "../firebase/config";
 
 const BrickandCondoDash = ({ user }: { user: object }) => {
-  
   const [properties, setProperties] = React.useState<object | any>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [hasProperty, setHasProperty] = React.useState(false);
@@ -27,7 +26,7 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
           };
           loadedProperties.push(data);
         }
-        console.log(typeof loadedProperties)
+        console.log(typeof loadedProperties);
         setProperties(loadedProperties);
       }
     });
@@ -42,26 +41,11 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
     }
   }, [JSON.stringify(user)]);
 
-  const DeleteThisFakeData = [
-    {
-      propName: "Main Street House 24 1717 Fraser Cir",
-      propTotalVisits: "6",
-    },
-    {
-      propName: "1717 Fraser Cir",
-      propTotalVisits: "0",
-    },
-    {
-      propName: "Crumbs Road 13",
-      propTotalVisits: "1",
-    },
-  ];
-
   return (
     <>
       {isAdmin && (
         <Flex direction="column">
-          <LoggedInBanner email={user && {...Object.values(user)}} />
+          <LoggedInBanner email={user && { ...Object.values(user) }} />
           <Flex direction="column">
             <Flex
               align="center"
@@ -89,16 +73,17 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
                 color="secondary.100"
                 fontSize={{ lg: "2xl", base: "2xl" }}
                 w={{ lg: "80%" }}
+                mb={{ base: 4 }}
               >
-                Propeties to manage:
+                Properties to manage:
               </Heading>
               <Flex
-                gap={{ lg: 4, base: 4 }}
+                gap={{ lg: 2, base: 4 }}
                 mt={{ lg: 4 }}
                 direction={{ base: "column", lg: "row" }}
+                flexWrap="wrap"
               >
-                {
-                  Object.values(properties)[0] ? 
+                {Object.values(properties)[0] ? (
                   properties.map((item: any, index: number) => {
                     console.log(Object.values(properties)[0]);
                     return (
@@ -110,8 +95,7 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
                       />
                     );
                   })
-
-                  : 
+                ) : (
                   <Heading
                     fontFamily="ProductBold"
                     color="secondary.200"
@@ -120,7 +104,7 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
                   >
                     They are currently no properties to manage
                   </Heading>
-                }
+                )}
               </Flex>
             </Flex>
           </Flex>

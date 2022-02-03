@@ -13,7 +13,11 @@ import {
   Input,
 } from "@chakra-ui/react";
 import React from "react";
-import { CustomInput, CustomTextArea } from "../../components/CustomInput";
+import {
+  CustomInput,
+  CustomSelect,
+  CustomTextArea,
+} from "../../components/CustomInput";
 import { DangerButton } from "../../components/DangerButton";
 import { LightButton } from "../../components/LightButton";
 import { LoggedInBanner } from "../../components/LoggedInBanner";
@@ -58,9 +62,12 @@ const IndividualProperty = ({ user }: { user: object }) => {
   const [mainImageBlob, setMainImageBlob] = React.useState<any>();
   const [subImageOneBlob, setSubImageOneBlob] = React.useState<any>();
   const [subImageTwoBlob, setSubImageTwoBlob] = React.useState<any>();
+
+  const [otherImagesBlob, setOtherImagesBlob] = React.useState<any | []>([]);
   const [otherImagesUploadURL, setOtherImagesUploadURL] = React.useState<
     any | []
   >([]);
+  const [otherImagesUploadName, setOtherImagesUploadName] = React.useState("");
   const [otherImageUrl, setOtherImageUrl] = React.useState("");
   const [mainImageUploadName, setMainImageUploadName] = React.useState("");
   const [subImageOneUploadURL, setSubImageOneUploadURL] = React.useState("");
@@ -80,6 +87,8 @@ const IndividualProperty = ({ user }: { user: object }) => {
   const [rental_value_dollar, setRentalValueDollar] = React.useState();
   const [uploadLoading, setUploadLoading] = React.useState(false);
   const [updateLoading, setUpdateLoading] = React.useState(false);
+  const [uploadOtherImageLoading, setUploadOtherImageLoading] =
+    React.useState(false);
   let lmainImageUploadURL: string;
   let lotherImagesUploadURL: any;
   let lsubImageOneUploadURL: string;
@@ -109,6 +118,16 @@ const IndividualProperty = ({ user }: { user: object }) => {
         setSubImageTwoBlob(selectedFile);
         setSubImageTwoUploadURL("");
         onDeletePropertyImage("subImageTwo");
+        break;
+      case "otherImages":
+        setCurrentUpload(selectedFile.name);
+        setOtherImagesUploadName(selectedFile.name);
+        setOtherImagesBlob([...otherImagesBlob, selectedFile]);
+        fetchOtherImageUrl(
+          selectedFile,
+          `${id}`,
+          `otherImages-${otherImagesBlob.length}`
+        );
         break;
       default:
         break;
@@ -175,6 +194,43 @@ const IndividualProperty = ({ user }: { user: object }) => {
       }
     );
   };
+  const fetchOtherImageUrl = async (
+    selectedFile: any,
+    dest: string,
+    anchor: string
+  ) => {
+    setUploadOtherImageLoading(true);
+    const storageRef = firebase
+      .storage()
+      .ref(`properties/${dest}/${anchor}/${selectedFile}`);
+    const uploadTask = storageRef.put(selectedFile);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED:
+            console.log("Upload is paused");
+            break;
+          case firebase.storage.TaskState.RUNNING:
+            console.log("Upload is running");
+            break;
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        // get the uploaded image url back
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          setOtherImagesUploadURL([
+            ...otherImagesUploadURL,
+            { pathId: otherImagesBlob.length, imageURL: downloadURL },
+          ]);
+          setUploadOtherImageLoading(false);
+        });
+      }
+    );
+  };
   const deleteFile = (pathToFile: string, fileName: string) => {
     const ref = firebase.storage().ref(pathToFile);
     const childRef = ref.child(fileName);
@@ -194,13 +250,13 @@ const IndividualProperty = ({ user }: { user: object }) => {
       });
   };
 
-  const onAddOtherImagesUploadURL = (url: string) => {
-    if (otherImageUrl.trim() === "") {
-      return;
-    }
-    setOtherImagesUploadURL([...otherImagesUploadURL, url]);
-    setOtherImageUrl("");
-  };
+  // const onAddOtherImagesUploadURL = (url: string) => {
+  //   if (otherImageUrl.trim() === "") {
+  //     return;
+  //   }
+  //   setOtherImagesUploadURL([...otherImagesUploadURL, url]);
+  //   setOtherImageUrl("");
+  // };
 
   const onUpdateProperty = async () => {
     setUpdateLoading(true);
@@ -305,6 +361,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
       lotherImagesUploadURL = data.images.other_images;
       setMainImageUploadURL(data.images.main);
       setOtherImagesUploadURL(data.images.other_images);
+      setOtherImagesBlob(data.images.other_images);
       setSubImageOneUploadURL(data.images.sub_image_one);
       setSubImageTwoUploadURL(data.images.sub_image_two);
       setProperty(data);
@@ -338,7 +395,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
     <Flex direction="column"></Flex>
   ) : (
     <Flex direction="column">
-      <LoggedInBanner email={{email:{user}}} />
+      <LoggedInBanner email={user && { ...Object.values(user) }} />
       <Popover>
         <PopoverTrigger>
           <Flex direction="column" w="fit-content" my={{ base: 4 }}>
@@ -427,47 +484,39 @@ const IndividualProperty = ({ user }: { user: object }) => {
         </Flex>
       </Flex>
 
-      <Flex
-        my={{ base: 8 }}
-        bg="white"
-        w={{ base: "80%" }}
-        gap={{ base: 4 }}
-        fontFamily="ProductLight"
-        borderRadius="xl"
-        p={{ base: 4 }}
-        cursor="pointer"
-      >
-        <Input
-          border="none"
-          _focus={{ outline: "none" }}
-          placeholder="Paste other image link here"
-          value={otherImageUrl}
+      <Flex gap={{ lg: 4, base: 10 }} my="6">
+        <AddMulitplePhotos
+          text={otherImagesUploadName || "Add other images"}
           onChange={
-            isLoading
+            isLoading || uploadOtherImageLoading
               ? () => {}
               : (e: any) => {
-                  setOtherImageUrl(e.target.value);
+                  onUploadImage(e, "otherImages");
                 }
           }
-        />
-        <Image
-          alt=""
-          src={AddIcon}
-          onClick={() => onAddOtherImagesUploadURL(otherImageUrl)}
+          disabled={uploadOtherImageLoading}
         />
       </Flex>
+      {uploadOtherImageLoading && (
+        <Flex gap={{ lg: 4, base: 10 }} my="4">
+          <Text fontFamily="ProductBold" color="primary.300">
+            Uploading...
+          </Text>
+        </Flex>
+      )}
 
       <Flex my={{ base: 8 }} gap={{ base: 4 }} direction="column">
         <Heading fontFamily="ProductBold" fontSize="2xl">
           Added Images:
         </Heading>
         <Flex gap={{ base: 4 }}>
-          {otherImagesUploadURL.map((item: string, index: number) => {
+          {otherImagesUploadURL.map((item: any, index: number) => {
             return (
               <Box w="fit-content" key={index}>
                 <AddedImagesPreview
-                  imageURL={item}
+                  imageURL={item.imageURL}
                   index={index}
+                  pathId={item.pathId}
                   propertyId={property.id}
                   otherImagesUploadURL={otherImagesUploadURL}
                   setOtherImagesUploadURL={setOtherImagesUploadURL}
@@ -477,6 +526,17 @@ const IndividualProperty = ({ user }: { user: object }) => {
           })}
         </Flex>
       </Flex>
+      <Box>
+        <DangerButton
+          onClick={() => {
+            setOtherImagesBlob([]);
+            setOtherImagesUploadName("Add other images");
+            setOtherImagesUploadURL([]);
+          }}
+        >
+          Clear
+        </DangerButton>
+      </Box>
 
       <Flex direction="column" my="10">
         <Heading
@@ -583,18 +643,12 @@ const IndividualProperty = ({ user }: { user: object }) => {
                       }
                 }
               />
-              <CustomInput
-                type="text"
-                id="propertyLocation"
+              <CustomSelect
+                defaultValue={property_location}
+                updateSelect={(data: { data: any; target: any }) => {
+                  !isLoading && setPropertyLocation(data.target.value);
+                }}
                 label="Property Location"
-                value={property_location}
-                onChange={
-                  isLoading
-                    ? () => {}
-                    : (e: any) => {
-                        setPropertyLocation(e.target.value);
-                      }
-                }
               />
               <CustomTextArea
                 type="text"
