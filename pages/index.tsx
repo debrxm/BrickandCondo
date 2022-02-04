@@ -174,7 +174,7 @@ const Home: NextPage = () => {
 
       if (!snapshot.empty) {
         availableLocation.push(item);
-        setLocation(availableLocation);
+        setLocation([ 'All', ...availableLocation]);
 
         getProperties();
       }

@@ -18,6 +18,10 @@ const FullProperty = () => {
   const [otherProperties, setOtherProperties] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [showNaira, setShowNaira] = React.useState(true);
+
+  //Hooks 
+  const [allImage, setAllImage] = React.useState<Array<string>>([]);
+
   const getProperty = async (propertyID: number) => {
     setIsLoading(true);
     const propertyRef = firestore.collection("properties").doc(`${propertyID}`);
@@ -25,8 +29,15 @@ const FullProperty = () => {
     if (snapshot.exists) {
       const data: any = snapshot.data();
       setProperty(data);
-      console.log(data);
-
+      const allImgArr = [data.images.main, data.images.sub_image_one, data.images.sub_image_two]; 
+      
+      data.images && data.images.other_images.forEach((i: {i: object, imageURL: string}, index: number) => { 
+        allImgArr.push(i.imageURL);
+        console.log(allImgArr);
+        
+      }); 
+      
+      setAllImage([...allImgArr]);
       getOtherProperty(data.property_location);
     } else {
       setIsLoading(false);
@@ -59,7 +70,6 @@ const FullProperty = () => {
   }, [""]);
 
   let dateAttr = new Date();
-  console.log(dateAttr.toLocaleDateString());
 
   const CostPriceCard = () => {
     return (
