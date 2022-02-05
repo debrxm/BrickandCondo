@@ -33,7 +33,6 @@ import firebase, { firestore } from "../../firebase/config";
 import Router from "next/router";
 import { DeleteProperty, UpdateProperty } from "../../firebase/firestore";
 
-
 const IndividualProperty = ({ user }: { user: object }) => {
   // let property;
   const [property, setProperty] = React.useState<any>();
@@ -79,7 +78,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
   const [id, setId] = React.useState();
 
   console.log(schedules);
-  
+
   const onUploadImage = async (e: any, anchor: string) => {
     const selectedFile = e.target.files[0];
     switch (anchor) {
@@ -314,12 +313,19 @@ const IndividualProperty = ({ user }: { user: object }) => {
       .collection(`properties`)
       .doc(`${propertyID}`)
       .collection(`schedules`);
-    const snapshot: any = await scheduleRef.get();
-    console.log(snapshot)
-    if (snapshot.exists) {      
-      const data: any = snapshot.data();
-      setSchedules(data);
-    }
+    const snapshot: any = await scheduleRef;
+    snapshot.onSnapshot((snapShot: any) => {
+      if (!snapShot.empty) {
+        let incomingSchedles: any = [];
+        for (let i = 0; i < snapShot.docs.length; i++) {
+          incomingSchedles.push(snapShot.docs[i].data());
+          if (i === snapShot.docs.length - 1) {
+            console.log(incomingSchedles);
+            setSchedules(incomingSchedles);
+          }
+        }
+      }
+    });
   };
   const getProperty = async (propertyID: number) => {
     setUploadLoading(false);
@@ -729,7 +735,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
         Scheduled Date
       </Heading>
       <Flex direction={{ base: "column", lg: "row" }} gap={{ base: 4 }}>
-        {/* {schedules.map((item, index) => {
+        {schedules.map((item: any, index) => {
           return (
             <ScheduleCard
               key={index}
@@ -738,7 +744,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
               clientEmail={item.clientEmail}
             />
           );
-        })} */}
+        })}
       </Flex>
     </Flex>
   );
