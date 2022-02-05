@@ -658,7 +658,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
             </Flex>
           </Box>
           <Box w={{ lg: "20%", base: "100%" }} my={{ lg: 4 }}>
-            <Flex direction="column" gap={{ lg: "4" }} h={{ lg: "100%" }}>
+            <Flex direction="column" gap={{ lg: "4", base: 8 }} h={{ lg: "100%" }}>
               <CustomInput
                 type="number"
                 id="oneTimePaymentNaira"
@@ -734,7 +734,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
       >
         Scheduled Date
       </Heading>
-      <Flex direction={{ base: "column", lg: "row" }} gap={{ base: 4 }}>
+      <Flex flexWrap='wrap' direction={{ base: "column", lg: "row" }} gap={{ base: 4 }}>
         {schedules.map((item: any, index) => {
           return (
             <ScheduleCard
@@ -742,6 +742,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
               clientName={item.clientName}
               scheduledDate={item.scheduledDate}
               clientEmail={item.clientEmail}
+              clientPhoneNum={item.clientPhoneNumber}
             />
           );
         })}

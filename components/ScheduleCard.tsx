@@ -7,20 +7,22 @@ type ScheduleTypes = {
   clientName: string, 
   scheduledDate: string, 
   clientEmail: string,
+  clientPhoneNum: number
 }
 export const ScheduleCard = ({ 
   clientName, 
   scheduledDate, 
-  clientEmail
+  clientEmail,
+  clientPhoneNum
 }: ScheduleTypes) => { 
   return ( 
     <Flex 
       bg='white'
       px='4'
       py='8'
-      w={{base: '100%'}}
       borderRadius='3xl'
       boxShadow="0px 0px 22px rgba(0, 0, 0, 0.08)"
+      w={{base:'100%', lg: '30%'}}
     > 
       <Flex gap={{base: 10}} direction='column'>
         <Box>
@@ -52,6 +54,22 @@ export const ScheduleCard = ({
             color='secondary.100'
           > 
             {scheduledDate}
+          </Heading>
+        </Box>
+
+        <Box>
+          <Text 
+            fontFamily='ProductLight'
+            color='secondary.100'
+          >
+            Phone Number:
+          </Text>
+          <Heading
+            fontFamily='ProductBold'
+            fontSize='3xl'
+            color='secondary.100'
+          > 
+            {clientPhoneNum}
           </Heading>
         </Box>
 

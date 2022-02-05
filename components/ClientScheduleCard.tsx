@@ -7,6 +7,7 @@ import {
   FormLabel,
   Heading,
   Input,
+  Text,
 } from '@chakra-ui/react';
 import { firestore } from '../firebase/config';
 import { LightButton } from './LightButton';
@@ -162,9 +163,9 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
       </Box>
 
       <Box display={showForm ? 'none' : 'block'}>
-        <Heading fontSize={{base: 'xl'}} lineHeight='1.5' color='white' fontFamily='ProductLight'>
+        <Text fontSize={{base: 'xl'}} lineHeight='1.5' color='white' fontFamily='ProductLight'>
           🎉 Thanks! We got your message and we will be in touch with more details for your visit 🎉  
-        </Heading>
+        </Text>
       </Box>
       
     </Flex>
