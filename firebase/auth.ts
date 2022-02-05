@@ -7,7 +7,6 @@ export const createUserProfile = async (userAuth: any) => {
 
   if (!snapShot.exists) {
     const { email, displayName, uid } = userAuth;
-    console.log(userAuth);
 
     const createdAt = Date.now();
     const userData = {

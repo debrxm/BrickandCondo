@@ -33,28 +33,11 @@ import firebase, { firestore } from "../../firebase/config";
 import Router from "next/router";
 import { DeleteProperty, UpdateProperty } from "../../firebase/firestore";
 
-const fakeScheduledVisit = [
-  {
-    clientName: "Kumuran Davids",
-    scheduledDate: "12th Febuary 2022",
-    clientEmail: "james@gmail.com",
-  },
-  {
-    clientName: "James Akpan",
-    scheduledDate: "1st April 2082",
-    clientEmail: "lmao@drake.com",
-  },
-  {
-    clientName: "Boluwatife Agebelemo",
-    scheduledDate: "11th June 2024",
-    clientEmail: "fola@jumia.com",
-  },
-];
 
 const IndividualProperty = ({ user }: { user: object }) => {
   // let property;
   const [property, setProperty] = React.useState<any>();
-  const [schedules, setSchedules] = React.useState(fakeScheduledVisit);
+  const [schedules, setSchedules] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
   const [currentUpload, setCurrentUpload] = React.useState("");
@@ -95,6 +78,8 @@ const IndividualProperty = ({ user }: { user: object }) => {
   let lsubImageTwoUploadURL: string;
   const [id, setId] = React.useState();
 
+  console.log(schedules);
+  
   const onUploadImage = async (e: any, anchor: string) => {
     const selectedFile = e.target.files[0];
     switch (anchor) {
@@ -330,7 +315,8 @@ const IndividualProperty = ({ user }: { user: object }) => {
       .doc(`${propertyID}`)
       .collection(`schedules`);
     const snapshot: any = await scheduleRef.get();
-    if (snapshot.exists) {
+    console.log(snapshot)
+    if (snapshot.exists) {      
       const data: any = snapshot.data();
       setSchedules(data);
     }
@@ -743,7 +729,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
         Scheduled Date
       </Heading>
       <Flex direction={{ base: "column", lg: "row" }} gap={{ base: 4 }}>
-        {schedules.map((item, index) => {
+        {/* {schedules.map((item, index) => {
           return (
             <ScheduleCard
               key={index}
@@ -752,7 +738,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
               clientEmail={item.clientEmail}
             />
           );
-        })}
+        })} */}
       </Flex>
     </Flex>
   );

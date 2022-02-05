@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text, Divider } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, Divider, Modal, useDisclosure, Button, ModalBody, ModalCloseButton, Image as ChkImage, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Grid } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -10,6 +10,8 @@ import bedRmIconBlack from "../../public/bedRmIcnBlack.svg";
 import ImgSampleIcon from "../../public/ImgSampleIcon.svg";
 import { ClientScheduleCard } from "../../components/ClientScheduleCard";
 import { LightButton } from "../../components/LightButton";
+import { DangerButton } from '../../components/DangerButton';
+import { PropertyPreviewCard } from '../../components/PropertyPreviewCard';
 
 const FullProperty = () => {
   // Property 0bject including the images
@@ -18,9 +20,9 @@ const FullProperty = () => {
   const [otherProperties, setOtherProperties] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [showNaira, setShowNaira] = React.useState(true);
-
   //Hooks 
   const [allImage, setAllImage] = React.useState<Array<string>>([]);
+  const {isOpen, onOpen, onClose} = useDisclosure(); 
 
   const getProperty = async (propertyID: number) => {
     setIsLoading(true);
@@ -33,7 +35,6 @@ const FullProperty = () => {
       
       data.images && data.images.other_images.forEach((i: {i: object, imageURL: string}, index: number) => { 
         allImgArr.push(i.imageURL);
-        console.log(allImgArr);
         
       }); 
       
@@ -44,7 +45,6 @@ const FullProperty = () => {
     }
   };
   const getOtherProperty = async (loc: string) => {
-    console.log(loc);
 
     const propertyRef = firestore
       .collection("properties")
@@ -146,8 +146,45 @@ const FullProperty = () => {
           </Flex>
         </Link>
       </Flex>
+      <Modal size='full' isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+        <ModalContent>
+          
+          <ModalBody>
+            <Box mt={{base: 20}}>
+              <Box px={{base: '5%'}} >
+                <DangerButton onClick={() => {onClose()}}>Go Back</DangerButton>
+                <Text mt={{base: 4}} fontFamily='ProductLight' color='secondary.200'>Currently Viewing</Text>
+                <Heading fontFamily='ProductBold' color='secondary.100'>Image for {property?.property_name}</Heading>
+                
+              </Box>
 
+              <Grid px={{base: '0%', lg: '5%'}} pb={{base: 20}} h={{lg:'85vh', base: '70vh'}} mt={8} gap='5' templateColumns={{lg:'repeat(3,1fr)', base: '1fr'}} flexWrap='wrap' overflowX='scroll'>
+                { 
+                  allImage?.map((item, index) => { 
+                    return ( 
+                      <Box
+                        key={index}
+                        borderRadius='12px'
+                        h='600px'
+                        w='100%'
+                        bg={`url(${item})`}
+                        bgSize='cover'
+                        bgPos='center'
+                      />
+                    )
+                  })
+                }
+              </Grid>
+            </Box>
+          </ModalBody>
+          <ModalFooter px='25%'>
+            
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Flex
+        onClick={onOpen}
         mb={{ lg: 10, base: 8 }}
         gap={{ base: 4 }}
         direction={{ base: "column", lg: "row" }}
@@ -211,7 +248,6 @@ const FullProperty = () => {
           </Box>
         </Flex>
       </Flex>
-
       <Flex
         gap={{ base: "8", lg: "0" }}
         direction={{ lg: "row", base: "column" }}
@@ -245,7 +281,7 @@ const FullProperty = () => {
           </Flex>
         </Flex>
 
-        <Flex width={{ lg: "20%" }}>
+        <Flex width={{ lg: "20%" }} onClick={onOpen}>
           <Flex
             justify="center"
             w={{ lg: "100%" }}
@@ -314,6 +350,25 @@ const FullProperty = () => {
         >
           <ClientScheduleCard propertyID={property?.id} />
         </Flex>
+      </Flex>
+
+      <Flex gap='4' mt={{base: 20}} direction='column'>
+        <Heading fontFamily='ProductBold' fontSize='2xl' color='secondary.100'>Similar properties</Heading>
+        <Flex gap={{base: 4}} flexWrap={{lg: 'wrap'}} direction={{lg: 'row', base: 'column'}}>
+          {
+            otherProperties?.length > 1 ? 
+            otherProperties?.filter((propty:any) => {return propty.id !== property.id})?.map((item: object, index: number) => { 
+              return (
+                <PropertyPreviewCard 
+                  key={index} 
+                  data={item}                
+                />
+              )
+            })
+            : <Heading fontFamily='ProductBold' fontSize='2xl' color='primary.200'>This is a unique property, we currently do not have any property like it.</Heading>
+          }
+        </Flex>
+        
       </Flex>
     </Flex>
   );

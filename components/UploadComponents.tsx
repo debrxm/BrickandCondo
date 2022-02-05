@@ -222,7 +222,6 @@ export const AddedImagesPreview = ({
               });
             })
             .catch((error) => {
-              console.log(error);
             });
           setOtherImagesUploadURL(
             otherImagesUploadURL.filter((n: any, i: any) => i != index)
