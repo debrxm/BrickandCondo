@@ -69,6 +69,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
   const [rental_value_dollar, setRentalValueDollar] = React.useState();
   const [uploadLoading, setUploadLoading] = React.useState(false);
   const [updateLoading, setUpdateLoading] = React.useState(false);
+  const [progress, setProgress] = React.useState<number>();
   const [uploadOtherImageLoading, setUploadOtherImageLoading] =
     React.useState(false);
   let lmainImageUploadURL: string;
@@ -104,14 +105,17 @@ const IndividualProperty = ({ user }: { user: object }) => {
         onDeletePropertyImage("subImageTwo");
         break;
       case "otherImages":
+        const imgs: any = [];
+        for (let index = 0; index < e.target.files.length; index++) {
+          const element: any = e.target.files[index];
+          imgs.push(element);
+          setOtherImagesBlob((prevState: []) => [...prevState, element]);
+          if (index === e.target.files.length - 1) {
+            fetchOtherImageUrl(imgs);
+          }
+        }
         setCurrentUpload(selectedFile.name);
         setOtherImagesUploadName(selectedFile.name);
-        setOtherImagesBlob([...otherImagesBlob, selectedFile]);
-        fetchOtherImageUrl(
-          selectedFile,
-          `${id}`,
-          `otherImages-${otherImagesBlob.length}`
-        );
         break;
       default:
         break;
@@ -178,42 +182,43 @@ const IndividualProperty = ({ user }: { user: object }) => {
       }
     );
   };
-  const fetchOtherImageUrl = async (
-    selectedFile: any,
-    dest: string,
-    anchor: string
-  ) => {
+  const fetchOtherImageUrl = async (blobs: []) => {
     setUploadOtherImageLoading(true);
-    const storageRef = firebase
-      .storage()
-      .ref(`properties/${dest}/${anchor}/${selectedFile}`);
-    const uploadTask = storageRef.put(selectedFile);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        switch (snapshot.state) {
-          case firebase.storage.TaskState.PAUSED:
-            console.log("Upload is paused");
-            break;
-          case firebase.storage.TaskState.RUNNING:
-            console.log("Upload is running");
-            break;
+    const promises: any = [];
+    blobs.map((image: any, index: number) => {
+      const storageRef: any = firebase
+        .storage()
+        .ref(`properties/${id}/otherImages/${image.name}`);
+      const uploadTask: any = storageRef.put(image);
+      promises.push(uploadTask);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot: any) => {
+          const progres: number =
+            Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(progres);
+        },
+        (error: any) => {
+          console.log(error);
+        },
+        () => {
+          // get the uploaded image url back
+          uploadTask.snapshot.ref
+            .getDownloadURL()
+            .then((downloadURL: string) => {
+              setOtherImagesUploadURL((prevState: []) => [
+                ...prevState,
+                { pathId: image.name, imageURL: downloadURL },
+              ]);
+              setUploadOtherImageLoading(false);
+            });
         }
-      },
-      (error) => {
-        console.log(error);
-      },
-      () => {
-        // get the uploaded image url back
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          setOtherImagesUploadURL([
-            ...otherImagesUploadURL,
-            { pathId: otherImagesBlob.length, imageURL: downloadURL },
-          ]);
-          setUploadOtherImageLoading(false);
-        });
-      }
-    );
+      );
+      Promise.all(promises)
+        .then(() => {})
+        .catch((error) => console.log(error));
+    });
   };
   const deleteFile = (pathToFile: string, fileName: string) => {
     const ref = firebase.storage().ref(pathToFile);
@@ -486,6 +491,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
                   onUploadImage(e, "otherImages");
                 }
           }
+          multiple
           disabled={uploadOtherImageLoading}
         />
       </Flex>
@@ -658,7 +664,11 @@ const IndividualProperty = ({ user }: { user: object }) => {
             </Flex>
           </Box>
           <Box w={{ lg: "20%", base: "100%" }} my={{ lg: 4 }}>
-            <Flex direction="column" gap={{ lg: "4", base: 8 }} h={{ lg: "100%" }}>
+            <Flex
+              direction="column"
+              gap={{ lg: "4", base: 8 }}
+              h={{ lg: "100%" }}
+            >
               <CustomInput
                 type="number"
                 id="oneTimePaymentNaira"
@@ -734,7 +744,11 @@ const IndividualProperty = ({ user }: { user: object }) => {
       >
         Scheduled Date
       </Heading>
-      <Flex flexWrap='wrap' direction={{ base: "column", lg: "row" }} gap={{ base: 4 }}>
+      <Flex
+        flexWrap="wrap"
+        direction={{ base: "column", lg: "row" }}
+        gap={{ base: 4 }}
+      >
         {schedules.map((item: any, index) => {
           return (
             <ScheduleCard
