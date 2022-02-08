@@ -66,10 +66,12 @@ export const MainUploadComp = ({
 export const AddMulitplePhotos = ({
   text,
   onChange,
+  multiple,
   disabled,
 }: {
   text: string;
   onChange?: any;
+  multiple?: boolean;
   disabled?: boolean;
 }) => {
   return (
@@ -101,6 +103,7 @@ export const AddMulitplePhotos = ({
           accept="image/gif, image/jpeg, image/png"
           onChange={onChange}
           disabled={disabled}
+          multiple={multiple}
         />
       </label>
     </Flex>
@@ -176,16 +179,18 @@ export const AddedImagesPreview = ({
 }: {
   imageURL: string;
   index: number;
-  pathId: number;
+  pathId: string;
   propertyId: number;
   otherImagesUploadURL: any;
   setOtherImagesUploadURL: any;
 }) => {
-  const deleteFile = (pathToFile: string, fileName: string) => {
-    const ref = firebase.storage().ref(pathToFile);
-    const childRef = ref.child(fileName);
-
+  const deleteFile = () => {
+    const ref = firebase.storage().ref(`properties/${propertyId}/otherImages`);
+    const childRef = ref.child(pathId);
     childRef.delete();
+    setOtherImagesUploadURL(
+      otherImagesUploadURL.filter((n: any, i: any) => i != index)
+    );
   };
   return (
     <Flex
@@ -210,23 +215,7 @@ export const AddedImagesPreview = ({
         cursor="pointer"
         w={{ lg: "50px", base: "100%" }}
         h={{ lg: "50px", base: "100%" }}
-        onClick={() => {
-          const storageRef = firebase
-            .storage()
-            .ref(`properties/${propertyId}/otherImages-${pathId}`);
-          storageRef
-            .listAll()
-            .then((dir) => {
-              dir.items.forEach((fileRef) => {
-                deleteFile(storageRef.fullPath, fileRef.name);
-              });
-            })
-            .catch((error) => {
-            });
-          setOtherImagesUploadURL(
-            otherImagesUploadURL.filter((n: any, i: any) => i != index)
-          );
-        }}
+        onClick={deleteFile}
       >
         <Image src={DeleteIcon} alt="" />
       </Box>

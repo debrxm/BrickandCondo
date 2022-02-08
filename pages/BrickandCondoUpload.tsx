@@ -56,6 +56,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [rental_value_dollar, setRentalValueDollar] = React.useState();
   const [isLoading, setIsLoading] = React.useState(false);
   const [uploadLoading, setUploadLoading] = React.useState(false);
+  const [progress, setProgress] = React.useState<number>();
   const [uploadOtherImageLoading, setUploadOtherImageLoading] =
     React.useState(false);
   const [createLoading, setCreateLoading] = React.useState(false);
@@ -83,14 +84,17 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
         setSubImageTwoBlob(selectedFile);
         break;
       case "otherImages":
+        const imgs: any = [];
+        for (let index = 0; index < e.target.files.length; index++) {
+          const element: any = e.target.files[index];
+          imgs.push(element);
+          setOtherImagesBlob((prevState: []) => [...prevState, element]);
+          if (index === e.target.files.length - 1) {
+            fetchOtherImageUrl(imgs);
+          }
+        }
         setCurrentUpload(selectedFile.name);
         setOtherImagesUploadName(selectedFile.name);
-        setOtherImagesBlob([...otherImagesBlob, selectedFile]);
-        fetchOtherImageUrl(
-          selectedFile,
-          `${id}`,
-          `otherImages-${otherImagesBlob.length}`
-        );
         break;
       default:
         break;
@@ -178,42 +182,43 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
       console.log("====================================");
     }
   };
-  const fetchOtherImageUrl = async (
-    selectedFile: any,
-    dest: string,
-    anchor: string
-  ) => {
+  const fetchOtherImageUrl = async (blobs: []) => {
     setUploadOtherImageLoading(true);
-    const storageRef = firebase
-      .storage()
-      .ref(`properties/${dest}/${anchor}/${selectedFile}`);
-    const uploadTask = storageRef.put(selectedFile);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        switch (snapshot.state) {
-          case firebase.storage.TaskState.PAUSED:
-            console.log("Upload is paused");
-            break;
-          case firebase.storage.TaskState.RUNNING:
-            console.log("Upload is running");
-            break;
+    const promises: any = [];
+    blobs.map((image: any, index: number) => {
+      const storageRef: any = firebase
+        .storage()
+        .ref(`properties/${id}/otherImages/${image.name}`);
+      const uploadTask: any = storageRef.put(image);
+      promises.push(uploadTask);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot: any) => {
+          const progres: number =
+            Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(progres);
+        },
+        (error: any) => {
+          console.log(error);
+        },
+        () => {
+          // get the uploaded image url back
+          uploadTask.snapshot.ref
+            .getDownloadURL()
+            .then((downloadURL: string) => {
+              setOtherImagesUploadURL((prevState: []) => [
+                ...prevState,
+                { pathId: image.name, imageURL: downloadURL },
+              ]);
+              setUploadOtherImageLoading(false);
+            });
         }
-      },
-      (error) => {
-        console.log(error);
-      },
-      () => {
-        // get the uploaded image url back
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          setOtherImagesUploadURL([
-            ...otherImagesUploadURL,
-            { pathId: otherImagesBlob.length, imageURL: downloadURL },
-          ]);
-          setUploadOtherImageLoading(false);
-        });
-      }
-    );
+      );
+      Promise.all(promises)
+        .then(() => {})
+        .catch((error) => console.log(error));
+    });
   };
   const cleanUp = () => {
     setCreateLoading(false);
@@ -235,9 +240,6 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
     } else {
       setIsAdmin(true);
     }
-    console.log("====================================");
-    console.log(otherImagesUploadURL);
-    console.log("====================================");
   }, [
     mainImageUploadURL,
     subImageOneUploadURL,
@@ -306,6 +308,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
                     onUploadImage(e, "otherImages");
                   }
             }
+            multiple
             disabled={uploadOtherImageLoading}
           />
           {uploadOtherImageLoading && (
