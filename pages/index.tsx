@@ -14,27 +14,45 @@ import searchIcon from "../public/searchIcon.svg";
 import React from "react";
 import { PropertyPreviewCard } from "../components/PropertyPreviewCard";
 import { firestore } from "../firebase/config";
+import {useRouter} from 'next/router'
 
 const Home: NextPage = () => {
   //Hooks
+  const queryHook = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const [hasProperty, setHasProperty] = React.useState(false);
   const [Location, setLocation] = React.useState<any | []>([]);
   const [propertiesRef, setPropertiesRef] = React.useState<any>(
     firestore.collection("properties").limit(10).orderBy("created_at", "desc")
   );
-  const [query, setQuery] = React.useState<string>("");
+  const [query, setQuery] = React.useState<any>("");
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isMoreLoading, setIsMoreLoading] = React.useState<boolean>(false);
   const [lastDoc, setLastDoc] = React.useState<any | {}>({});
   const [properties, setProperties] = React.useState<any | []>([]);
+
+  React.useEffect(() => { 
+    
+    queryHook.query.filter && setQuery(queryHook.query.filter);
+    if(queryHook.query.filter) { 
+      let value = queryHook.query.filter
+      setPropertiesRef(
+        firestore
+          .collection("properties")
+          .where("property_location", "==", value)
+          .limit(10)
+      );
+      setQuery(queryHook.query.filter);
+    }
+  }, [JSON.stringify(queryHook)])
   //Small Components
   const LocationItem = ({ item }: { item: string }) => {
     const changeLocation = () => {
       if (item === "All") {
         setPropertiesRef(firestore.collection("properties").limit(10));
         setQuery("Filter By Location");
-      } else {
+      } 
+      else {
         setPropertiesRef(
           firestore
             .collection("properties")
@@ -76,7 +94,7 @@ const Home: NextPage = () => {
         px={{ lg: 8, base: 4 }}
         boxShadow="0px 9px 11px 9px rgba(0, 0, 0, 0.04);"
       >
-        <Text fontFamily="ProductBold" color="#C5C5C5">
+        <Text textTransform='capitalize' fontFamily="ProductBold" color="#C5C5C5">
           {query || "Filter By Location"}
         </Text>
         <Box w={{ base: "45px" }} h={{ base: "45px" }}>
@@ -252,6 +270,7 @@ const Home: NextPage = () => {
             my={{ base: 10 }}
             fontSize={{ base: "25px" }}
             fontFamily={"ProductBold"}
+            textTransform='capitalize'
           >
             Properties around: {query}
           </Heading>
