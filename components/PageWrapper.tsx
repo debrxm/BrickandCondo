@@ -93,12 +93,13 @@ const Header = () => {
   //Hooks 
   const [showMobileMenu, setShowMobileMenu] = React.useState<boolean>(false);
   return ( 
-    <Flex position='relative' align='center' pt={4} m='0 auto' w={{base: '95%'}}>
+    <Flex position='relative' align='center' pt={4} m='0 auto' w={{base: '100%'}}>
       <Flex w={{lg: '70%', base: '90%'}}>
         <Box>
-          <Link href='/'>
+          <Link href='/' _focus={{outline: '4px solid red'}}>
             <Box 
               w={{base: '90px', lg:'120px'}}
+              ml={{lg: '-4%'}}
             >
               <Image src={DarkLogo} priority />
             </Box>
@@ -142,7 +143,7 @@ const Footer = () => {
         mb={14}
         ml={{base: '-3%', lg: '-1%'}}
       >
-        <Image src={DarkLogo} priority />
+        
       </Box>
       <Box>
         <Flex direction={{base: 'column', lg: 'row'}} gap='10'> 
@@ -218,7 +219,7 @@ export const PageWrapper = (props:any) => {
   return (
     <Box>
       <Header />
-      <Box maxWidth={{lg: '100vw'}} mx='auto' py={{lg:4, base:6}} px={{lg:12, base: 4}}>
+      <Box maxWidth={{lg: '100vw'}} mx='auto' py={{lg:4, base:6}} px={{lg:2, base: 4}}>
         {props.children}
       </Box>
       <Footer />

@@ -83,6 +83,7 @@ const Home: NextPage = () => {
   const SearchComp = () => {
     return (
       <Flex
+        mt={{lg: 20, base: 4}}
         onClick={onToggle}
         cursor="pointer"
         borderRadius={{ base: "full", lg: "full", md: "xl" }}
@@ -206,13 +207,13 @@ const Home: NextPage = () => {
   return (
     <Flex direction="column">
       <Flex
-        mb={{ base: 20 }}
+        mb={{ base: 10, lg: 2, '2xl': '10' }}
         direction={{ base: "column" }}
         position={{ base: "relative", lg: "relative" }}
       >
         <Flex
           direction={{ base: "column" }}
-          py={{ lg: 52, base: 40 }}
+          py={{ lg: 32, '2xl': 48, base: 20 }}
           px={{ lg: 80, base: 2 }}
           borderRadius="2xl"
           bg={`linear-gradient(0deg, rgba(3, 28, 32, 0.71), rgba(3, 28, 32, 0.71)), url(https://images.unsplash.com/photo-1507089947368-19c1da9775ae?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1476&q=80)`}
@@ -220,6 +221,7 @@ const Home: NextPage = () => {
           bgSize="cover"
           textAlign='center'
           fontFamily="ProductLight"
+          align={{lg: 'center', base: 'center'}}
         >
           <Heading
             w={{lg: '80%', base: '90%'}}
@@ -239,28 +241,19 @@ const Home: NextPage = () => {
             Brick & Condo gives you the needed <br /> assistance as your venture
             into real <br /> estate inveting.
           </Text>
-        </Flex>
-
-        <Flex
-          direction="column"
-          w={{ base: "fit-content" }}
-          position={{ lg: "absolute", base: "absolute" }}
-          bottom={{ base: "10%", lg: "7%" }}
-          left={{ base: "15%", lg: "41%" }}
-          gap={{ base: 4, lg: 4 }}
-        >
           <SearchComp />
         </Flex>
         <Fade in={isOpen}>
           <Flex
             direction="column"
-            w={{ lg: "25%", base: "70%" }}
+            w={{ lg: "25%", base: "80%" }}
             position={{ lg: "absolute", base: "absolute" }}
-            bottom={{ base: "27%", lg: "24%" }}
-            left={{ base: "20%", lg: "41%" }}
+            bottom={{ base: "-65%", lg: "35%", '2xl': '40%' }}
+            left={{ base: "10%", lg: "39%", '2xl': '44%' }}
             gap={{ base: 4, lg: 4 }}
             transition="display 4s"
             zIndex="5"
+            display={isOpen ? 'flex' : 'none'}
           >
             <ListLocationComp />
           </Flex>
@@ -274,19 +267,21 @@ const Home: NextPage = () => {
         {query !== "Filter By Location" && query !== "" ? (
           <Heading
             my={{ base: 10 }}
-            fontSize={{ base: "25px" }}
+            fontSize={{ lg: "30", base: '25px' }}
             fontFamily={"ProductBold"}
             textTransform='capitalize'
+            color='secondary.100'
           >
-            Properties around: {query}
+            Explore Properties in {query}
           </Heading>
         ) : (
           <Heading
             my={{ base: 10 }}
-            fontSize={{ base: "25px" }}
+            fontSize={{ lg: "30", base: '25px'  }}
             fontFamily={"ProductBold"}
+            color='secondary.100'
           >
-            Showing all properties
+            Explore all properties
           </Heading>
         )}
       </Flex>
