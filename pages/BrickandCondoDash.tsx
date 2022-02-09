@@ -44,7 +44,7 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
   return (
     <>
       {isAdmin && (
-        <Flex direction="column">
+        <Flex direction="column" maxW={{lg: '1290px'}} mx={{lg: 'auto'}}>
           <LoggedInBanner email={user && { ...Object.values(user) }} />
           <Flex direction="column">
             <Flex

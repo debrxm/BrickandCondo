@@ -127,7 +127,7 @@ const FullProperty = () => {
     );
   };
   return (
-    <Flex direction="column">
+    <Flex direction="column" maxW={{lg: '1290px'}} mx={{lg: 'auto'}}>
       <Flex
         mb={{ lg: 10, base: 8 }}
         cursor="pointer"
@@ -151,8 +151,8 @@ const FullProperty = () => {
         <ModalContent>
           
           <ModalBody>
-            <Box mt={{base: 20}}>
-              <Box px={{base: '5%'}} >
+            <Box mt={{base: 32}}>
+              <Box>
                 <DangerButton onClick={() => {onClose()}}>Go Back</DangerButton>
                 <Text mt={{base: 4}} fontFamily='ProductLight' color='secondary.200'>Currently Viewing</Text>
                 <Heading fontFamily='ProductBold' color='secondary.100'>Image for {property?.property_name}</Heading>
@@ -281,10 +281,9 @@ const FullProperty = () => {
           </Flex>
         </Flex>
 
-        <Flex width={{ lg: "20%" }} onClick={onOpen}>
+        <Flex width={{ lg: "20%" }} onClick={onOpen} justify={{lg:"end"}}>
           <Flex
-            justify="center"
-            w={{ lg: "100%" }}
+            w={{ lg: "fit-content" }}
             align="center"
             gap="4"
             bg="white"
@@ -326,7 +325,7 @@ const FullProperty = () => {
           </Heading>
         </Flex>
 
-        <Flex w={{ lg: "30%", base: "100%" }}>
+        <Flex w={{ lg: "fit-content", base: "100%" }}>
           <CostPriceCard />
         </Flex>
       </Flex>

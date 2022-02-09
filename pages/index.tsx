@@ -213,18 +213,21 @@ const Home: NextPage = () => {
         <Flex
           direction={{ base: "column" }}
           py={{ lg: 52, base: 40 }}
-          px={{ lg: 80, base: 10 }}
+          px={{ lg: 80, base: 2 }}
           borderRadius="2xl"
           bg={`linear-gradient(0deg, rgba(3, 28, 32, 0.71), rgba(3, 28, 32, 0.71)), url(https://images.unsplash.com/photo-1507089947368-19c1da9775ae?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1476&q=80)`}
           bgPos="center"
           bgSize="cover"
+          textAlign='center'
           fontFamily="ProductLight"
         >
           <Heading
+            w={{lg: '80%', base: '90%'}}
             mb={{ base: 6 }}
             fontSize={{ base: "4xl", lg: "6xl" }}
             fontFamily="ProductBold"
             color="white"
+            mx='auto'
           >
             Purchase your next Property-
           </Heading>
@@ -242,8 +245,8 @@ const Home: NextPage = () => {
           direction="column"
           w={{ base: "fit-content" }}
           position={{ lg: "absolute", base: "absolute" }}
-          bottom={{ base: "-10%", lg: "-7%" }}
-          left={{ base: "7%", lg: "36%" }}
+          bottom={{ base: "10%", lg: "7%" }}
+          left={{ base: "15%", lg: "41%" }}
           gap={{ base: 4, lg: 4 }}
         >
           <SearchComp />
@@ -253,8 +256,8 @@ const Home: NextPage = () => {
             direction="column"
             w={{ lg: "25%", base: "70%" }}
             position={{ lg: "absolute", base: "absolute" }}
-            bottom={{ base: "7%", lg: "7%" }}
-            left={{ base: "7%", lg: "36%" }}
+            bottom={{ base: "27%", lg: "24%" }}
+            left={{ base: "20%", lg: "41%" }}
             gap={{ base: 4, lg: 4 }}
             transition="display 4s"
             zIndex="5"
@@ -264,7 +267,10 @@ const Home: NextPage = () => {
         </Fade>
       </Flex>
 
-      <Flex>
+      <Flex 
+        w={{lg: '90%'}}
+        mx={{lg: 'auto'}}
+      >
         {query !== "Filter By Location" && query !== "" ? (
           <Heading
             my={{ base: 10 }}
@@ -289,6 +295,8 @@ const Home: NextPage = () => {
         direction={{ base: "column", lg: "row" }}
         flexWrap="wrap"
         gap="2%"
+        w={{lg: '90%'}}
+        mx={{lg: 'auto'}}
       >
         {properties.map((item: object, index: number) => {
           return <PropertyPreviewCard key={index} data={item} />;

@@ -251,7 +251,7 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
   return (
     <>
       {isAdmin && (
-        <Box>
+        <Box maxW={{lg: '1290px'}} mx={{lg: 'auto'}}>
           <LoggedInBanner email={user && { ...Object.values(user) }} />
           <Heading
             fontFamily="ProductBold"

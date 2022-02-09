@@ -391,7 +391,7 @@ const IndividualProperty = ({ user }: { user: object }) => {
   return isLoading ? (
     <Flex direction="column"></Flex>
   ) : (
-    <Flex direction="column">
+    <Flex direction="column"  maxW={{lg: '1290px'}} mx={{lg: 'auto'}}>
       <LoggedInBanner email={user && { ...Object.values(user) }} />
       <Popover>
         <PopoverTrigger>

@@ -8,6 +8,7 @@ export const DarkFullWidthCard = (props:any) => {
       borderRadius='xl'
       py={20}
       px={16}
+      maxW={{lg: '1290px'}} mx={{lg: 'auto'}}
     >
       {props.children}
     </Box>

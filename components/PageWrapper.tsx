@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Link, Text } from '@chakra-ui/react';
+import { Box, Flex, Img as ChkImg, Heading, Link, Text } from '@chakra-ui/react';
 import React from 'react'; 
 import Image from 'next/image';
 import BurgerMenuIcon  from '../public/burgermenuicon.svg';
@@ -127,6 +127,7 @@ const Header = () => {
 }
 
 const Footer = () => { 
+  let router = useRouter();
   return ( 
     <Box  
       mt={{lg:10, base: 10}}
@@ -139,6 +140,7 @@ const Footer = () => {
       <Box 
         w={{base: '90px'}}
         mb={14}
+        ml={{base: '-3%', lg: '-1%'}}
       >
         <Image src={DarkLogo} priority />
       </Box>
@@ -183,11 +185,11 @@ const Footer = () => {
               Locations
             </Heading>
             <Flex gap='2' direction='column'>
-              <Link w='fit-content' href='https://instagram.com' fontFamily='ProductLight'>Lekki</Link>
-              <Link w='fit-content' href='https://instagram.com' fontFamily='ProductLight'>Ajah</Link>
-              <Link w='fit-content' href='https://instagram.com' fontFamily='ProductLight'>Sangotedo</Link>
-              <Link w='fit-content' href='https://instagram.com' fontFamily='ProductLight'>Ikeja</Link>
-              <Link w='fit-content' href='https://instagram.com' fontFamily='ProductLight'>VI</Link>
+              <Link w='fit-content' cursor='pointer' onClick={() => {router.push({query: {filter: 'lekki'}})}}  fontFamily='ProductLight'>Lekki</Link>
+              <Link w='fit-content' cursor='pointer' onClick={() => {router.push({query: {filter: 'ajah'}})}}  fontFamily='ProductLight'>Ajah</Link>
+              <Link w='fit-content' cursor='pointer' onClick={() => {router.push({query: {filter: 'sangotedo'}})}}  fontFamily='ProductLight'>Sangotedo</Link>
+              <Link w='fit-content' cursor='pointer' onClick={() => {router.push({query: {filter: 'ikeja'}})}}  fontFamily='ProductLight'>Ikeja</Link>
+              <Link w='fit-content' cursor='pointer' onClick={() => {router.push({query: {filter: 'vi'}})}}  fontFamily='ProductLight'>VI</Link>
             </Flex>
           </Flex>
 
@@ -216,7 +218,7 @@ export const PageWrapper = (props:any) => {
   return (
     <Box>
       <Header />
-      <Box maxWidth={{lg: '1290px'}} mx='auto' py={{lg:10, base:12}} px={{lg:12, base: 4}}>
+      <Box maxWidth={{lg: '100vw'}} mx='auto' py={{lg:4, base:6}} px={{lg:12, base: 4}}>
         {props.children}
       </Box>
       <Footer />
