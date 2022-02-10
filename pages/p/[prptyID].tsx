@@ -185,7 +185,7 @@ const FullProperty = () => {
               </Grid>
             </Box>
 
-            <Flex display={showCarousel ? 'flex' : 'none'} direction='row' position='absolute' top='0' left='0%' bg='secondary.100' h='100%' w='100vw' > 
+            <Flex display={showCarousel ? 'flex' : 'none'} direction='row' position='absolute' top='0' left='0%' bg='secondary.100' w='100vw' overflow='hidden'> 
               <Flex align='center' w='100%' direction={{base: 'column', lg: 'row'}} mt={{base: '20%', lg: '0%'}}>
 
                 <Box  
@@ -203,8 +203,8 @@ const FullProperty = () => {
 
                 <Flex h={{lg:'60%',}} direction='column' w={{lg:'80%', base: '100%'}} m='0 auto'  align='center' justify='center'>
 
-                  <Box cursor='pointer' px='4' my={{lg:2, base: 4}} py={{lg:4, base: 4}} backgroundColor='primary.200' borderRadius='xl'>
-                    <Text userSelect='none' onClick={() => {setShowCarousel(!showCarousel); setcarouselCounter(0)}} fontFamily='ProductBold' color='white'>Close Side</Text>
+                  <Box cursor='pointer' px='4' my={{lg:2, base: 4}} py={{lg:4, base: 4}} backgroundColor='primary.200' borderRadius='xl' onClick={() => {setShowCarousel(false); setcarouselCounter(0)}} >
+                    <Text userSelect='none' fontFamily='ProductBold' color='white'>Close Slide</Text>
                   </Box>
                   < ChkImg borderRadius='xl' h={{lg:'100%', base: '100%'}} src={allImage&& allImage[carouselCounter]} />
 
@@ -254,6 +254,7 @@ const FullProperty = () => {
         </ModalContent>
       </Modal>
       <Flex 
+        overflow='hidden'
         onClick={onOpen}
         mb={{ lg: 10, base: 8 }}
         gap={{ base: 4 }}
