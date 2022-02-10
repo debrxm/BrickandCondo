@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export const PropertyPreviewCard = ({ data }: { data: any }) => {
   return (
-    <Link href={`/p/${data.id}`}>
+    <Link href={`/p/${data.id}/`}>
       <Flex
         w={{lg:'48%', base: '100%'}}
         direction={{lg:"column", base: 'row'}}

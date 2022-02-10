@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text, Divider, Modal, useDisclosure, Button, ModalBody, ModalCloseButton, Image as ChkImage, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Grid } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, Image as ChkImg, Divider, Modal, useDisclosure, Button, ModalBody, ModalCloseButton, Image as ChkImage, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Grid } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -8,6 +8,9 @@ import sqftIcnBlack from "../../public/sqftIconBlack.svg";
 import bathRmIcnBlack from "../../public/bathRmIconBlack.svg";
 import bedRmIconBlack from "../../public/bedRmIcnBlack.svg";
 import ImgSampleIcon from "../../public/ImgSampleIcon.svg";
+import FrwdIcon from "../../public/forwardArrow.svg";
+import BckrdIcon from "../../public/backArrow.svg";
+
 import { ClientScheduleCard } from "../../components/ClientScheduleCard";
 import { LightButton } from "../../components/LightButton";
 import { DangerButton } from '../../components/DangerButton';
@@ -23,6 +26,8 @@ const FullProperty = () => {
   //Hooks 
   const [allImage, setAllImage] = React.useState<Array<string>>([]);
   const {isOpen, onOpen, onClose} = useDisclosure(); 
+  const [carouselCounter, setcarouselCounter] = React.useState<number>(0)
+  const [showCarousel, setShowCarousel] = React.useState<boolean>(false);
 
   const getProperty = async (propertyID: number) => {
     setIsLoading(true);
@@ -150,7 +155,7 @@ const FullProperty = () => {
       <ModalOverlay />
         <ModalContent>
           
-          <ModalBody>
+          <ModalBody position='relative'>
             <Box mt={{base: 32}}>
               <Box>
                 <DangerButton onClick={() => {onClose()}}>Go Back</DangerButton>
@@ -163,7 +168,9 @@ const FullProperty = () => {
                 { 
                   allImage?.map((item, index) => { 
                     return ( 
-                      <Box
+                      <Box  
+                        cursor='pointer'
+                        onClick={() => {setShowCarousel(!showCarousel)}}
                         key={index}
                         borderRadius='12px'
                         h='600px'
@@ -177,13 +184,76 @@ const FullProperty = () => {
                 }
               </Grid>
             </Box>
+
+            <Flex display={showCarousel ? 'flex' : 'none'} direction='row' position='absolute' top='0' left='0%' bg='secondary.100' h='100%' w='100vw' > 
+              <Flex align='center' w='100%' direction={{base: 'column', lg: 'row'}} mt={{base: '20%', lg: '0%'}}>
+
+                <Box  
+                  display={{base: 'none', lg: 'block'}} 
+                  w='10%' cursor='pointer' 
+                  m='0 auto' 
+                  h='50px' pl={{lg: '3%'}} 
+                  transform='scale(1.4)'
+                  onClick={() => {
+                    Number(carouselCounter) !== 0 && setcarouselCounter(carouselCounter-1)}
+                  }
+                >
+                  <Image alt="" src={BckrdIcon} />
+                </Box>
+
+                <Flex h={{lg:'60%',}} direction='column' w={{lg:'80%', base: '100%'}} m='0 auto'  align='center' justify='center'>
+
+                  <Box cursor='pointer' px='4' my={{lg:2, base: 4}} py={{lg:4, base: 4}} backgroundColor='primary.200' borderRadius='xl'>
+                    <Text userSelect='none' onClick={() => {setShowCarousel(!showCarousel); setcarouselCounter(0)}} fontFamily='ProductBold' color='white'>Close Side</Text>
+                  </Box>
+                  < ChkImg borderRadius='xl' h={{lg:'100%', base: '100%'}} src={allImage&& allImage[carouselCounter]} />
+
+                </Flex>
+
+                <Box 
+                  display={{base: 'none', lg: 'block'}} 
+                  w='10%' 
+                  cursor='pointer' 
+                  m='0 auto' 
+                  h='50px' 
+                  pl={{lg: '4%'}} 
+                  transform='scale(1.4)'
+                  onClick={() => {
+                    Number(carouselCounter+1) !== allImage.length && setcarouselCounter(carouselCounter+1)}
+                  }
+                >
+                  <Image src={FrwdIcon} />
+                </Box>
+
+                <Flex display={{base: 'flex', lg: 'none'}} gap='40' mt={{base: 8}}>
+                  <Box 
+                    w='50%' 
+                    cursor='pointer' 
+                    m='0 auto' 
+                    h='50px' 
+                    pl={{lg: '3%'}} 
+                    transform='' 
+                    onClick={() => {
+                      Number(carouselCounter) !== 0 && setcarouselCounter(carouselCounter-1)}
+                    }
+                  >
+                    <Image alt="" src={BckrdIcon} />
+                  </Box>
+                  <Box w='50%' cursor='pointer' m='0 auto' h='50px' pl={{lg: '3%'}} transform='' onClick={() => {
+                    Number(carouselCounter+1) !== allImage.length && setcarouselCounter(carouselCounter+1)}
+                  }>
+                    <Image alt="" src={FrwdIcon} />
+                  </Box>
+                </Flex>
+              </Flex>
+            </Flex>
           </ModalBody>
           <ModalFooter px='25%'>
             
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Flex
+      <Flex 
         onClick={onOpen}
         mb={{ lg: 10, base: 8 }}
         gap={{ base: 4 }}
