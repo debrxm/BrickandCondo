@@ -20,7 +20,7 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
         borderRadius={{ lg: "3xl", base: "2xl" }}
         position="relative"
         cursor="pointer"
-        onClick={() => {localStorage.setItem("propertyID", data.id); window.location.reload();}}
+        onClick={() => {localStorage.setItem("propertyID", data.id);}}
         mb={{base: 20}}
       >
         <Flex direction="column" pb={16}>
