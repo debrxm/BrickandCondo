@@ -10,11 +10,15 @@ import bedRmIconBlack from "../../public/bedRmIcnBlack.svg";
 import ImgSampleIcon from "../../public/ImgSampleIcon.svg";
 import FrwdIcon from "../../public/forwardArrow.svg";
 import BckrdIcon from "../../public/backArrow.svg";
+import disableScroll from 'disable-scroll'
 
 import { ClientScheduleCard } from "../../components/ClientScheduleCard";
 import { LightButton } from "../../components/LightButton";
 import { DangerButton } from '../../components/DangerButton';
 import { PropertyPreviewCard } from '../../components/PropertyPreviewCard';
+import SliderTest from '../../components/SliderTest';
+import { SwiperSlide } from 'swiper/react';
+
 
 const FullProperty = () => {
   // Property 0bject including the images
@@ -170,7 +174,7 @@ const FullProperty = () => {
                     return ( 
                       <Box  
                         cursor='pointer'
-                        onClick={() => {setShowCarousel(!showCarousel)}}
+                        onClick={() => {setShowCarousel(!showCarousel); disableScroll.on()}}
                         key={index}
                         borderRadius='12px'
                         h='600px'
@@ -185,15 +189,16 @@ const FullProperty = () => {
               </Grid>
             </Box>
 
-            <Flex display={showCarousel ? 'flex' : 'none'} direction='row' position='absolute' top='0' left='0%' bg='secondary.100' w='100vw' overflow='hidden'> 
+            <Flex pt={{base:'32', lg: '0'}} display={showCarousel ? 'flex' : 'none'} h='100%' direction='row' position='absolute' top='0' left='0%' bg='secondary.100' w='100vw' overflow='hidden'> 
               <Flex align='center' w='100%' direction={{base: 'column', lg: 'row'}} mt={{base: '20%', lg: '0%'}}>
 
                 <Box  
                   display={{base: 'none', lg: 'block'}} 
                   w='10%' cursor='pointer' 
                   m='0 auto' 
-                  h='50px' pl={{lg: '3%'}} 
-                  transform='scale(1.4)'
+                  h='50px' 
+                  pl={{lg: '3%'}} 
+                  transform='scale(0.7)'
                   onClick={() => {
                     Number(carouselCounter) !== 0 && setcarouselCounter(carouselCounter-1)}
                   }
@@ -201,13 +206,24 @@ const FullProperty = () => {
                   <Image alt="" src={BckrdIcon} />
                 </Box>
 
-                <Flex h={{lg:'60%',}} direction='column' w={{lg:'80%', base: '100%'}} m='0 auto'  align='center' justify='center'>
+                <Flex h={{lg:'60%', }} direction='column' w={{lg:'80%', base: '100%'}} m='0 auto'  align='center' justify='center'>
 
-                  <Box cursor='pointer' px='4' my={{lg:2, base: 4}} py={{lg:4, base: 4}} backgroundColor='primary.200' borderRadius='xl' onClick={() => {setShowCarousel(false); setcarouselCounter(0)}} >
+                  <Box cursor='pointer' px='4' my={{lg:2, base: 4}} py={{lg:4, base: 4}} bg='secondary.300' borderRadius='xl' onClick={() => {setShowCarousel(false); disableScroll.off(); setcarouselCounter(0)}} >
                     <Text userSelect='none' fontFamily='ProductBold' color='white'>Close Slide</Text>
                   </Box>
-                  < ChkImg borderRadius='xl' h={{lg:'100%', base: '100%'}} src={allImage&& allImage[carouselCounter]} />
-
+                    <SliderTest changeHandle={() => {console.log('dd')}}>
+                      { 
+                         allImage?.map((item, index) => { 
+                          return ( 
+                            <SwiperSlide key={index}>
+                              <ChkImg  h={{lg:'100%', base: '90%'}} w='100%' src={allImage&& allImage[index]} />
+                            </SwiperSlide>
+                            
+                          )
+                        })
+                      }
+                    </SliderTest>
+                  <ChkImg display={{base: 'none', lg: 'block'}}  h={{lg:'120%', base: '100%'}} w='95%' src={allImage&& allImage[carouselCounter]} />
                 </Flex>
 
                 <Box 
@@ -217,34 +233,13 @@ const FullProperty = () => {
                   m='0 auto' 
                   h='50px' 
                   pl={{lg: '4%'}} 
-                  transform='scale(1.4)'
+                  transform='scale(0.7)'
                   onClick={() => {
                     Number(carouselCounter+1) !== allImage.length && setcarouselCounter(carouselCounter+1)}
                   }
                 >
                   <Image src={FrwdIcon} />
                 </Box>
-
-                <Flex display={{base: 'flex', lg: 'none'}} gap='40' mt={{base: 8}}>
-                  <Box 
-                    w='50%' 
-                    cursor='pointer' 
-                    m='0 auto' 
-                    h='50px' 
-                    pl={{lg: '3%'}} 
-                    transform='' 
-                    onClick={() => {
-                      Number(carouselCounter) !== 0 && setcarouselCounter(carouselCounter-1)}
-                    }
-                  >
-                    <Image alt="" src={BckrdIcon} />
-                  </Box>
-                  <Box w='50%' cursor='pointer' m='0 auto' h='50px' pl={{lg: '3%'}} transform='' onClick={() => {
-                    Number(carouselCounter+1) !== allImage.length && setcarouselCounter(carouselCounter+1)}
-                  }>
-                    <Image alt="" src={FrwdIcon} />
-                  </Box>
-                </Flex>
               </Flex>
             </Flex>
           </ModalBody>
@@ -351,7 +346,6 @@ const FullProperty = () => {
             </Flex>
           </Flex>
         </Flex>
-
         <Flex width={{ lg: "20%" }} onClick={onOpen} justify={{lg:"end"}}>
           <Flex
             w={{ lg: "fit-content" }}
@@ -438,7 +432,6 @@ const FullProperty = () => {
             : <Heading fontFamily='ProductBold' fontSize='2xl' color='primary.200'>This is a unique property, we currently do not have any property like it.</Heading>
           }
         </Flex>
-        
       </Flex>
     </Flex>
   );
