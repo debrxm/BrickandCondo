@@ -5,7 +5,7 @@ import BathRoomIcon from "../public/bathRoom.svg";
 import Image from "next/image";
 import Link from "next/link";
 
-export const PropertyPreviewCard = ({ data }: { data: any }) => {
+export const PropertyPreviewCard = ({ data, shouldReload }: { data: any, shouldReload: boolean }) => {
   return (
     <Link href={`/p/${data.id}/`}>
       <Flex
@@ -20,7 +20,7 @@ export const PropertyPreviewCard = ({ data }: { data: any }) => {
         borderRadius={{ lg: "3xl", base: "2xl" }}
         position="relative"
         cursor="pointer"
-        onClick={() => localStorage.setItem("propertyID", data.id)}
+        onClick={() => {localStorage.setItem("propertyID", data.id); shouldReload && window.location.reload()}}
         mb={{base: 20}}
       >
         <Flex direction="column" pb={16}>

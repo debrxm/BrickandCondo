@@ -299,7 +299,7 @@ const Home: NextPage = () => {
         mx={{lg: 'auto'}}
       >
         {properties.map((item: object, index: number) => {
-          return <PropertyPreviewCard key={index} data={item} />;
+          return <PropertyPreviewCard key={index} data={item} shouldReload={false} />;
         })}
       </Flex>
       {lastDoc && (

@@ -430,7 +430,8 @@ const FullProperty = () => {
               return (
                 <PropertyPreviewCard 
                   key={index} 
-                  data={item}                
+                  data={item}
+                  shouldReload={true}
                 />
               )
             })
