@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/link-passhref */
 import { Box, Flex, Grid, Heading } from "@chakra-ui/react";
+import { NextSeo } from 'next-seo';
 import Link from "next/link";
 import React from "react";
 import { LightButton } from "../components/LightButton";
@@ -43,8 +44,17 @@ const BrickandCondoDash = ({ user }: { user: object }) => {
 
   return (
     <>
+    <NextSeo 
+      title='Dashboard- Admin'
+      description='Only Admins for BrickandCondo have access'
+    />
       {isAdmin && (
         <Flex direction="column" maxW={{lg: '1290px'}} mx={{lg: 'auto'}}>
+          <NextSeo 
+            title='Dashboard- Admin'
+            description=' Brick & Condo gives you the needed assistance as your venture
+            into real estate investing.'
+          />
           <LoggedInBanner email={user && { ...Object.values(user) }} />
           <Flex direction="column">
             <Flex

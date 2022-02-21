@@ -18,6 +18,7 @@ import { DangerButton } from '../../components/DangerButton';
 import { PropertyPreviewCard } from '../../components/PropertyPreviewCard';
 import SliderTest from '../../components/SliderTest';
 import { SwiperSlide } from 'swiper/react';
+import { NextSeo } from 'next-seo';
 
 
 const FullProperty = () => {
@@ -137,6 +138,10 @@ const FullProperty = () => {
   };
   return (
     <Flex direction="column" maxW={{lg: '1290px'}} mx={{lg: 'auto'}}>
+      <NextSeo
+        title={`${property ? property.property_name : 'BrickandCondo...'}`}
+        description={`${property ? property.property_description: 'BrickandCondo'}`}
+      />
       <Flex
         mb={{ lg: 10, base: 8 }}
         cursor="pointer"

@@ -13,6 +13,7 @@ import { createUserProfile } from "../firebase/auth";
 import { DarkFullWidthCard } from "../components/DarkFullWidthCard";
 import { LightButton } from "../components/LightButton";
 import Router from 'next/router';
+import { NextSeo } from 'next-seo';
 
 const BrickandcondoLogin = ({user}: {user: object}) => {
   const [email, setEmail] = useState("");
@@ -63,6 +64,10 @@ const BrickandcondoLogin = ({user}: {user: object}) => {
 
   return (
     <DarkFullWidthCard>
+      <NextSeo
+        title='Login- BrickandCondo'
+        description='Only Admins for BrickandCondo have access'
+      />
       <Heading mb={20} color="white" fontSize="2xl" fontFamily="ProductBold">
         Login- For BrickandCondo Admins.
       </Heading>

@@ -25,6 +25,7 @@ import { LightButton } from "../components/LightButton";
 import { CreateProperty } from "../firebase/firestore";
 import Router from "next/router";
 import { LoggedInBanner } from "../components/LoggedInBanner";
+import { NextSeo } from 'next-seo';
 
 const BrickandCondoUpload = ({ user }: { user: object }) => {
   const [isAdmin, setIsAdmin] = React.useState<boolean | null>(null);
@@ -252,6 +253,10 @@ const BrickandCondoUpload = ({ user }: { user: object }) => {
     <>
       {isAdmin && (
         <Box maxW={{lg: '1290px'}} mx={{lg: 'auto'}}>
+          <NextSeo
+            title='Uploading- BrickandCondo'
+            description='Only Admins for BrickandCondo have access'
+          />
           <LoggedInBanner email={user && { ...Object.values(user) }} />
           <Heading
             fontFamily="ProductBold"

@@ -15,7 +15,7 @@ import React from "react";
 import { PropertyPreviewCard } from "../components/PropertyPreviewCard";
 import { firestore } from "../firebase/config";
 import {useRouter} from 'next/router'
-
+import {NextSeo} from 'next-seo'
 const Home: NextPage = () => {
   //Hooks
   const queryHook = useRouter();
@@ -206,6 +206,11 @@ const Home: NextPage = () => {
 
   return (
     <Flex direction="column">
+      <NextSeo 
+        title='BrickandCondo'
+        description=' Brick & Condo gives you the needed assistance as your venture
+        into real estate investing.'
+      />
       <Flex
         mb={{ base: 10, lg: 2, '2xl': '10' }}
         direction={{ base: "column" }}
@@ -239,7 +244,7 @@ const Home: NextPage = () => {
             fontSize={{ base: "sm", lg: "md" }}
           >
             Brick & Condo gives you the needed <br /> assistance as your venture
-            into real <br /> estate inveting.
+            into real <br /> estate investing.
           </Text>
           <SearchComp />
         </Flex>

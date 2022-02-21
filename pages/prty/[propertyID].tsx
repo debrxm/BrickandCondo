@@ -32,6 +32,7 @@ import {
 import firebase, { firestore } from "../../firebase/config";
 import Router from "next/router";
 import { DeleteProperty, UpdateProperty } from "../../firebase/firestore";
+import { NextSeo } from 'next-seo';
 
 const IndividualProperty = ({ user }: { user: object }) => {
   // let property;
@@ -389,9 +390,18 @@ const IndividualProperty = ({ user }: { user: object }) => {
   };
 
   return isLoading ? (
-    <Flex direction="column"></Flex>
+    <Flex direction="column">
+      <NextSeo
+        title={`Managing Property -`}
+        description='Only Admins for BrickandCondo have access'
+      />
+    </Flex>
   ) : (
     <Flex direction="column"  maxW={{lg: '1290px'}} mx={{lg: 'auto'}}>
+        <NextSeo
+          title={`Managing Property -${property.property_name}`}
+          description='Only Admins for BrickandCondo have access'
+        />
       <LoggedInBanner email={user && { ...Object.values(user) }} />
       <Popover>
         <PopoverTrigger>
