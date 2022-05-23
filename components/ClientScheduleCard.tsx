@@ -31,26 +31,30 @@ export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
       .doc(`${propertyID}`)
       .collection(`schedules`);
     try {
-      await scheduleRef.doc().set({
-        clientName: name,
-        clientPhoneNumber: phone,
-        clientEmail: email,
-        scheduledDate: date,
-      });
-      emailjs
-        .sendForm(
-          "service_srkb0iw",
-          "template_5io9f98",
-          form.current,
-          "1ADtsFmpfR-1ujNp9"
-        )
-        .then(
-          (result) => {
-            console.log(result.text);
-          },
-          (error) => {
-            console.log(error.text);
-          }
+      await scheduleRef
+        .doc()
+        .set({
+          clientName: name,
+          clientPhoneNumber: phone,
+          clientEmail: email,
+          scheduledDate: date,
+        })
+        .then(() =>
+          emailjs
+            .sendForm(
+              "service_srkb0iw",
+              "template_5io9f98",
+              form.current,
+              "1ADtsFmpfR-1ujNp9"
+            )
+            .then(
+              (result) => {
+                console.log(result.text);
+              },
+              (error) => {
+                console.log(error.text);
+              }
+            )
         );
       setStatus({ code: 200, message: "Success" });
       setShowFrom(!showForm);
