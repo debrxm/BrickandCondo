@@ -14,7 +14,7 @@ import { firestore } from "../firebase/config";
 import { LightButton } from "./LightButton";
 
 export const ClientScheduleCard = ({ propertyID }: { propertyID: number }) => {
-  const form = React.useRef();
+  const form: any = React.useRef();
 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
