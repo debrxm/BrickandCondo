@@ -1,4 +1,22 @@
-import { Box, Flex, Heading, Text, Image as ChkImg, Divider, Modal, useDisclosure, Button, ModalBody, ModalCloseButton, Image as ChkImage, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Grid } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Image as ChkImg,
+  Divider,
+  Modal,
+  useDisclosure,
+  Button,
+  ModalBody,
+  ModalCloseButton,
+  Image as ChkImage,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Grid,
+} from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -10,16 +28,15 @@ import bedRmIconBlack from "../../public/bedRmIcnBlack.svg";
 import ImgSampleIcon from "../../public/ImgSampleIcon.svg";
 import FrwdIcon from "../../public/forwardArrow.svg";
 import BckrdIcon from "../../public/backArrow.svg";
-import disableScroll from 'disable-scroll'
+import disableScroll from "disable-scroll";
 
 import { ClientScheduleCard } from "../../components/ClientScheduleCard";
 import { LightButton } from "../../components/LightButton";
-import { DangerButton } from '../../components/DangerButton';
-import { PropertyPreviewCard } from '../../components/PropertyPreviewCard';
-import SliderTest from '../../components/SliderTest';
-import { SwiperSlide } from 'swiper/react';
-import { NextSeo } from 'next-seo';
-
+import { DangerButton } from "../../components/DangerButton";
+import { PropertyPreviewCard } from "../../components/PropertyPreviewCard";
+import SliderTest from "../../components/SliderTest";
+import { SwiperSlide } from "swiper/react";
+import { NextSeo } from "next-seo";
 
 const FullProperty = () => {
   // Property 0bject including the images
@@ -28,10 +45,10 @@ const FullProperty = () => {
   const [otherProperties, setOtherProperties] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState(false);
   const [showNaira, setShowNaira] = React.useState(true);
-  //Hooks 
+  //Hooks
   const [allImage, setAllImage] = React.useState<Array<string>>([]);
-  const {isOpen, onOpen, onClose} = useDisclosure(); 
-  const [carouselCounter, setcarouselCounter] = React.useState<number>(0)
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [carouselCounter, setcarouselCounter] = React.useState<number>(0);
   const [showCarousel, setShowCarousel] = React.useState<boolean>(false);
 
   const getProperty = async (propertyID: number) => {
@@ -41,13 +58,19 @@ const FullProperty = () => {
     if (snapshot.exists) {
       const data: any = snapshot.data();
       setProperty(data);
-      const allImgArr = [data.images.main, data.images.sub_image_one, data.images.sub_image_two]; 
-      
-      data.images && data.images.other_images.forEach((i: {i: object, imageURL: string}, index: number) => { 
-        allImgArr.push(i.imageURL);
-        
-      }); 
-      
+      const allImgArr = [
+        data.images.main,
+        data.images.sub_image_one,
+        data.images.sub_image_two,
+      ];
+
+      data.images &&
+        data.images.other_images.forEach(
+          (i: { i: object; imageURL: string }, index: number) => {
+            allImgArr.push(i.imageURL);
+          }
+        );
+
       setAllImage([...allImgArr]);
       getOtherProperty(data.property_location);
     } else {
@@ -55,7 +78,6 @@ const FullProperty = () => {
     }
   };
   const getOtherProperty = async (loc: string) => {
-
     const propertyRef = firestore
       .collection("properties")
       .where("property_location", "==", loc.toLowerCase())
@@ -137,10 +159,12 @@ const FullProperty = () => {
     );
   };
   return (
-    <Flex direction="column" maxW={{lg: '1290px'}} mx={{lg: 'auto'}}>
+    <Flex direction="column" maxW={{ lg: "1290px" }} mx={{ lg: "auto" }}>
       <NextSeo
-        title={`${property ? property.property_name : 'BrickandCondo...'}`}
-        description={`${property ? property.property_description: 'BrickandCondo'}`}
+        title={`${property ? property.property_name : "BrickandCondo..."}`}
+        description={`${
+          property ? property.property_description : "BrickandCondo"
+        }`}
       />
       <Flex
         mb={{ lg: 10, base: 8 }}
@@ -160,102 +184,179 @@ const FullProperty = () => {
           </Flex>
         </Link>
       </Flex>
-      <Modal size='full' isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
+      <Modal size="full" isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
         <ModalContent>
-          
-          <ModalBody position='relative'>
-            <Box mt={{base: 32}}>
+          <ModalBody position="relative">
+            <Box mt={{ base: 32 }}>
               <Box>
-                <DangerButton onClick={() => {onClose()}}>Go Back</DangerButton>
-                <Text mt={{base: 4}} fontFamily='ProductLight' color='secondary.200'>Currently Viewing</Text>
-                <Heading fontFamily='ProductBold' color='secondary.100'>Image for {property?.property_name}</Heading>
-                
+                <DangerButton
+                  onClick={() => {
+                    onClose();
+                  }}
+                >
+                  Go Back
+                </DangerButton>
+                <Text
+                  mt={{ base: 4 }}
+                  fontFamily="ProductLight"
+                  color="secondary.200"
+                >
+                  Currently Viewing
+                </Text>
+                <Heading fontFamily="ProductBold" color="secondary.100">
+                  Image for {property?.property_name}
+                </Heading>
               </Box>
 
-              <Grid px={{base: '0%', lg: '5%'}} pb={{base: 20}} h={{lg:'85vh', base: '70vh'}} mt={8} gap='5' templateColumns={{lg:'repeat(3,1fr)', base: '1fr'}} flexWrap='wrap' overflowX='scroll'>
-                { 
-                  allImage?.map((item, index) => { 
-                    return ( 
-                      <Box  
-                        cursor='pointer'
-                        onClick={() => {setShowCarousel(!showCarousel); disableScroll.on()}}
-                        key={index}
-                        borderRadius='12px'
-                        h='600px'
-                        w='100%'
-                        bg={`url(${item})`}
-                        bgSize='cover'
-                        bgPos='center'
-                      />
-                    )
-                  })
-                }
+              <Grid
+                px={{ base: "0%", lg: "5%" }}
+                pb={{ base: 20 }}
+                h={{ lg: "85vh", base: "70vh" }}
+                mt={8}
+                gap="5"
+                templateColumns={{ lg: "repeat(3,1fr)", base: "1fr" }}
+                flexWrap="wrap"
+                overflowX="scroll"
+              >
+                {allImage?.map((item, index) => {
+                  return (
+                    <Box
+                      cursor="pointer"
+                      onClick={() => {
+                        setShowCarousel(!showCarousel);
+                        disableScroll.on();
+                      }}
+                      key={index}
+                      borderRadius="12px"
+                      h="600px"
+                      w="100%"
+                      bg={`url(${item})`}
+                      bgSize="cover"
+                      bgPos="center"
+                    />
+                  );
+                })}
               </Grid>
             </Box>
 
-            <Flex pt={{base:'32', lg: '0'}} display={showCarousel ? 'flex' : 'none'} h='100%' direction='row' position='absolute' top='0' left='0%' bg='secondary.100' w='100vw' overflow='hidden'> 
-              <Flex align='center' w='100%' direction={{base: 'column', lg: 'row'}} mt={{base: '20%', lg: '0%'}}>
-
-                <Box  
-                  display={{base: 'none', lg: 'block'}} 
-                  w='10%' cursor='pointer' 
-                  m='0 auto' 
-                  h='50px' 
-                  pl={{lg: '3%'}} 
-                  transform='scale(0.7)'
+            <Flex
+              pt={{ base: "32", lg: "0" }}
+              display={showCarousel ? "flex" : "none"}
+              h="100%"
+              direction="row"
+              position="absolute"
+              top="0"
+              left="0%"
+              bg="secondary.100"
+              w="100vw"
+              overflow="hidden"
+            >
+              <Flex
+                align="center"
+                w="100%"
+                direction={{ base: "column", lg: "row" }}
+                mt={{ base: "20%", lg: "0%" }}
+              >
+                <Box
+                  display={{ base: "none", lg: "block" }}
+                  w="10%"
+                  cursor="pointer"
+                  m="0 auto"
+                  h="50px"
+                  pl={{ lg: "3%" }}
+                  transform="scale(0.7)"
                   onClick={() => {
-                    Number(carouselCounter) !== 0 && setcarouselCounter(carouselCounter-1)}
-                  }
+                    Number(carouselCounter) !== 0 &&
+                      setcarouselCounter(carouselCounter - 1);
+                  }}
                 >
                   <Image alt="" src={BckrdIcon} />
                 </Box>
 
-                <Flex h={{lg:'60%', }} direction='column' w={{lg:'80%', base: '100%'}} m='0 auto'  align='center' justify='center'>
-
-                  <Box cursor='pointer' px='4' my={{lg:2, base: 4}} py={{lg:4, base: 4}} bg='secondary.300' borderRadius='xl' onClick={() => {setShowCarousel(false); disableScroll.off(); setcarouselCounter(0)}} >
-                    <Text userSelect='none' fontFamily='ProductBold' color='white'>Close Slide</Text>
+                <Flex
+                  h={{ lg: "60%" }}
+                  direction="column"
+                  w={{ lg: "80%", base: "100%" }}
+                  m="0 auto"
+                  align="center"
+                  justify="center"
+                >
+                  <Box
+                    cursor="pointer"
+                    px="4"
+                    my={{ lg: 2, base: 4 }}
+                    py={{ lg: 4, base: 4 }}
+                    bg="secondary.300"
+                    borderRadius="xl"
+                    onClick={() => {
+                      setShowCarousel(false);
+                      disableScroll.off();
+                      setcarouselCounter(0);
+                      onClose();
+                    }}
+                  >
+                    <Text
+                      userSelect="none"
+                      fontFamily="ProductBold"
+                      color="white"
+                    >
+                      Close Slide
+                    </Text>
                   </Box>
-                    <SliderTest changeHandle={() => {console.log('dd')}}>
-                      { 
-                         allImage?.map((item, index) => { 
-                          return ( 
-                            <SwiperSlide key={index}>
-                              <ChkImg  h={{lg:'100%', base: '90%'}} w='100%' src={allImage&& allImage[index]} />
-                            </SwiperSlide>
-                            
-                          )
-                        })
-                      }
-                    </SliderTest>
-                  <ChkImg display={{base: 'none', lg: 'block'}}  h={{lg:'120%', base: '100%'}} w='95%' src={allImage&& allImage[carouselCounter]} />
+                  <SliderTest
+                    changeHandle={() => {
+                      console.log("dd");
+                    }}
+                  >
+                    {allImage?.map((item, index) => {
+                      return (
+                        <SwiperSlide key={index}>
+                          <ChkImg
+                            h={{ lg: "100%", base: "90%" }}
+                            w="100%"
+                            src={allImage && allImage[index]}
+                          />
+                        </SwiperSlide>
+                      );
+                    })}
+                  </SliderTest>
+                  <ChkImg
+                    display={{ base: "none", lg: "block" }}
+                    h={{ lg: "120%", base: "100%" }}
+                    w="95%"
+                    src={allImage && allImage[carouselCounter]}
+                  />
                 </Flex>
 
-                <Box 
-                  display={{base: 'none', lg: 'block'}} 
-                  w='10%' 
-                  cursor='pointer' 
-                  m='0 auto' 
-                  h='50px' 
-                  pl={{lg: '4%'}} 
-                  transform='scale(0.7)'
+                <Box
+                  display={{ base: "none", lg: "block" }}
+                  w="10%"
+                  cursor="pointer"
+                  m="0 auto"
+                  h="50px"
+                  pl={{ lg: "4%" }}
+                  transform="scale(0.7)"
                   onClick={() => {
-                    Number(carouselCounter+1) !== allImage.length && setcarouselCounter(carouselCounter+1)}
-                  }
+                    Number(carouselCounter + 1) !== allImage.length &&
+                      setcarouselCounter(carouselCounter + 1);
+                  }}
                 >
                   <Image src={FrwdIcon} />
                 </Box>
               </Flex>
             </Flex>
           </ModalBody>
-          <ModalFooter px='25%'>
-            
-          </ModalFooter>
+          <ModalFooter px="25%"></ModalFooter>
         </ModalContent>
       </Modal>
-      <Flex 
-        overflow='hidden'
-        onClick={onOpen}
+      <Flex
+        overflow="hidden"
+        onClick={() => {
+          setShowCarousel(true);
+          console.log("hey");
+          onOpen();
+        }}
         mb={{ lg: 10, base: 8 }}
         gap={{ base: 4 }}
         direction={{ base: "column", lg: "row" }}
@@ -351,7 +452,7 @@ const FullProperty = () => {
             </Flex>
           </Flex>
         </Flex>
-        <Flex width={{ lg: "20%" }} onClick={onOpen} justify={{lg:"end"}}>
+        <Flex width={{ lg: "20%" }} onClick={onOpen} justify={{ lg: "end" }}>
           <Flex
             w={{ lg: "fit-content" }}
             align="center"
@@ -421,22 +522,39 @@ const FullProperty = () => {
         </Flex>
       </Flex>
 
-      <Flex gap='4' mt={{base: 20}} direction='column'>
-        <Heading fontFamily='ProductBold' fontSize='2xl' color='secondary.100'>Similar properties</Heading>
-        <Flex gap={{base: 4}} flexWrap={{lg: 'wrap'}} direction={{lg: 'row', base: 'column'}}>
-          {
-            otherProperties?.length > 1 ? 
-            otherProperties?.filter((propty:any) => {return propty.id !== property.id})?.map((item: object, index: number) => { 
-              return (
-                <PropertyPreviewCard 
-                  key={index} 
-                  data={item}
-                  shouldReload={true}
-                />
-              )
-            })
-            : <Heading fontFamily='ProductBold' fontSize='2xl' color='primary.200'>This is a unique property, we currently do not have any property like it.</Heading>
-          }
+      <Flex gap="4" mt={{ base: 20 }} direction="column">
+        <Heading fontFamily="ProductBold" fontSize="2xl" color="secondary.100">
+          Similar properties
+        </Heading>
+        <Flex
+          gap={{ base: 4 }}
+          flexWrap={{ lg: "wrap" }}
+          direction={{ lg: "row", base: "column" }}
+        >
+          {otherProperties?.length > 1 ? (
+            otherProperties
+              ?.filter((propty: any) => {
+                return propty.id !== property.id;
+              })
+              ?.map((item: object, index: number) => {
+                return (
+                  <PropertyPreviewCard
+                    key={index}
+                    data={item}
+                    shouldReload={true}
+                  />
+                );
+              })
+          ) : (
+            <Heading
+              fontFamily="ProductBold"
+              fontSize="2xl"
+              color="primary.200"
+            >
+              This is a unique property, we currently do not have any property
+              like it.
+            </Heading>
+          )}
         </Flex>
       </Flex>
     </Flex>
