@@ -14,8 +14,8 @@ import searchIcon from "../public/searchIcon.svg";
 import React from "react";
 import { PropertyPreviewCard } from "../components/PropertyPreviewCard";
 import { firestore } from "../firebase/config";
-import {useRouter} from 'next/router'
-import {NextSeo} from 'next-seo'
+import { useRouter } from "next/router";
+import { NextSeo } from "next-seo";
 const Home: NextPage = () => {
   //Hooks
   const queryHook = useRouter();
@@ -31,11 +31,10 @@ const Home: NextPage = () => {
   const [lastDoc, setLastDoc] = React.useState<any | {}>({});
   const [properties, setProperties] = React.useState<any | []>([]);
 
-  React.useEffect(() => { 
-    
+  React.useEffect(() => {
     queryHook.query.filter && setQuery(queryHook.query.filter);
-    if(queryHook.query.filter) { 
-      let value = queryHook.query.filter
+    if (queryHook.query.filter) {
+      let value = queryHook.query.filter;
       setPropertiesRef(
         firestore
           .collection("properties")
@@ -44,15 +43,14 @@ const Home: NextPage = () => {
       );
       setQuery(queryHook.query.filter);
     }
-  }, [JSON.stringify(queryHook)])
+  }, [JSON.stringify(queryHook)]);
   //Small Components
   const LocationItem = ({ item }: { item: string }) => {
     const changeLocation = () => {
       if (item === "All") {
         setPropertiesRef(firestore.collection("properties").limit(10));
         setQuery("Filter By Location");
-      } 
-      else {
+      } else {
         setPropertiesRef(
           firestore
             .collection("properties")
@@ -83,7 +81,7 @@ const Home: NextPage = () => {
   const SearchComp = () => {
     return (
       <Flex
-        mt={{lg: 20, base: 4}}
+        mt={{ lg: 20, base: 4 }}
         onClick={onToggle}
         cursor="pointer"
         borderRadius={{ base: "full", lg: "full", md: "xl" }}
@@ -95,7 +93,11 @@ const Home: NextPage = () => {
         px={{ lg: 8, base: 4 }}
         boxShadow="0px 9px 11px 9px rgba(0, 0, 0, 0.04);"
       >
-        <Text textTransform='capitalize' fontFamily="ProductBold" color="#C5C5C5">
+        <Text
+          textTransform="capitalize"
+          fontFamily="ProductBold"
+          color="#C5C5C5"
+        >
           {query || "Filter By Location"}
         </Text>
         <Box w={{ base: "45px" }} h={{ base: "45px" }}>
@@ -147,8 +149,10 @@ const Home: NextPage = () => {
   const getMore = async () => {
     if (lastDoc) {
       setIsMoreLoading(true);
-      let snapshot = await propertiesRef
-        .orderBy("id")
+      let snapshot = await firestore
+        .collection("properties")
+        .limit(10)
+        .orderBy("created_at", "desc")
         .startAfter(lastDoc.data().id)
         .limit(10);
       snapshot.onSnapshot((snapShot: any) => {
@@ -193,7 +197,7 @@ const Home: NextPage = () => {
 
       if (!snapshot.empty) {
         availableLocation.push(item);
-        setLocation([ 'All', ...availableLocation]);
+        setLocation(["All", ...availableLocation]);
 
         getProperties();
       }
@@ -206,35 +210,35 @@ const Home: NextPage = () => {
 
   return (
     <Flex direction="column">
-      <NextSeo 
-        title='BrickandCondo'
-        description=' Brick & Condo gives you the needed assistance as your venture
-        into real estate investing.'
+      <NextSeo
+        title="BrickandCondo"
+        description=" Brick & Condo gives you the needed assistance as your venture
+        into real estate investing."
       />
       <Flex
-        mb={{ base: 10, lg: 2, '2xl': '10' }}
+        mb={{ base: 10, lg: 2, "2xl": "10" }}
         direction={{ base: "column" }}
         position={{ base: "relative", lg: "relative" }}
       >
         <Flex
           direction={{ base: "column" }}
-          py={{ lg: 32, '2xl': 48, base: 20 }}
+          py={{ lg: 32, "2xl": 48, base: 20 }}
           px={{ lg: 80, base: 2 }}
           borderRadius="2xl"
           bg={`linear-gradient(0deg, rgba(3, 28, 32, 0.71), rgba(3, 28, 32, 0.71)), url(https://images.unsplash.com/photo-1507089947368-19c1da9775ae?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1476&q=80)`}
           bgPos="center"
           bgSize="cover"
-          textAlign='center'
+          textAlign="center"
           fontFamily="ProductLight"
-          align={{lg: 'center', base: 'center'}}
+          align={{ lg: "center", base: "center" }}
         >
           <Heading
-            w={{lg: '80%', base: '90%'}}
+            w={{ lg: "80%", base: "90%" }}
             mb={{ base: 6 }}
             fontSize={{ base: "4xl", lg: "6xl" }}
             fontFamily="ProductBold"
             color="white"
-            mx='auto'
+            mx="auto"
           >
             Purchase your next Property-
           </Heading>
@@ -253,38 +257,35 @@ const Home: NextPage = () => {
             direction="column"
             w={{ lg: "25%", base: "80%" }}
             position={{ lg: "absolute", base: "absolute" }}
-            bottom={{ base: "-65%", lg: "35%", '2xl': '40%' }}
-            left={{ base: "10%", lg: "39%", '2xl': '44%' }}
+            bottom={{ base: "-65%", lg: "35%", "2xl": "40%" }}
+            left={{ base: "10%", lg: "39%", "2xl": "44%" }}
             gap={{ base: 4, lg: 4 }}
             transition="display 4s"
             zIndex="5"
-            display={isOpen ? 'flex' : 'none'}
+            display={isOpen ? "flex" : "none"}
           >
             <ListLocationComp />
           </Flex>
         </Fade>
       </Flex>
 
-      <Flex 
-        w={{lg: '90%'}}
-        mx={{lg: 'auto'}}
-      >
+      <Flex w={{ lg: "90%" }} mx={{ lg: "auto" }}>
         {query !== "Filter By Location" && query !== "" ? (
           <Heading
             my={{ base: 10 }}
-            fontSize={{ lg: "30", base: '25px' }}
+            fontSize={{ lg: "30", base: "25px" }}
             fontFamily={"ProductBold"}
-            textTransform='capitalize'
-            color='secondary.100'
+            textTransform="capitalize"
+            color="secondary.100"
           >
             Explore Properties in {query}
           </Heading>
         ) : (
           <Heading
             my={{ base: 10 }}
-            fontSize={{ lg: "30", base: '25px'  }}
+            fontSize={{ lg: "30", base: "25px" }}
             fontFamily={"ProductBold"}
-            color='secondary.100'
+            color="secondary.100"
           >
             Explore all properties
           </Heading>
@@ -295,11 +296,13 @@ const Home: NextPage = () => {
         direction={{ base: "column", lg: "row" }}
         flexWrap="wrap"
         gap="2%"
-        w={{lg: '90%'}}
-        mx={{lg: 'auto'}}
+        w={{ lg: "90%" }}
+        mx={{ lg: "auto" }}
       >
         {properties.map((item: object, index: number) => {
-          return <PropertyPreviewCard key={index} data={item} shouldReload={false} />;
+          return (
+            <PropertyPreviewCard key={index} data={item} shouldReload={false} />
+          );
         })}
       </Flex>
       {lastDoc && (
