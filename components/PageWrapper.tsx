@@ -360,7 +360,7 @@ const FloatingContact = () => {
         <Link
           p="0.4rem"
           target="_blank"
-          href="https://api.whatsapp.com/send?phone=8056842804&text=Brickandcondo%20at%20your%20service"
+          href="https://api.whatsapp.com/send?phone=2348056842804"
           _focus={{ outline: "4px solid #06A7C2" }}
           w="40px"
         >
